@@ -79,7 +79,7 @@ if __name__ == '__main__':
     process_shanghaitech(SHA, 'A', limit=SAMPLE_LIMIT)
     
     print('\n=== ShanghaiTech Part B (Quick Test) ===')
-    process_shanghaitech(SHA, 'B', limit=SAMPLE_LIMIT)
+    process_shanghaitech(SHA, 'B', limit=None)
     
     print('\n=== UCF-QNRF (Quick Test) ===')
     process_ucfqnrf(QNRF, limit=SAMPLE_LIMIT)
