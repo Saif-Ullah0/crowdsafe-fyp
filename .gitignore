@@ -14,3 +14,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 density_map_preview.png
+*.pth
+*.part
