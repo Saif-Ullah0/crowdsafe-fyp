@@ -1,0 +1,23 @@
+# Datasets & Large Binary Files
+datasets/
+models/CSRNet/weights/
+*.h5
+*.npy
+*.mat
+
+# Environment & Python Cache
+crowdsafe_env/
+.venv/
+mvp/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS & Preview Output Files
+.DS_Store
+Thumbs.db
+density_map_preview.png
+output/
+mvp/output/
+*.pth
+*.part
