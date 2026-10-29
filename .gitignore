@@ -21,3 +21,4 @@ output/
 mvp/output/
 *.pth
 *.part
+models/CSRNet/*.json
