@@ -246,3 +246,4 @@ class DVRStreamer:
         if self.cap is not None:
             self.cap.release()
             self.cap = None
+

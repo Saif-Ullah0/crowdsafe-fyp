@@ -225,3 +225,4 @@ class Visualizer:
         """Closes all OpenCV display windows."""
         if not self.headless:
             cv2.destroyAllWindows()
+
