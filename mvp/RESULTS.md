@@ -25,38 +25,37 @@ Whenever a test run or benchmark is performed by Antigravity or the team, record
 
 | Run ID | Date & Time | Model / Mode | Input Source | Total Frames | Mean Count Error | Avg Latency (ms) / FPS | Critical Alerts Triggered | Status / Observations |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| `RUN-001` | *Pending* | MCNN / Synthetic | Synthetic Feed | 100 | N/A (Mock) | ~12ms / 83 FPS | 2 | Initial pipeline sanity test |
-| `RUN-002` | *Pending* | MCNN (PyTorch) | Mall Sample Frames | 50 | TBD | TBD | TBD | End-to-end model verification |
+| `RUN-001` | 2026-11-07 14:26 | FastSim Engine | Synthetic CCTV DVR (1 FPS) | 5 | N/A (Simulation) | 1.33 ms / 750 FPS | 0 (Safe flow) | Pipeline sanity test passed. Headless snapshots verified. |
+| `RUN-002` | 2026-11-07 14:26 | MCNN (PyTorch Fallback) | Synthetic CCTV DVR (1 FPS) | 3 | N/A (Simulation) | 1.63 ms / 613 FPS | 0 (Safe flow) | Plug-and-play architecture verified. |
+| `RUN-003` | 2026-11-07 14:26 | PyTest Suite (8 tests) | Synthetic & Mock Grid | N/A | 0 errors | 4.5s total | 2 (Hysteresis & Flash) | Unit tests passed: DVR, FastSim, MCNN, Spatial, Alerts, Visualizer |
 
 ---
 
 ## 3. Detailed Run Reports
 
-### Run ID: Template Format
-- **Execution Date:** `YYYY-MM-DD HH:MM:SS`
-- **Environment:** CPU / CUDA (GPU Name)
-- **Model Architecture:** MCNN (`core/density_engine.py`)
-- **Dataset / Stream:** `datasets/Mall/demo_frames`
+### Run ID: RUN-001
+- **Execution Date:** `2026-11-07 14:26:00`
+- **Environment:** CPU (Python 3.12.15 venv via uv)
+- **Model Architecture:** FastSim (`core/density_engine.py`)
+- **Dataset / Stream:** Synthetic CCTV Simulator (1.0 FPS)
 - **Configuration Used:**
   - Density Safe Limit: `2.0` people/$m^2$
   - Warning Limit: `3.5` people/$m^2$
   - Critical Limit: `5.0` people/$m^2$
 - **Metrics:**
-  - Mean Absolute Error (MAE): `X.XX`
-  - Root Mean Squared Error (RMSE): `X.XX`
-  - Processing Latency: `XX ms` per frame (`YY FPS`)
+  - Processing Latency: `1.33 ms` per frame
+  - Ingestion Throughput: `1.0 FPS` (DVR regulated)
 - **Key Findings:**
-  - Bottlenecks observed:
-  - Alert accuracy:
-  - Sample heatmap preview path: `output/run_001_sample.png`
+  - Multi-layer visualizer and overlay compositor confirmed functional.
+  - Snapshot preview path: `output/preview_frame_1.png`, `output/preview_frame_5.png`
 
 ---
 
 ## 4. Milestone Verification Checklist
 
-- [ ] **Milestone 1:** MVP structure initialized (`README.md`, `INSTRUCTIONS.md`, `RESULTS.md`, `COMMUNICATION.md`, `config.py`).
-- [ ] **Milestone 2:** End-to-end pipeline execution succeeds on synthetic/mock data.
+- [x] **Milestone 1:** MVP structure initialized (`README.md`, `INSTRUCTIONS.md`, `RESULTS.md`, `COMMUNICATION.md`, `config.py`).
+- [x] **Milestone 2:** End-to-end pipeline execution succeeds on synthetic/mock data.
 - [ ] **Milestone 3:** Real weight inference runs on sample frame with density map generated.
-- [ ] **Milestone 4:** Multi-zone risk computation verified (LOW, MODERATE, HIGH, CRITICAL).
-- [ ] **Milestone 5:** Consecutive frame alert triggering and JSON logging validated.
+- [x] **Milestone 4:** Multi-zone risk computation verified (LOW, MODERATE, HIGH, CRITICAL).
+- [x] **Milestone 5:** Consecutive frame alert triggering, instant flash surge, and JSON logging validated.
 - [ ] **Milestone 6:** Benchmark report completed comparing CPU vs GPU inference times.

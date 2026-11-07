@@ -75,13 +75,18 @@ The goal of the CrowdSafe MVP is to ingest CCTV video frames or image sequences,
 
 ## 3. Development Phases & Tasks for Antigravity
 
-### Phase 1: Foundation & Mock Pipeline (Immediate)
+### Phase 1: Foundation & Skeleton Pipeline (Complete)
 - [x] Create project layout and core docs (`README.md`, `INSTRUCTIONS.md`, `RESULTS.md`, `COMMUNICATION.md`).
-- [ ] Define `requirements.txt` and `config.py` with default zone definitions and safety thresholds.
-- [ ] Implement `core/density_engine.py` with modular model loader and synthetic fallbacks.
-- [ ] Implement `core/spatial_analyzer.py` for zone-based density mapping and risk computation.
-- [ ] Implement `core/alert_system.py` for risk alerting and JSON logging.
-- [ ] Implement `app.py` end-to-end CLI runner.
+- [x] Define `requirements.txt` and `config.py` with default zone definitions, safety thresholds, and 1 FPS streaming rate.
+- [x] Set up isolated Python 3.12 virtual environment via `uv` with PyTorch CPU, OpenCV, and Scipy.
+- [x] Implement `core/dvr_streamer.py` for 1 FPS DVR/CCTV sequence simulation and video ingestion.
+- [x] Implement `core/density_engine.py` with plug-and-play abstraction (`BaseDensityModel`, `FastSimModel`, `MCNNModel`, `CSRNetModel`).
+- [x] Implement `core/spatial_analyzer.py` for zone-based density mapping, Fruin risk escalation, cluster contours, and peak dots.
+- [x] Implement `core/alert_system.py` for multi-frame hysteresis, flash-surge triggers, async webhook dispatching, and JSONL logging.
+- [x] Implement `core/visualizer.py` with high-freedom multi-layer OpenCV GUI overlays and keyboard hotkeys.
+- [x] Implement `webhook_receiver.py` local testing server.
+- [x] Implement `app.py` end-to-end CLI & GUI runner.
+- [x] Add automated unit test suite `tests/test_pipeline.py` (8/8 passing).
 
 ### Phase 2: Integration of Real Weights & Mall Dataset Validation
 - [ ] Wire up real MCNN / CSRNet PyTorch model definitions.
