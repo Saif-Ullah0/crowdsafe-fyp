@@ -17,31 +17,30 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # ---------------------------------------------------------
 DENSITY_LEVELS = {
     "LOW": {
-        "max": 2.0,
-        "color": (0, 255, 0),         # Green (BGR)
+        "max": 0.1,  # <--- Changed from 2.0
+        "color": (0, 255, 0),
         "label": "Normal Flow",
         "description": "Free movement, normal walking speed"
     },
     "MODERATE": {
-        "max": 3.5,
-        "color": (0, 255, 255),       # Yellow (BGR)
+        "max": 0.2,  # <--- Changed from 3.5
+        "color": (0, 255, 255),
         "label": "Caution / High Volume",
         "description": "Constrained movement, walking speed restricted"
     },
     "HIGH": {
-        "max": 5.0,
-        "color": (0, 165, 255),       # Orange (BGR)
+        "max": 0.25, # <--- Changed from 5.0
+        "color": (0, 165, 255),
         "label": "Warning / Bottleneck",
         "description": "Crowd compression begins, involuntary contact"
     },
     "CRITICAL": {
         "max": float("inf"),
-        "color": (0, 0, 255),         # Red (BGR)
+        "color": (0, 0, 255),
         "label": "Critical / Crush Risk",
         "description": "Extreme compressive asphyxiation / stampede risk"
     }
 }
-
 # ---------------------------------------------------------
 # Default Zone / Region of Interest (ROI) Definitions
 # Normalized coordinates (x1, y1, x2, y2) in range [0.0, 1.0]
@@ -97,9 +96,8 @@ class AlertConfig:
     instant_critical_threshold: float = 5.5  # Instant trigger (bypass hysteresis) for flash surges
     alert_log_file: Path = OUTPUT_DIR / "alerts.jsonl"
     enable_console_logging: bool = True
-    webhook_url: str = None                 # HTTP POST endpoint (e.g. 'http://localhost:8080/alert')
+    webhook_url: str = "http://localhost:3000/api/webhook"  # <--- UPDATE THIS LINE
     webhook_timeout: float = 2.0            # Seconds before non-blocking timeout
-
 # ---------------------------------------------------------
 # Visualization & GUI Settings
 # ---------------------------------------------------------
