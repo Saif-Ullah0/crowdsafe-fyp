@@ -106,5 +106,5 @@ The goal of the CrowdSafe MVP is to ingest CCTV video frames or image sequences,
 ## 4. Engineering Rules & Coding Standards
 1. **Never crash on missing weights or inputs:** Always provide graceful fallbacks and actionable error messages.
 2. **Deterministic Configuration:** All configurable hyperparameters (thresholds, zone geometries, camera mappings) must reside in `config.py` rather than hardcoded magic numbers.
-3. **Traceability:** Every major benchmark or experiment must be appended to [RESULTS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/RESULTS.md).
-4. **Communication:** Report progress, blockers, and questions according to [COMMUNICATION.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/COMMUNICATION.md).
+3. **Traceability:** Every major benchmark or experiment must be appended to [RESULTS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/RESULTS.md).
+4. **Communication:** Report progress, blockers, and questions according to [COMMUNICATION.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/COMMUNICATION.md).

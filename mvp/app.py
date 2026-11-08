@@ -9,6 +9,11 @@ import time
 from pathlib import Path
 import cv2
 
+# Ensure mvp directory is on sys.path for direct execution or outside execution
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
 from config import AppConfig
 from core.dvr_streamer import DVRStreamer
 from core.density_engine import get_density_engine
@@ -21,10 +26,12 @@ def parse_args():
     parser = argparse.ArgumentParser(description="CrowdSafe MVP — Real-Time CCTV Sentinel")
     parser.add_argument("--source", type=str, default="sample", help="Input source: 'sample', image directory, video path, or webcam ID")
     parser.add_argument("--model", type=str, default="fast_sim", choices=["fast_sim", "mcnn", "csrnet"], help="Model architecture")
+    parser.add_argument("--weights", type=str, default=None, help="Path to pre-trained model weights (.pth / .pth.tar)")
     parser.add_argument("--fps", type=float, default=1.0, help="Ingestion rate in FPS (default: 1.0)")
     parser.add_argument("--device", type=str, default="cpu", help="Compute device: 'cpu' or 'cuda'")
     parser.add_argument("--webhook", type=str, default=None, help="HTTP POST Webhook URL for incident alerts")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode without GUI window")
+    parser.add_argument("--visualize", action="store_true", help="Explicitly enable GUI visualizer window (default: GUI enabled unless --headless)")
     parser.add_argument("--max-frames", type=int, default=None, help="Stop after N frames (default: run continuously)")
     parser.add_argument("--save-output", action="store_true", default=True, help="Save preview snapshots to output directory")
     return parser.parse_args()
@@ -40,9 +47,15 @@ def main():
     config.stream.max_frames = args.max_frames
     config.model.architecture = args.model
     config.model.device = args.device
+    if args.weights:
+        config.model.weights_path = args.weights
     if args.webhook:
         config.alert.webhook_url = args.webhook
-    config.visualizer.headless = args.headless
+    
+    if args.headless:
+        config.visualizer.headless = True
+    elif args.visualize:
+        config.visualizer.headless = False
 
     print("=" * 70)
     print("      CrowdSafe MVP — Real-Time CCTV Safety & Density Sentinel      ")
@@ -112,8 +125,10 @@ def main():
                 camera_id="CAM_NORTH_GATE_01",
                 is_flash_spike=spatial_analysis["is_flash_spike"]
             )
-            if new_alerts:
-                latest_alert = new_alerts[-1]
+            if alert_system.active_alerts:
+                latest_alert = list(alert_system.active_alerts.values())[-1]
+            else:
+                latest_alert = None
 
             processed_count += 1
             fps_effective = round(1.0 / max((time.time() - loop_start), 0.001), 1)
@@ -134,8 +149,8 @@ def main():
                   f"Peak: {top_zone['name']} ({top_zone['density_per_m2']:4.1f} p/m²) | "
                   f"Risk: {spatial_analysis['overall_risk']:8s} | Latency: {latency_ms:4.1f}ms")
 
-            # Save snapshot preview for initial frames
-            if config.visualizer.headless and config.output_dir:
+            # Save snapshot preview for initial frames or milestone frames
+            if args.save_output and config.output_dir:
                 if frame_idx == 1 or (args.max_frames and frame_idx == args.max_frames):
                     snap_path = config.output_dir / f"preview_frame_{frame_idx}.png"
                     cv2.imwrite(str(snap_path), annotated_frame)

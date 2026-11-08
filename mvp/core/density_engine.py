@@ -70,7 +70,7 @@ class FastSimModel(BaseDensityModel):
         sum_val = np.sum(density_field)
         if sum_val > 0:
             # Calibrate to realistic crowd headcount range (e.g., 20 - 150 people)
-            head_factor = float(np.count_nonzero(edges > 0)) / 45.0
+            head_factor = float(np.count_nonzero(edges > 0)) / 22.0
             density_map = (density_field / sum_val) * max(head_factor, 15.0)
         else:
             density_map = np.zeros((out_h, out_w), dtype=np.float32)
@@ -144,7 +144,10 @@ if TORCH_AVAILABLE:
 
             if weights_path and os.path.exists(weights_path):
                 try:
-                    checkpoint = torch.load(weights_path, map_location=self.device)
+                    try:
+                        checkpoint = torch.load(weights_path, map_location=self.device, weights_only=False)
+                    except TypeError:
+                        checkpoint = torch.load(weights_path, map_location=self.device)
                     if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
                         self.model.load_state_dict(checkpoint["state_dict"])
                     elif isinstance(checkpoint, dict):
@@ -184,23 +187,96 @@ if TORCH_AVAILABLE:
             }
 
 
+    class CSRNetNet(nn.Module):
+        """
+        CSRNet: Dilated Convolutional Neural Network for Congested Scene Recognition.
+        Frontend based on VGG-16 first 10 conv layers + dilated conv backend.
+        """
+        def __init__(self):
+            super().__init__()
+            self.frontend = nn.Sequential(
+                nn.Conv2d(3, 64, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.MaxPool2d(2, stride=2),
+                nn.Conv2d(64, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.MaxPool2d(2, stride=2),
+                nn.Conv2d(128, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.MaxPool2d(2, stride=2),
+                nn.Conv2d(256, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+                nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True)
+            )
+            self.backend = nn.Sequential(
+                nn.Conv2d(512, 512, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True),
+                nn.Conv2d(512, 512, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True),
+                nn.Conv2d(512, 512, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True),
+                nn.Conv2d(512, 256, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True),
+                nn.Conv2d(256, 128, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True),
+                nn.Conv2d(128, 64, kernel_size=3, padding=2, dilation=2), nn.ReLU(inplace=True)
+            )
+            self.output_layer = nn.Conv2d(64, 1, kernel_size=1)
+
+        def forward(self, x):
+            x = self.frontend(x)
+            x = self.backend(x)
+            x = self.output_layer(x)
+            return x
+
+
     class CSRNetModel(BaseDensityModel):
         """CSRNet dilated convolutional model wrapper."""
         def __init__(self, weights_path: Optional[str] = None, device: str = "cpu"):
             self.model_name = "CSRNet (Dilated CNN)"
+            self.device = torch.device(device if torch.cuda.is_available() and device == "cuda" else "cpu")
+            self.model = CSRNetNet().to(self.device)
             self.fallback = FastSimModel()
             self.has_weights = False
-            # CSRNet weights check
+
             if weights_path and os.path.exists(weights_path):
-                # Placeholder for CSRNet PyTorch graph initialization
-                self.has_weights = True
+                try:
+                    try:
+                        checkpoint = torch.load(weights_path, map_location=self.device, weights_only=False)
+                    except TypeError:
+                        checkpoint = torch.load(weights_path, map_location=self.device)
+                    if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
+                        self.model.load_state_dict(checkpoint["state_dict"])
+                    elif isinstance(checkpoint, dict):
+                        self.model.load_state_dict(checkpoint)
+                    self.model.eval()
+                    self.has_weights = True
+                    print(f"[CSRNetModel] Successfully loaded weights: {weights_path}")
+                except Exception as e:
+                    print(f"[CSRNetModel] Error loading checkpoint ({e}). Running in simulation mode.")
             else:
-                print(f"[CSRNetModel] Weights not found. Using FastSim backend.")
+                print(f"[CSRNetModel] No weights found at '{weights_path}'. Using FastSim backend.")
 
         def predict(self, frame_bgr: np.ndarray) -> Dict[str, Any]:
-            res = self.fallback.predict(frame_bgr)
-            res["model_name"] = self.model_name
-            return res
+            if not self.has_weights:
+                res = self.fallback.predict(frame_bgr)
+                res["model_name"] = "CSRNet (FastSim Fallback)"
+                return res
+
+            start = time.time()
+            img = frame_bgr[:, :, ::-1].astype(np.float32) / 255.0  # BGR to RGB
+            img = (img - np.array([0.485, 0.456, 0.406])) / np.array([0.229, 0.224, 0.225])
+            tensor = torch.from_numpy(img).permute(2, 0, 1).unsqueeze(0).float().to(self.device)
+
+            with torch.no_grad():
+                out = self.model(tensor)
+                density_map = out.squeeze().cpu().numpy()
+                density_map = np.maximum(density_map, 0.0)
+                total_count = float(np.sum(density_map))
+
+            latency = (time.time() - start) * 1000.0
+            return {
+                "total_count": round(total_count, 1),
+                "density_map": density_map,
+                "latency_ms": round(latency, 2),
+                "model_name": self.model_name
+            }
 
 
 def get_density_engine(

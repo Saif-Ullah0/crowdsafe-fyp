@@ -5,7 +5,7 @@ streaming controls, and webhook notification settings.
 """
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 BASE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE_DIR / "output"
@@ -74,7 +74,7 @@ class StreamConfig:
     source: str = "sample"          # 'sample', directory path, video file, or camera index
     target_fps: float = 1.0        # Default 1 FPS CCTV/DVR polling rate
     loop: bool = True              # Loop image sequences or video clips
-    max_frames: int = None         # None = unlimited, or int limit
+    max_frames: Optional[int] = None  # None = unlimited, or int limit
     frame_size: Tuple[int, int] = (480, 640)  # (H, W)
 
 # ---------------------------------------------------------
@@ -96,7 +96,7 @@ class AlertConfig:
     instant_critical_threshold: float = 5.5  # Instant trigger (bypass hysteresis) for flash surges
     alert_log_file: Path = OUTPUT_DIR / "alerts.jsonl"
     enable_console_logging: bool = True
-    webhook_url: str = "http://localhost:3000/api/webhook"  # <--- UPDATE THIS LINE
+    webhook_url: Optional[str] = "http://localhost:3000/api/webhook"  # Next.js telemetry dashboard endpoint
     webhook_timeout: float = 2.0            # Seconds before non-blocking timeout
 # ---------------------------------------------------------
 # Visualization & GUI Settings

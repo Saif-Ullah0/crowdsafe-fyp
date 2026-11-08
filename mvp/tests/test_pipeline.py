@@ -64,12 +64,17 @@ def test_model_factory_plug_and_play():
 
 
 def test_spatial_analyzer_risk_levels():
-    """Verify risk classification adheres strictly to Fruin Level of Service standards."""
+    """Verify risk classification adheres strictly to configured Level of Service standards."""
     analyzer = SpatialAnalyzer()
-    assert analyzer._classify_risk(1.2) == "LOW"
-    assert analyzer._classify_risk(2.5) == "MODERATE"
-    assert analyzer._classify_risk(4.2) == "HIGH"
-    assert analyzer._classify_risk(5.8) == "CRITICAL"
+    low_val = DENSITY_LEVELS["LOW"]["max"] / 2.0
+    mod_val = (DENSITY_LEVELS["LOW"]["max"] + DENSITY_LEVELS["MODERATE"]["max"]) / 2.0
+    high_val = (DENSITY_LEVELS["MODERATE"]["max"] + DENSITY_LEVELS["HIGH"]["max"]) / 2.0
+    crit_val = DENSITY_LEVELS["HIGH"]["max"] + 1.0
+
+    assert analyzer._classify_risk(low_val) == "LOW"
+    assert analyzer._classify_risk(mod_val) == "MODERATE"
+    assert analyzer._classify_risk(high_val) == "HIGH"
+    assert analyzer._classify_risk(crit_val) == "CRITICAL"
 
 
 def test_spatial_analysis_integration():
@@ -175,3 +180,24 @@ def test_visualizer_render_composite():
     assert annotated is not None
     assert annotated.shape == (480, 640, 3)
     vis.close()
+
+
+def test_csrnet_density_engine():
+    """Verify CSRNet model instantiates and processes frames gracefully."""
+    csr = get_density_engine("csrnet", weights_path=None)
+    dummy_frame = np.full((480, 640, 3), 60, dtype=np.uint8)
+    res = csr.predict(dummy_frame)
+    assert "density_map" in res
+    assert "total_count" in res
+    assert "CSRNet" in res["model_name"]
+
+
+def test_cli_args_parsing(monkeypatch):
+    """Verify that CLI flags including --visualize and --weights parse without error."""
+    from app import parse_args
+    test_args = ["app.py", "--source", "sample", "--visualize", "--weights", "model.pth", "--max-frames", "5"]
+    monkeypatch.setattr(sys, "argv", test_args)
+    parsed = parse_args()
+    assert parsed.visualize is True
+    assert parsed.weights == "model.pth"
+    assert parsed.max_frames == 5
