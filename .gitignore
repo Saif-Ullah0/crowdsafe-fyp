@@ -22,3 +22,23 @@ mvp/output/
 *.pth
 *.part
 models/CSRNet/*.json
+
+# Node.js / Next.js Dashboard
+node_modules/
+.next/
+out/
+.env*.local
+
+# Python Environments & Cache
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# MVP Pipeline Dynamic Outputs
+mvp/output/*.png
+mvp/output/*.jpg
+mvp/output/*.mp4
+mvp/output/alerts.jsonl
