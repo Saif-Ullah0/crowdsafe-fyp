@@ -1,0 +1,24 @@
+{
+  "name": "evacuation",
+  "description": "Orderly emergency evacuation directing 150 agents to their nearest designated building exit",
+  "num_agents": 150,
+  "spawn_distribution": {
+    "N4": 0.35,
+    "N2": 0.25,
+    "N5": 0.20,
+    "N1": 0.10,
+    "N3": 0.10
+  },
+  "route_patterns": [
+    {"from": "N4", "route": ["N2", "N1", "N10", "N6"], "weight": 0.25},
+    {"from": "N4", "route": ["N2", "N3", "N11", "N7"], "weight": 0.25},
+    {"from": "N5", "route": ["N0"], "weight": 0.20},
+    {"from": "N1", "route": ["N12", "N8"], "weight": 0.15},
+    {"from": "N3", "route": ["N13", "N9"], "weight": 0.15}
+  ],
+  "speed_range": [1.6, 2.4],
+  "duration_frames": 100,
+  "fps": 25,
+  "render_frame_step": 1,
+  "density_profile": "evacuation_flow"
+}

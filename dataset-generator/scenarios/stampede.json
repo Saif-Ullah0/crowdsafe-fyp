@@ -1,0 +1,21 @@
+{
+  "name": "stampede",
+  "description": "Critical panic rush with 200 agents accelerating towards exits causing high crush and compression",
+  "num_agents": 200,
+  "spawn_distribution": {
+    "N4": 0.50,
+    "N2": 0.30,
+    "N5": 0.20
+  },
+  "route_patterns": [
+    {"from": "N4", "route": ["N2", "N1", "N10", "N6"], "weight": 0.45},
+    {"from": "N4", "route": ["N2", "N3", "N11", "N7"], "weight": 0.35},
+    {"from": "N2", "route": ["N1", "N12", "N8"], "weight": 0.10},
+    {"from": "N5", "route": ["N0"], "weight": 0.10}
+  ],
+  "speed_range": [2.8, 3.8],
+  "duration_frames": 100,
+  "fps": 25,
+  "render_frame_step": 1,
+  "density_profile": "critical_crush"
+}

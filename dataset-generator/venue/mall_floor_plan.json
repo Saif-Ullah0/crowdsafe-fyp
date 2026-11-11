@@ -1,0 +1,177 @@
+{
+  "venue_name": "CrowdSafe_Mall_Ground_Floor",
+  "dimensions": {
+    "width_x": 50.0,
+    "depth_y": 30.0,
+    "height_z": 3.2
+  },
+  "floor": {
+    "material": "tile_dark_grid",
+    "color": [0.18, 0.18, 0.20],
+    "tile_size": 1.0,
+    "roughness": 0.35,
+    "specular": 0.5
+  },
+  "walls": [
+    {"name": "perimeter_south_1", "start": [0.0, 0.0], "end": [7.0, 0.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_south_2", "start": [9.0, 0.0], "end": [23.5, 0.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_south_3", "start": [26.5, 0.0], "end": [41.0, 0.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_south_4", "start": [43.0, 0.0], "end": [50.0, 0.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_north_1", "start": [0.0, 30.0], "end": [7.0, 30.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_north_2", "start": [9.0, 30.0], "end": [41.0, 30.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_north_3", "start": [43.0, 30.0], "end": [50.0, 30.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_west", "start": [0.0, 0.0], "end": [0.0, 30.0], "height": 3.2, "thickness": 0.2},
+    {"name": "perimeter_east", "start": [50.0, 0.0], "end": [50.0, 30.0], "height": 3.2, "thickness": 0.2},
+    {"name": "partition_west_north", "start": [16.0, 17.0], "end": [16.0, 21.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_west_north_2", "start": [16.0, 23.0], "end": [16.0, 30.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_east_north", "start": [34.0, 17.0], "end": [34.0, 21.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_east_north_2", "start": [34.0, 23.0], "end": [34.0, 30.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_west_south", "start": [16.0, 0.0], "end": [16.0, 5.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_west_south_2", "start": [16.0, 7.5], "end": [16.0, 13.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_east_south", "start": [34.0, 0.0], "end": [34.0, 5.0], "height": 3.0, "thickness": 0.15},
+    {"name": "partition_east_south_2", "start": [34.0, 7.5], "end": [34.0, 13.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_north_west", "start": [0.0, 17.0], "end": [7.0, 17.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_north_west_2", "start": [9.0, 17.0], "end": [16.0, 17.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_north_east", "start": [34.0, 17.0], "end": [41.0, 17.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_north_east_2", "start": [43.0, 17.0], "end": [50.0, 17.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_south_west", "start": [0.0, 13.0], "end": [7.0, 13.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_south_west_2", "start": [9.0, 13.0], "end": [16.0, 13.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_south_east", "start": [34.0, 13.0], "end": [41.0, 13.0], "height": 3.0, "thickness": 0.15},
+    {"name": "corridor_south_east_2", "start": [43.0, 13.0], "end": [50.0, 13.0], "height": 3.0, "thickness": 0.15}
+  ],
+  "obstacles": [
+    {"name": "pillar_fc_1", "type": "cylinder", "position": [20.0, 22.0, 1.6], "radius": 0.45, "height": 3.2},
+    {"name": "pillar_fc_2", "type": "cylinder", "position": [30.0, 22.0, 1.6], "radius": 0.45, "height": 3.2},
+    {"name": "pillar_atrium_1", "type": "cylinder", "position": [20.0, 8.0, 1.6], "radius": 0.45, "height": 3.2},
+    {"name": "pillar_atrium_2", "type": "cylinder", "position": [30.0, 8.0, 1.6], "radius": 0.45, "height": 3.2},
+    {"name": "kiosk_center", "type": "box", "position": [25.0, 15.0, 0.75], "size": [2.4, 1.2, 1.5]}
+  ],
+  "lights": [
+    {"name": "light_entrance", "position": [25.0, 4.0, 3.1], "power": 450.0, "size": [4.0, 2.0], "color": [1.0, 0.98, 0.94]},
+    {"name": "light_corridor_west", "position": [8.0, 15.0, 3.1], "power": 400.0, "size": [6.0, 2.0], "color": [0.98, 0.98, 1.0]},
+    {"name": "light_corridor_center", "position": [25.0, 15.0, 3.1], "power": 500.0, "size": [8.0, 2.0], "color": [1.0, 0.99, 0.96]},
+    {"name": "light_corridor_east", "position": [42.0, 15.0, 3.1], "power": 400.0, "size": [6.0, 2.0], "color": [0.98, 0.98, 1.0]},
+    {"name": "light_food_court", "position": [25.0, 24.0, 3.1], "power": 600.0, "size": [8.0, 4.0], "color": [1.0, 0.96, 0.90]},
+    {"name": "light_atrium", "position": [25.0, 7.0, 3.1], "power": 550.0, "size": [8.0, 4.0], "color": [0.96, 0.98, 1.0]}
+  ],
+  "navigation_graph": {
+    "nodes": {
+      "N0": {"name": "Main Entrance", "pos": [25.0, 0.5], "type": "entrance"},
+      "N1": {"name": "Corridor West", "pos": [8.0, 15.0], "type": "junction"},
+      "N2": {"name": "Corridor Center", "pos": [25.0, 15.0], "type": "junction"},
+      "N3": {"name": "Corridor East", "pos": [42.0, 15.0], "type": "junction"},
+      "N4": {"name": "Food Court", "pos": [25.0, 23.5], "type": "open_area"},
+      "N5": {"name": "Atrium", "pos": [25.0, 7.0], "type": "open_area"},
+      "N6": {"name": "Exit A", "pos": [8.0, 29.5], "type": "exit"},
+      "N7": {"name": "Exit B", "pos": [42.0, 29.5], "type": "exit"},
+      "N8": {"name": "Exit C", "pos": [8.0, 0.5], "type": "exit"},
+      "N9": {"name": "Exit D", "pos": [42.0, 0.5], "type": "exit"},
+      "N10": {"name": "Zone A Center", "pos": [8.0, 23.5], "type": "zone_center"},
+      "N11": {"name": "Zone B Center", "pos": [42.0, 23.5], "type": "zone_center"},
+      "N12": {"name": "Zone C Center", "pos": [8.0, 6.5], "type": "zone_center"},
+      "N13": {"name": "Zone D Center", "pos": [42.0, 6.5], "type": "zone_center"}
+    },
+    "edges": [
+      ["N0", "N5"],
+      ["N5", "N2"],
+      ["N1", "N2"],
+      ["N2", "N3"],
+      ["N2", "N4"],
+      ["N1", "N10"],
+      ["N10", "N6"],
+      ["N10", "N4"],
+      ["N3", "N11"],
+      ["N11", "N7"],
+      ["N11", "N4"],
+      ["N1", "N12"],
+      ["N12", "N8"],
+      ["N12", "N5"],
+      ["N3", "N13"],
+      ["N13", "N9"],
+      ["N13", "N5"]
+    ]
+  },
+  "zones": {
+    "zone_corridor_west": {
+      "name": "West Corridor",
+      "polygon": [[0.0, 13.0], [16.0, 13.0], [16.0, 17.0], [0.0, 17.0]],
+      "area_m2": 64.0
+    },
+    "zone_corridor_center": {
+      "name": "Center Main Corridor",
+      "polygon": [[16.0, 13.0], [34.0, 13.0], [34.0, 17.0], [16.0, 17.0]],
+      "area_m2": 72.0
+    },
+    "zone_corridor_east": {
+      "name": "East Corridor",
+      "polygon": [[34.0, 13.0], [50.0, 13.0], [50.0, 17.0], [34.0, 17.0]],
+      "area_m2": 64.0
+    },
+    "zone_food_court": {
+      "name": "Food Court Area",
+      "polygon": [[16.0, 17.0], [34.0, 17.0], [34.0, 30.0], [16.0, 30.0]],
+      "area_m2": 234.0
+    },
+    "zone_atrium": {
+      "name": "Central Atrium",
+      "polygon": [[16.0, 0.0], [34.0, 0.0], [34.0, 13.0], [16.0, 13.0]],
+      "area_m2": 234.0
+    },
+    "zone_exit_a": {
+      "name": "North-West Exit Corridor",
+      "polygon": [[0.0, 17.0], [16.0, 17.0], [16.0, 30.0], [0.0, 30.0]],
+      "area_m2": 208.0
+    },
+    "zone_exit_b": {
+      "name": "North-East Exit Corridor",
+      "polygon": [[34.0, 17.0], [50.0, 17.0], [50.0, 30.0], [34.0, 30.0]],
+      "area_m2": 208.0
+    }
+  },
+  "cameras": [
+    {
+      "camera_id": "CAM-01",
+      "name": "West Corridor Surveillance",
+      "position": [8.0, 15.0, 4.5],
+      "look_at": [8.0, 17.5, 0.0],
+      "focal_length_mm": 6.0,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "resolution": [640, 480],
+      "coverage_zones": ["zone_corridor_west", "zone_exit_a"]
+    },
+    {
+      "camera_id": "CAM-02",
+      "name": "Food Court & Central Axis",
+      "position": [25.0, 24.0, 5.0],
+      "look_at": [25.0, 16.0, 0.0],
+      "focal_length_mm": 6.0,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "resolution": [640, 480],
+      "coverage_zones": ["zone_food_court", "zone_corridor_center"]
+    },
+    {
+      "camera_id": "CAM-03",
+      "name": "East Corridor Surveillance",
+      "position": [42.0, 15.0, 4.5],
+      "look_at": [42.0, 17.5, 0.0],
+      "focal_length_mm": 6.0,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "resolution": [640, 480],
+      "coverage_zones": ["zone_corridor_east", "zone_exit_b"]
+    },
+    {
+      "camera_id": "CAM-04",
+      "name": "Main Entrance & Atrium",
+      "position": [25.0, 3.5, 4.2],
+      "look_at": [25.0, 9.5, 0.0],
+      "focal_length_mm": 6.0,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "resolution": [640, 480],
+      "coverage_zones": ["zone_atrium", "zone_corridor_center"]
+    }
+  ]
+}

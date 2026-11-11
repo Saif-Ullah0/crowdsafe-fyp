@@ -1,0 +1,24 @@
+{
+  "name": "normal_flow",
+  "description": "Baseline sparse wandering across all mall corridors and zones",
+  "num_agents": 40,
+  "spawn_distribution": {
+    "N0": 0.25,
+    "N4": 0.25,
+    "N5": 0.25,
+    "N1": 0.125,
+    "N3": 0.125
+  },
+  "route_patterns": [
+    {"from": "N0", "route": ["N5", "N2", "N4"], "weight": 0.3},
+    {"from": "N4", "route": ["N2", "N1", "N10", "N6"], "weight": 0.2},
+    {"from": "N4", "route": ["N2", "N3", "N11", "N7"], "weight": 0.2},
+    {"from": "N5", "route": ["N2", "N1", "N12", "N8"], "weight": 0.15},
+    {"from": "N5", "route": ["N2", "N3", "N13", "N9"], "weight": 0.15}
+  ],
+  "speed_range": [1.1, 1.4],
+  "duration_frames": 100,
+  "fps": 25,
+  "render_frame_step": 1,
+  "density_profile": "low"
+}

@@ -1,0 +1,8 @@
+# CrowdSafe Dataset Generator Host Tools Dependencies
+numpy>=1.22.0
+scipy>=1.9.0
+pillow>=9.5.0
+opencv-python>=4.8.0
+matplotlib>=3.7.0
+tqdm>=4.65.0
+pydantic>=2.0.0

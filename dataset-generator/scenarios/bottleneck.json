@@ -1,0 +1,20 @@
+{
+  "name": "bottleneck",
+  "description": "High-density crowd converging toward single Exit A chokepoint causing localized congestion",
+  "num_agents": 80,
+  "spawn_distribution": {
+    "N0": 0.30,
+    "N4": 0.40,
+    "N2": 0.30
+  },
+  "route_patterns": [
+    {"from": "N0", "route": ["N5", "N2", "N1", "N10", "N6"], "weight": 0.35},
+    {"from": "N4", "route": ["N2", "N1", "N10", "N6"], "weight": 0.45},
+    {"from": "N2", "route": ["N1", "N10", "N6"], "weight": 0.20}
+  ],
+  "speed_range": [0.8, 1.3],
+  "duration_frames": 100,
+  "fps": 25,
+  "render_frame_step": 1,
+  "density_profile": "high_chokepoint"
+}
