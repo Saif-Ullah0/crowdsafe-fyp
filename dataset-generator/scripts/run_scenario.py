@@ -136,8 +136,11 @@ def main():
         floor_plan = json.load(f)
 
     num_frames = args.frames if args.frames is not None else scenario.get("duration_frames", 100)
-    fps = scenario.get("fps", 25)
-    dt = 1.0 / float(fps)
+    fps = scenario.get("fps", 1.0)  # Default 1.0 FPS for surveillance CCTV
+    frame_interval_sec = 1.0 / float(fps)
+    # Perform 10 sub-steps per frame for smooth Social Force numerical stability
+    substeps = 10
+    sub_dt = frame_interval_sec / float(substeps)
     zones = floor_plan.get("zones", {})
 
     # 2. Setup Social Force Physics Engine
@@ -187,8 +190,9 @@ def main():
     total_renders = 0
 
     for frame_idx in range(num_frames):
-        # Step physics forward
-        engine.step(dt=dt)
+        # Step physics forward with smooth substeps
+        for _ in range(substeps):
+            engine.step(dt=sub_dt)
         agent_states = engine.get_agent_states()
 
         # Update 3D agent positions, gait bobbing, and heading yaw in Blender
@@ -234,7 +238,7 @@ def main():
             # Structure Annotation JSON Payload
             annotation_record = {
                 "frame_id": frame_idx,
-                "timestamp_sec": round(frame_idx * dt, 3),
+                "timestamp_sec": round(frame_idx * frame_interval_sec, 3),
                 "camera_id": cam_name,
                 "image_path": os.path.relpath(final_filepath, args.output),
                 "image_width": tracking["image_width"],

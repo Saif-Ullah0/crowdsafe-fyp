@@ -3,22 +3,22 @@
   "description": "Heavy bi-directional foot traffic along the central corridor connecting entrance to food court and exits",
   "num_agents": 120,
   "spawn_distribution": {
-    "N0": 0.40,
-    "N6": 0.15,
-    "N7": 0.15,
-    "N8": 0.15,
-    "N9": 0.15
+    "N0": 0.25,
+    "N2": 0.25,
+    "N4": 0.25,
+    "N6": 0.125,
+    "N7": 0.125
   },
   "route_patterns": [
     {"from": "N0", "route": ["N5", "N2", "N4"], "weight": 0.35},
-    {"from": "N0", "route": ["N5", "N2", "N1", "N10", "N6"], "weight": 0.25},
-    {"from": "N0", "route": ["N5", "N2", "N3", "N11", "N7"], "weight": 0.20},
-    {"from": "N6", "route": ["N10", "N1", "N2", "N5", "N0"], "weight": 0.10},
-    {"from": "N7", "route": ["N11", "N3", "N2", "N5", "N0"], "weight": 0.10}
+    {"from": "N2", "route": ["N1", "N10", "N6"], "weight": 0.25},
+    {"from": "N4", "route": ["N2", "N3", "N11", "N7"], "weight": 0.25},
+    {"from": "N6", "route": ["N10", "N1", "N2", "N5", "N0"], "weight": 0.075},
+    {"from": "N7", "route": ["N11", "N3", "N2", "N5", "N0"], "weight": 0.075}
   ],
   "speed_range": [1.2, 1.6],
   "duration_frames": 100,
-  "fps": 25,
+  "fps": 1.0,
   "render_frame_step": 1,
   "density_profile": "moderate_corridor"
 }
