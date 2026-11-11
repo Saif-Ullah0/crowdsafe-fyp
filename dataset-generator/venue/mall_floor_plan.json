@@ -44,7 +44,13 @@
     {"name": "pillar_fc_2", "type": "cylinder", "position": [30.0, 22.0, 1.6], "radius": 0.45, "height": 3.2},
     {"name": "pillar_atrium_1", "type": "cylinder", "position": [20.0, 8.0, 1.6], "radius": 0.45, "height": 3.2},
     {"name": "pillar_atrium_2", "type": "cylinder", "position": [30.0, 8.0, 1.6], "radius": 0.45, "height": 3.2},
-    {"name": "kiosk_center", "type": "box", "position": [25.0, 15.0, 0.75], "size": [2.4, 1.2, 1.5]}
+    {"name": "kiosk_center", "type": "box", "position": [25.0, 15.0, 0.75], "size": [2.4, 1.2, 1.5]},
+    {"name": "fc_table_1", "type": "cylinder", "position": [22.0, 26.0, 0.45], "radius": 0.65, "height": 0.9},
+    {"name": "fc_table_2", "type": "cylinder", "position": [28.0, 26.0, 0.45], "radius": 0.65, "height": 0.9},
+    {"name": "fc_table_3", "type": "cylinder", "position": [22.0, 19.5, 0.45], "radius": 0.65, "height": 0.9},
+    {"name": "fc_table_4", "type": "cylinder", "position": [28.0, 19.5, 0.45], "radius": 0.65, "height": 0.9},
+    {"name": "atrium_bench_1", "type": "box", "position": [21.0, 5.0, 0.3], "size": [2.0, 0.6, 0.6]},
+    {"name": "atrium_bench_2", "type": "box", "position": [29.0, 5.0, 0.3], "size": [2.0, 0.6, 0.6]}
   ],
   "lights": [
     {"name": "light_entrance", "position": [25.0, 4.0, 3.1], "power": 450.0, "size": [4.0, 2.0], "color": [1.0, 0.98, 0.94]},
@@ -72,23 +78,23 @@
       "N13": {"name": "Zone D Center", "pos": [42.0, 6.5], "type": "zone_center"}
     },
     "edges": [
-      ["N0", "N5"],
-      ["N5", "N2"],
-      ["N1", "N2"],
-      ["N2", "N3"],
-      ["N2", "N4"],
-      ["N1", "N10"],
-      ["N10", "N6"],
-      ["N10", "N4"],
-      ["N3", "N11"],
-      ["N11", "N7"],
-      ["N11", "N4"],
-      ["N1", "N12"],
-      ["N12", "N8"],
-      ["N12", "N5"],
-      ["N3", "N13"],
-      ["N13", "N9"],
-      ["N13", "N5"]
+      {"from": "N0", "to": "N5", "capacity": 150, "width_m": 5.0},
+      {"from": "N5", "to": "N2", "capacity": 120, "width_m": 6.0},
+      {"from": "N1", "to": "N2", "capacity": 100, "width_m": 4.0},
+      {"from": "N2", "to": "N3", "capacity": 100, "width_m": 4.0},
+      {"from": "N2", "to": "N4", "capacity": 120, "width_m": 6.0},
+      {"from": "N1", "to": "N10", "capacity": 60, "width_m": 3.0},
+      {"from": "N10", "to": "N6", "capacity": 80, "width_m": 3.0},
+      {"from": "N10", "to": "N4", "capacity": 60, "width_m": 3.0},
+      {"from": "N3", "to": "N11", "capacity": 60, "width_m": 3.0},
+      {"from": "N11", "to": "N7", "capacity": 80, "width_m": 3.0},
+      {"from": "N11", "to": "N4", "capacity": 60, "width_m": 3.0},
+      {"from": "N1", "to": "N12", "capacity": 60, "width_m": 3.0},
+      {"from": "N12", "to": "N8", "capacity": 80, "width_m": 3.0},
+      {"from": "N12", "to": "N5", "capacity": 60, "width_m": 3.0},
+      {"from": "N3", "to": "N13", "capacity": 60, "width_m": 3.0},
+      {"from": "N13", "to": "N9", "capacity": 80, "width_m": 3.0},
+      {"from": "N13", "to": "N5", "capacity": 60, "width_m": 3.0}
     ]
   },
   "zones": {
