@@ -173,6 +173,7 @@ class SocialForceEngine:
             
             # Social distance: r_ij - d_ij
             overlap = r_sum - dist_matrix
+            np.fill_diagonal(overlap, 0.0)
             
             # Helbing exponential social repulsive force
             f_social_mag = self.A_ped * np.exp(overlap / self.B_ped)             # (N, N)
