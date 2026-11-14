@@ -22,26 +22,19 @@ Here are the exact step-by-step phases we will execute to build and verify the d
    - Obstacles (food court tables, structural pillars) that agents steer around and that occlude CCTV line-of-sight.
    - Navigation graph (waypoints, corridors, exits, entrances) with pedestrian capacities.
    - Zone polygons for Fruin Level of Service tracking.
-2. Implement `dataset-generator/scripts/build_venue.py`:
+2. Build the venue with `dataset-generator/venue/modular_mall_builder.py`:
    - Reads `mall_floor_plan.json` headlessly inside Blender.
-   - Extrudes walls, carves doorways via boolean modifiers, and creates the floor with subtle tile material.
-   - Places overhead diffuse area lights simulating mall ceiling fixtures.
+   - Builds the mall floor, walls, obstacles, storefronts, lighting, and CCTV fixtures.
    - Saves the scene to `dataset-generator/venue/mall_scene.blend`.
+   - The host CLI builds the scene automatically if it is missing; use `--rebuild-venue` to regenerate it.
 
 ---
 
 ### Step 3: Implement the 3D Character Model & Domain Randomization
 
-1. Create `dataset-generator/agents/humanoid_generator.py`:
-   - Builds lightweight "Capsule-Plus" humanoids (~100 polygons per agent):
-     - UV sphere head ($r \approx 0.12\text{m}$)
-     - Cylinder/capsule torso
-     - Leg columns and optional primitive accessories (backpacks, hats)
-   - Height and scale randomization:
-     - Adult heights ($1.55\text{m} - 1.90\text{m}$)
-     - Child/youth heights ($1.20\text{m} - 1.40\text{m}$)
-   - Multi-slot color palette (20+ randomized clothing colors for tops, bottoms, and hair/hats).
-   - Walking gait bobbing ($z$-axis sine oscillation) synchronized with movement speed.
+1. Use `dataset-generator/agents/realistic_human_library.py` for articulated, randomized humanoids, or select `--character-style capsule` to use the lightweight capsule models.
+   - Height and clothing color are randomized across agents.
+   - The realistic models use articulated limbs with walking gait synchronized to agent movement.
 
 ---
 
@@ -74,15 +67,10 @@ Here are the exact step-by-step phases we will execute to build and verify the d
 
 ### Step 6: Dual-Mode Rendering Pipeline (CCTV vs. Clean)
 
-1. Create `dataset-generator/scripts/render_pipeline.py`:
-   - **Mode 1: CCTV Mode (Default)**:
-     - Adds CCTV camera sensor noise (Gaussian/Poisson sensor grain).
-     - Simulates DVR H.264/JPEG compression artifacts.
-     - Applies subtle wide-angle lens distortion.
-     - Adds minor exposure/lighting jitter across frames.
-   - **Mode 2: Clean Mode**:
-     - Exports direct raw 3D rasterized frames without optical degradation.
-   - Controlled via CLI flag (`--mode cctv` or `--mode clean`).
+1. `dataset-generator/scripts/render_pipeline.py` supports two modes:
+   - **Clean Mode (Default)** exports frames without optical degradation.
+   - **CCTV Mode** adds subtle sensor noise, compression, wide-angle lens distortion, and exposure jitter.
+   - Controlled via `--mode clean` or `--mode cctv`.
 
 ---
 
@@ -95,12 +83,15 @@ Here are the exact step-by-step phases we will execute to build and verify the d
    - `stampede.json`: 200 agents, panic speed ($3.5\text{ m/s}$), critical crush risk.
    - `evacuation.json`: 150 agents, orderly routing to nearest emergency exits.
 2. Create `dataset-generator/scripts/run_scenario.py` (Blender runner).
-3. Create `dataset-generator/generate.py` (Host CLI wrapper):
+3. Use `dataset-generator/generate.py` (Host CLI wrapper):
    - Example command:
      ```bash
-     python dataset-generator/generate.py --scenario rush_hour --frames 100 --mode cctv --output output/rush_hour/
+     python3 dataset-generator/generate.py --scenario rush_hour --frames 100 --fps 10 --mode cctv --output output/rush_hour/
      ```
-   - Automatically handles Blender headless invocation, logging progress, and exporting standard JSON annotations + PNG frames.
+   - Select cameras with `--cameras all` or a comma-separated list such as `--cameras CAM-01,CAM-02`.
+   - Select `--character-style realistic` or `--character-style capsule`.
+   - MP4 surveillance videos are encoded by default; use `--no-video` to skip them. Add `--tracking-video` to export tracking-overlay videos.
+   - The CLI handles Blender headless invocation, progress logging, and JSON annotations, PNG frames, and MP4 video output.
 
 ---
 

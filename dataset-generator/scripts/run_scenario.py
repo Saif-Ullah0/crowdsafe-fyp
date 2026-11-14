@@ -30,6 +30,7 @@ if parent_dir not in sys.path:
 
 from agents.crowd_physics import SocialForceEngine, PedestrianAgent
 from agents.humanoid_generator import spawn_crowd_in_scene
+from agents.realistic_human_library import spawn_realistic_crowd
 from scripts.camera_calibration import get_full_camera_calibration
 from scripts.occlusion_tracker import track_camera_crowd
 from scripts.render_pipeline import process_rendered_frame
@@ -48,7 +49,9 @@ def parse_args():
     parser.add_argument("--output", default=os.path.join(parent_dir, "output", "scenario_run"), help="Output directory")
     parser.add_argument("--frames", type=int, default=None, help="Override frame count")
     parser.add_argument("--cameras", default="all", help="Cameras to render: 'all' or comma-separated e.g. 'CAM-01,CAM-02'")
-    parser.add_argument("--mode", default="cctv", choices=["cctv", "clean"], help="Render mode: cctv (default) or clean")
+    parser.add_argument("--mode", default="clean", choices=["clean", "cctv"], help="Render mode: clean (default, crystal-clear 3D) or cctv")
+    parser.add_argument("--fps", type=float, default=None, help="Override simulation framerate (FPS)")
+    parser.add_argument("--character-style", default="realistic", choices=["realistic", "capsule"], help="Pedestrian avatar model style")
     return parser.parse_args(script_args)
 
 
@@ -136,7 +139,9 @@ def main():
         floor_plan = json.load(f)
 
     num_frames = args.frames if args.frames is not None else scenario.get("duration_frames", 100)
-    fps = scenario.get("fps", 1.0)  # Default 1.0 FPS for surveillance CCTV
+    fps = args.fps if args.fps is not None else scenario.get("fps", 10.0)
+    if fps <= 0:
+        raise ValueError(f"Simulation FPS must be greater than zero; got {fps}.")
     frame_interval_sec = 1.0 / float(fps)
     # Perform 10 sub-steps per frame for smooth Social Force numerical stability
     substeps = 10
@@ -153,7 +158,10 @@ def main():
 
     # 3. Spawn 3D Humanoid Models in Blender Scene
     scene = bpy.context.scene
-    agent_models = spawn_crowd_in_scene(scene, agents_init_data)
+    if args.character_style == "realistic":
+        agent_models = spawn_realistic_crowd(scene, agents_init_data)
+    else:
+        agent_models = spawn_crowd_in_scene(scene, agents_init_data)
     bpy.context.view_layer.update()
 
     # 4. Filter and calibrate cameras

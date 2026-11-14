@@ -83,16 +83,19 @@ def apply_chromatic_aberration(img: np.ndarray, strength: float = 1.5) -> np.nda
     return out
 
 
-def apply_sensor_noise(img: np.ndarray, sigma: float = 6.0, seed: Optional[int] = None) -> np.ndarray:
-    """Adds combined Gaussian read noise and Poisson-like shot noise."""
+def apply_sensor_noise(img: np.ndarray, sigma: float = 0.8, seed: Optional[int] = None) -> np.ndarray:
+    """Adds subtle, realistic digital sensor grain matching modern IP cameras."""
     if seed is not None:
         np.random.seed(seed)
     
-    # Gaussian electronic read noise
+    if sigma <= 0.01:
+        return img
+
+    # Subtle Gaussian electronic read noise
     gaussian_noise = np.random.normal(0, sigma, img.shape)
     
-    # Signal-dependent photon shot noise (stronger in brighter pixels)
-    shot_scale = np.sqrt(np.maximum(img.astype(np.float32), 1.0)) * 0.4
+    # Subtle photon shot noise
+    shot_scale = np.sqrt(np.maximum(img.astype(np.float32), 1.0)) * 0.05
     shot_noise = np.random.normal(0, 1.0, img.shape) * shot_scale
 
     noisy = img.astype(np.float32) + gaussian_noise + shot_noise
@@ -100,19 +103,15 @@ def apply_sensor_noise(img: np.ndarray, sigma: float = 6.0, seed: Optional[int] 
 
 
 def apply_exposure_and_tint_jitter(img: np.ndarray, frame_idx: int = 0) -> np.ndarray:
-    """Simulates realistic surveillance auto-exposure fluctuation and fluorescent tint."""
-    # Low frequency sine wave + subtle random jitter
-    jitter_factor = 1.0 + 0.03 * math.sin(frame_idx * 0.15) + np.random.uniform(-0.015, 0.015)
-    
-    # Slight cool fluorescent green/cyan tint typical of commercial CCTV
-    tint = np.array([0.97, 1.01, 0.98], dtype=np.float32)
-    
+    """Simulates realistic surveillance auto-exposure fluctuation and subtle commercial tint."""
+    jitter_factor = 1.0 + 0.01 * math.sin(frame_idx * 0.15)
+    tint = np.array([0.99, 1.00, 0.99], dtype=np.float32)
     adjusted = img.astype(np.float32) * jitter_factor * tint
     return np.clip(adjusted, 0, 255).astype(np.uint8)
 
 
-def apply_dvr_compression_artifacts(img: np.ndarray, quality: int = 68) -> np.ndarray:
-    """Simulates security DVR H.264/JPEG macroblocking and quantization artifacts."""
+def apply_dvr_compression_artifacts(img: np.ndarray, quality: int = 92) -> np.ndarray:
+    """Simulates high-definition IP camera H.264 stream compression."""
     try:
         import cv2
         # Use OpenCV JPEG encode/decode for authentic 8x8 DCT compression artifacts
@@ -162,20 +161,20 @@ def apply_cctv_pipeline(
     if lighting_jitter:
         frame = apply_exposure_and_tint_jitter(frame, frame_idx=frame_idx)
 
-    # 2. Barrel lens distortion (6mm wide-angle optics)
+    # 2. Subtle barrel lens distortion (6mm wide-angle optics)
     if lens_distort:
-        frame = apply_lens_distortion(frame, k1=-0.05, k2=0.008)
+        frame = apply_lens_distortion(frame, k1=-0.02, k2=0.003)
 
-    # 3. Chromatic dispersion
-    frame = apply_chromatic_aberration(frame, strength=1.2)
+    # 3. Subtle edge chromatic dispersion
+    frame = apply_chromatic_aberration(frame, strength=0.3)
 
-    # 4. Sensor noise (read noise + shot noise)
+    # 4. Realistic digital IP sensor response (low noise)
     if sensor_noise:
-        frame = apply_sensor_noise(frame, sigma=4.5)
+        frame = apply_sensor_noise(frame, sigma=0.8)
 
-    # 5. DVR video compression artifacts
+    # 5. Modern high-bitrate IP camera H.264 compression
     if compression:
-        frame = apply_dvr_compression_artifacts(frame, quality=68)
+        frame = apply_dvr_compression_artifacts(frame, quality=92)
 
     return frame
 

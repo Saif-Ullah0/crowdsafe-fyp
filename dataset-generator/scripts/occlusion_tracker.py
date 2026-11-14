@@ -126,10 +126,15 @@ def track_camera_crowd(
         # ---------------------------------------------------------------------
         ray_vec = head_world - cam_origin
         target_dist = ray_vec.length
+        if target_dist < 0.4:
+            continue
+        ray_dir = ray_vec / target_dist
+        # Start ray 0.35m forward to clear the camera's physical mount bracket and dome
+        start_origin = cam_origin + ray_dir * 0.35
 
         # Cast ray from camera optical center toward head center
         is_hit, hit_loc, hit_norm, hit_idx, hit_obj, hit_mat = scene.ray_cast(
-            depsgraph, cam_origin, ray_vec
+            depsgraph, start_origin, ray_dir, distance=(target_dist - 0.35)
         )
 
         is_occluded = False
@@ -137,8 +142,9 @@ def track_camera_crowd(
             hit_dist = (hit_loc - cam_origin).length
             # If hit something before target head (tolerance: 0.22m to account for head sphere radius)
             if hit_dist < (target_dist - 0.22):
-                # Verify hit object is not the agent's own head or cap
-                if hit_obj != model.head_obj and hit_obj != model.accessory_obj:
+                # Verify hit object is not any part of the agent's own body (head, hair, cap, backpack, etc.)
+                agent_prefix = f"Agent_{aid:04d}"
+                if not (hit_obj and hit_obj.name.startswith(agent_prefix)):
                     is_occluded = True
 
         head_record = {
