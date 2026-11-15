@@ -502,6 +502,127 @@ class RealisticHumanoidModel:
             part.hide_viewport = not visible
 
 
+class PhotorealisticTemplateLibrary:
+    """Loads and caches authentic 3D scanned/textured GLB characters as reusable archetypes."""
+    _templates = []
+    _initialized = False
+
+    @classmethod
+    def reset(cls):
+        cls._templates = []
+        cls._initialized = False
+
+    @classmethod
+    def init_templates(cls, assets_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+        if cls._initialized and cls._templates:
+            valid = [t for t in cls._templates if t['mesh'].name in bpy.data.meshes]
+            if len(valid) == len(cls._templates):
+                return cls._templates
+
+        if assets_dir is None:
+            current_file = os.path.abspath(__file__)
+            base_dir = os.path.dirname(os.path.dirname(current_file))
+            assets_dir = os.path.join(base_dir, "assets", "humans")
+
+        if not os.path.exists(assets_dir):
+            return []
+
+        files = sorted([f for f in os.listdir(assets_dir) if f.endswith(".glb")])
+        if not files:
+            return []
+
+        cls._templates = []
+        for f in files:
+            fpath = os.path.join(assets_dir, f)
+            try:
+                bpy.ops.import_scene.gltf(filepath=fpath)
+                meshes = [o for o in bpy.context.selected_objects if o.type == 'MESH' and 'Icosphere' not in o.name]
+                if not meshes:
+                    continue
+                # Bake world transform into mesh data so meter scale is exact
+                for o in meshes:
+                    mat = o.matrix_world.copy()
+                    o.parent = None
+                    bm = bmesh.new()
+                    bm.from_mesh(o.data)
+                    bm.transform(mat)
+                    bm.to_mesh(o.data)
+                    bm.free()
+                    o.matrix_world.identity()
+
+                for o in bpy.data.objects:
+                    o.select_set(False)
+                for o in meshes:
+                    o.select_set(True)
+                bpy.context.view_layer.objects.active = meshes[0]
+                if len(meshes) > 1:
+                    bpy.ops.object.join()
+                joined = bpy.context.active_object
+                for col in list(joined.users_collection):
+                    col.objects.unlink(joined)
+                max_z = max(v.co.z for v in joined.data.vertices)
+                cls._templates.append({
+                    "name": f,
+                    "mesh": joined.data,
+                    "height": max_z,
+                    "head_z": max_z - 0.12
+                })
+            except Exception as e:
+                print(f"Warning: Failed to import glb template '{f}': {e}")
+
+        cls._initialized = True
+        print(f"[✓] Initialized {len(cls._templates)} photorealistic character templates from GLB.")
+        return cls._templates
+
+
+class PhotorealisticTexturedAgent:
+    """Instantiates a photorealistic, textured 3D character with real clothing, hair, and kinematics."""
+    def __init__(
+        self,
+        agent_id: int,
+        collection: bpy.types.Collection,
+        template: Dict[str, Any],
+        scale: float = 1.0
+    ):
+        self.agent_id = agent_id
+        self.collection = collection
+        self.template = template
+        self.scale_factor = scale
+        self.head_z_rel = template["head_z"] * scale
+
+        self.root = bpy.data.objects.new(f"Agent_{agent_id:04d}", template["mesh"])
+        self.root.scale = (scale, scale, scale)
+        self.collection.objects.link(self.root)
+        self.all_parts = [self.root]
+
+        self.prev_x = 0.0
+        self.prev_y = 0.0
+        self.gait_phase = random.uniform(0.0, 2 * math.pi)
+
+    def set_pose(self, x: float, y: float, z: float = 0.0, yaw: float = 0.0, speed: float = 0.0, dt: float = 0.1):
+        dist_moved = math.hypot(x - self.prev_x, y - self.prev_y)
+        self.prev_x = x
+        self.prev_y = y
+
+        if dist_moved > 1e-4:
+            step_rate = max(4.0, speed * 5.0)
+            self.gait_phase += step_rate * dt
+            bob_z = 0.020 * math.sin(self.gait_phase)
+        else:
+            bob_z = 0.0
+
+        self.root.location = Vector((x, y, z + bob_z))
+        # glTF standard models face -Y. Point towards instantaneous velocity:
+        self.root.rotation_euler = Euler((0.0, 0.0, yaw + math.pi / 2.0), 'XYZ')
+
+    def get_head_world_position(self) -> Vector:
+        return self.root.location + Vector((0.0, 0.0, self.head_z_rel))
+
+    def set_visibility(self, visible: bool):
+        self.root.hide_render = not visible
+        self.root.hide_viewport = not visible
+
+
 def spawn_realistic_crowd(
     scene: bpy.types.Scene,
     agents_data: List[Dict[str, Any]],
@@ -510,7 +631,7 @@ def spawn_realistic_crowd(
 ) -> Dict[int, Any]:
     """
     Instantiates realistic humanoid agents into the Blender scene under a dedicated collection.
-    Uses ultra-fast memory-cached BMesh archetypes.
+    Automatically prioritizes authentic photorealistic textured 3D GLB characters if available.
     """
     if collection_name in bpy.data.collections:
         crowd_col = bpy.data.collections[collection_name]
@@ -518,8 +639,33 @@ def spawn_realistic_crowd(
         crowd_col = bpy.data.collections.new(collection_name)
         scene.collection.children.link(crowd_col)
 
+    templates = PhotorealisticTemplateLibrary.init_templates(assets_dir)
     agent_models = {}
 
+    if templates:
+        # Spawn authentic photorealistic textured 3D characters
+        for a in agents_data:
+            aid = a["id"]
+            template = templates[aid % len(templates)]
+            scale = random.uniform(0.95, 1.05)
+
+            model = PhotorealisticTexturedAgent(
+                agent_id=aid,
+                collection=crowd_col,
+                template=template,
+                scale=scale
+            )
+
+            x = a.get("x", 0.0)
+            y = a.get("y", 0.0)
+            yaw = a.get("yaw", 0.0)
+            model.set_pose(x, y, 0.0, yaw)
+            agent_models[aid] = model
+
+        print(f"[✓] Spawned {len(agent_models)} photorealistic textured 3D characters into '{collection_name}'")
+        return agent_models
+
+    # Fallback to procedural BMesh anatomical model
     for a in agents_data:
         aid = a["id"]
         height = a.get("height", None)
@@ -538,7 +684,6 @@ def spawn_realistic_crowd(
         y = a.get("y", 0.0)
         yaw = a.get("yaw", 0.0)
         model.set_pose(x, y, 0.0, yaw)
-
         agent_models[aid] = model
 
     print(f"[✓] Spawned {len(agent_models)} realistic anatomical humanoids with kinematics into '{collection_name}'")

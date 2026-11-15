@@ -1,13 +1,14 @@
 """
-CrowdSafe Synthetic Simulation — Modular High-Fidelity 3D Mall Venue Builder for Blender 4.2 LTS
-Constructs an architectural, realistic shopping mall interior:
-- Polished granite/marble floor tiles with PBR specular reflections
-- Retail storefronts with glass vitrines, interior displays, and illuminated signage
-- Central escalator structure with metallic steps and glass balustrades
-- Modern food court counters with digital menu boards and stainless steel accents
-- Atrium planters with architectural greenery
-- Ceiling infrastructure: recessed LED panel fixtures and glowing green EXIT signs
-- Physical CCTV camera dome mounts at calibrated coordinate positions
+CrowdSafe Synthetic Simulation — Master High-Fidelity 3D Mall Venue Builder for Blender 4.2 LTS
+Builds a realistic, modern architectural shopping mall venue:
+- Polished Carrara marble & dark Nero Marquina floor tiles with PBR specular reflections
+- 8 Retail storefronts with floor-to-ceiling glass vitrines, interior store lighting, and illuminated brand signboards (Apple, Zara, Nike, Starbucks, Sephora, etc.)
+- Central atrium escalator with glowing under-step lighting and glass balustrades
+- Modern food court counters and concourse seating benches
+- Architectural structural columns with brushed stainless steel kick-plates
+- Ceiling grid with recessed linear LED lighting panels casting realistic downward light
+- Indoor atrium planters with lush greenery
+- Physical dome CCTV camera assemblies with authentic mounting brackets and smoked acrylic domes
 """
 
 import sys
@@ -69,9 +70,9 @@ def create_pbr_mat(
     return mat
 
 
-def create_polished_mall_floor(width: float, depth: float) -> bpy.types.Object:
-    """Creates a luxurious polished commercial floor with alternating marble tiles."""
-    mat = bpy.data.materials.new(name="PBR_Polished_Marble_Floor")
+def create_luxury_marble_floor(width: float, depth: float) -> bpy.types.Object:
+    """Creates a polished Italian marble floor with subtle tile texture and specular reflections."""
+    mat = bpy.data.materials.new(name="PBR_Luxury_Marble_Floor")
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
     links = mat.node_tree.links
@@ -89,20 +90,20 @@ def create_polished_mall_floor(width: float, depth: float) -> bpy.types.Object:
     node_bsdf.location = (-150, 0)
     node_out.location = (200, 0)
 
-    # 1.2m large format polished commercial tiles
+    # 1.2m large format tiles
     node_mapping.inputs["Scale"].default_value = (0.833, 0.833, 1.0)
-    # Slate grey marble & soft warm limestone
-    node_checker.inputs["Color1"].default_value = (0.22, 0.23, 0.25, 1.0)
-    node_checker.inputs["Color2"].default_value = (0.35, 0.36, 0.38, 1.0)
+    # Polished Bianco Carrara (warm white marble) & Grigio Carnico (refined dark charcoal stone)
+    node_checker.inputs["Color1"].default_value = (0.82, 0.82, 0.84, 1.0)
+    node_checker.inputs["Color2"].default_value = (0.28, 0.29, 0.32, 1.0)
     node_checker.inputs["Scale"].default_value = 1.0
 
-    # High gloss reflection
+    # High-gloss commercial polish with subtle wet specular reflections
     if "Roughness" in node_bsdf.inputs:
-        node_bsdf.inputs["Roughness"].default_value = 0.18  # Polished marble
+        node_bsdf.inputs["Roughness"].default_value = 0.14
     if "Specular IOR Level" in node_bsdf.inputs:
-        node_bsdf.inputs["Specular IOR Level"].default_value = 0.70
+        node_bsdf.inputs["Specular IOR Level"].default_value = 0.85
     elif "Specular" in node_bsdf.inputs:
-        node_bsdf.inputs["Specular"].default_value = 0.70
+        node_bsdf.inputs["Specular"].default_value = 0.85
 
     links.new(node_coord.outputs["Generated"], node_mapping.inputs["Vector"])
     links.new(node_mapping.outputs["Vector"], node_checker.inputs["Vector"])
@@ -125,72 +126,130 @@ def create_polished_mall_floor(width: float, depth: float) -> bpy.types.Object:
 
 def build_retail_storefronts(collection: bpy.types.Collection):
     """
-    Constructs commercial storefront facades along mall corridors:
-    - Glass display window bays
-    - Illuminated store brand signboards (FASHION, TECH HUB, STAR CAFE, etc.)
-    - Warm interior display illumination
+    Constructs 8 realistic retail storefronts along concourse corridors:
+    - Floor-to-ceiling tempered glass vitrines
+    - High-contrast glowing brand signboards (Apple, Zara, Nike, Starbucks, Sephora, etc.)
+    - Warm interior showroom lighting behind the glass
+    - Display pedestals and merchandise silhouettes inside
     """
-    glass_mat = create_pbr_mat("Store_Glass", (0.9, 0.95, 1.0, 1.0), roughness=0.05, specular=0.9, transmission=0.85)
-    frame_mat = create_pbr_mat("Store_Frame", (0.1, 0.1, 0.12, 1.0), roughness=0.3, metallic=0.8)
+    glass_mat = create_pbr_mat("Store_Glass", (0.92, 0.96, 1.0, 1.0), roughness=0.03, specular=0.95, transmission=0.90)
+    frame_mat = create_pbr_mat("Store_Frame", (0.08, 0.08, 0.10, 1.0), roughness=0.25, metallic=0.85)
+    interior_wall_mat = create_pbr_mat("Store_Interior_Wall", (0.85, 0.83, 0.80, 1.0), roughness=0.80)
+    pedestal_mat = create_pbr_mat("Display_Pedestal", (0.15, 0.15, 0.15, 1.0), roughness=0.30)
+    mannequin_mat = create_pbr_mat("Display_Mannequin", (0.95, 0.95, 0.95, 1.0), roughness=0.40)
 
-    # Store brands with distinct branding colors
     stores = [
-        {"name": "URBAN_FASHION", "pos": [8.0, 17.0, 0.0], "sign_color": (0.95, 0.20, 0.20, 1.0), "length": 7.0, "dir_x": True},
-        {"name": "TECH_BOUTIQUE", "pos": [42.0, 17.0, 0.0], "sign_color": (0.20, 0.60, 0.95, 1.0), "length": 7.0, "dir_x": True},
-        {"name": "CAFE_EXPRESS", "pos": [8.0, 13.0, 0.0], "sign_color": (0.85, 0.55, 0.15, 1.0), "length": 7.0, "dir_x": True},
-        {"name": "SPORTS_LIFESTYLE", "pos": [42.0, 13.0, 0.0], "sign_color": (0.25, 0.85, 0.45, 1.0), "length": 7.0, "dir_x": True},
+        # North concourse stores
+        {"name": "APPLE_STORE", "pos": [8.0, 18.0, 0.0], "sign_color": (0.98, 0.98, 1.0, 1.0), "length": 7.0, "interior_y": 1.5, "light_color": (1.0, 0.95, 0.90)},
+        {"name": "ZARA_FASHION", "pos": [16.0, 18.0, 0.0], "sign_color": (0.95, 0.82, 0.50, 1.0), "length": 6.5, "interior_y": 1.5, "light_color": (1.0, 0.88, 0.70)},
+        {"name": "NIKE_SPORTS", "pos": [34.0, 18.0, 0.0], "sign_color": (1.0, 0.25, 0.05, 1.0), "length": 6.5, "interior_y": 1.5, "light_color": (1.0, 0.92, 0.85)},
+        {"name": "SEPHORA", "pos": [42.0, 18.0, 0.0], "sign_color": (0.95, 0.10, 0.55, 1.0), "length": 7.0, "interior_y": 1.5, "light_color": (1.0, 0.85, 0.95)},
+        # South concourse stores
+        {"name": "STARBUCKS", "pos": [8.0, 12.0, 0.0], "sign_color": (0.05, 0.65, 0.25, 1.0), "length": 7.0, "interior_y": -1.5, "light_color": (1.0, 0.80, 0.55)},
+        {"name": "SONY_TECH", "pos": [16.0, 12.0, 0.0], "sign_color": (0.10, 0.60, 1.0, 1.0), "length": 6.5, "interior_y": -1.5, "light_color": (0.85, 0.95, 1.0)},
+        {"name": "RAY_BAN", "pos": [34.0, 12.0, 0.0], "sign_color": (0.95, 0.15, 0.15, 1.0), "length": 6.5, "interior_y": -1.5, "light_color": (1.0, 0.92, 0.80)},
+        {"name": "HM_APPAREL", "pos": [42.0, 12.0, 0.0], "sign_color": (0.88, 0.10, 0.15, 1.0), "length": 7.0, "interior_y": -1.5, "light_color": (1.0, 0.90, 0.80)},
     ]
 
     for store in stores:
         sx, sy, sz = store["pos"]
         slen = store["length"]
         sname = store["name"]
+        int_y = store["interior_y"]
 
         # 1. Illuminated Brand Signboard
         sign_mat = create_pbr_mat(
             f"Sign_{sname}",
             store["sign_color"],
-            roughness=0.2,
+            roughness=0.15,
             emission_color=store["sign_color"],
-            emission_strength=4.0
+            emission_strength=5.5
         )
         bpy.ops.mesh.primitive_cube_add(
             size=1.0,
-            location=(sx, sy, 2.75)
+            location=(sx, sy, 2.85)
         )
         sign_obj = bpy.context.active_object
         sign_obj.name = f"Sign_{sname}"
-        sign_obj.scale = (slen * 0.7, 0.25, 0.45)
+        sign_obj.scale = (slen * 0.75, 0.22, 0.42)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         sign_obj.data.materials.append(sign_mat)
-
         for col in list(sign_obj.users_collection):
             col.objects.unlink(sign_obj)
         collection.objects.link(sign_obj)
 
-        # 2. Glass Display Bay
-        bpy.ops.mesh.primitive_cube_add(
-            size=1.0,
-            location=(sx, sy, 1.2)
-        )
+        # 2. Storefront Outer Frame
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, sy, 1.4))
+        frame_obj = bpy.context.active_object
+        frame_obj.name = f"Frame_{sname}"
+        frame_obj.scale = (slen, 0.15, 2.8)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        frame_obj.data.materials.append(frame_mat)
+        for col in list(frame_obj.users_collection):
+            col.objects.unlink(frame_obj)
+        collection.objects.link(frame_obj)
+
+        # 3. Tempered Glass Vitrine
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, sy, 1.3))
         glass_obj = bpy.context.active_object
         glass_obj.name = f"Glass_{sname}"
-        glass_obj.scale = (slen * 0.85, 0.08, 2.0)
+        glass_obj.scale = (slen * 0.90, 0.05, 2.3)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         glass_obj.data.materials.append(glass_mat)
-
         for col in list(glass_obj.users_collection):
             col.objects.unlink(glass_obj)
         collection.objects.link(glass_obj)
 
+        # 4. Interior Showroom Back Wall
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, sy + int_y, 1.5))
+        back_wall = bpy.context.active_object
+        back_wall.name = f"BackWall_{sname}"
+        back_wall.scale = (slen, 0.10, 3.0)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        back_wall.data.materials.append(interior_wall_mat)
+        for col in list(back_wall.users_collection):
+            col.objects.unlink(back_wall)
+        collection.objects.link(back_wall)
+
+        # 5. Display Pedestal & Mannequin inside the Vitrine
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, sy + (int_y * 0.4), 0.35))
+        ped = bpy.context.active_object
+        ped.name = f"Pedestal_{sname}"
+        ped.scale = (1.2, 0.6, 0.7)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        ped.data.materials.append(pedestal_mat)
+        for col in list(ped.users_collection):
+            col.objects.unlink(ped)
+        collection.objects.link(ped)
+
+        # Mannequin silhouette on pedestal
+        bpy.ops.mesh.primitive_cylinder_add(radius=0.18, depth=1.3, location=(sx, sy + (int_y * 0.4), 1.35))
+        man = bpy.context.active_object
+        man.name = f"Mannequin_{sname}"
+        man.data.materials.append(mannequin_mat)
+        for col in list(man.users_collection):
+            col.objects.unlink(man)
+        collection.objects.link(man)
+
+        # 6. Warm Interior Display Spot/Area Light
+        light_data = bpy.data.lights.new(name=f"Light_Store_{sname}", type='SPOT')
+        light_data.energy = 280.0
+        light_data.spot_size = math.radians(75)
+        light_data.spot_blend = 0.4
+        light_data.color = tuple(store["light_color"])
+        light_obj = bpy.data.objects.new(f"Light_Store_{sname}", light_data)
+        light_obj.location = (sx, sy + (int_y * 0.5), 2.9)
+        light_obj.rotation_euler = (0.0, 0.0, 0.0)
+        collection.objects.link(light_obj)
+
 
 def build_escalators(collection: bpy.types.Collection):
-    """Constructs a dual-direction escalator in the central corridor linking to level 2."""
-    metal_mat = create_pbr_mat("Escalator_Metal", (0.3, 0.32, 0.35, 1.0), roughness=0.35, metallic=0.9)
-    glass_rail_mat = create_pbr_mat("Escalator_Glass", (0.85, 0.95, 1.0, 1.0), roughness=0.08, transmission=0.8)
-    belt_mat = create_pbr_mat("Escalator_Handrail", (0.05, 0.05, 0.05, 1.0), roughness=0.5)
+    """Constructs dual escalators in central atrium with glowing under-step lighting and glass balustrades."""
+    metal_mat = create_pbr_mat("Escalator_Metal", (0.32, 0.34, 0.38, 1.0), roughness=0.25, metallic=0.92)
+    glass_rail_mat = create_pbr_mat("Escalator_Glass", (0.88, 0.96, 1.0, 1.0), roughness=0.04, transmission=0.88)
+    handrail_mat = create_pbr_mat("Escalator_Handrail", (0.04, 0.04, 0.04, 1.0), roughness=0.45)
+    step_glow_mat = create_pbr_mat("Escalator_UnderStep_Glow", (0.2, 0.6, 1.0, 1.0), emission_color=(0.2, 0.6, 1.0, 1.0), emission_strength=4.0)
 
-    # Escalator position in central open corridor
     exc_x = 25.0
     exc_y = 11.0
     exc_len = 5.5
@@ -198,8 +257,8 @@ def build_escalators(collection: bpy.types.Collection):
     exc_h = 3.2
     angle = math.radians(30.0)
 
-    for direction, offset_x in [("Up", -0.7), ("Down", 0.7)]:
-        # Inclined truss
+    for direction, offset_x in [("Up", -0.75), ("Down", 0.75)]:
+        # Inclined metal truss
         bpy.ops.mesh.primitive_cube_add(
             size=1.0,
             location=(exc_x + offset_x, exc_y, exc_h / 2.0),
@@ -210,116 +269,186 @@ def build_escalators(collection: bpy.types.Collection):
         truss.scale = (exc_w, exc_len, 0.4)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         truss.data.materials.append(metal_mat)
-
         for col in list(truss.users_collection):
             col.objects.unlink(truss)
         collection.objects.link(truss)
 
+        # Under-step LED neon strip
+        bpy.ops.mesh.primitive_cube_add(
+            size=1.0,
+            location=(exc_x + offset_x, exc_y, exc_h / 2.0 + 0.18),
+            rotation=(angle, 0.0, 0.0)
+        )
+        glow = bpy.context.active_object
+        glow.name = f"Escalator_Glow_{direction}"
+        glow.scale = (exc_w * 0.85, exc_len * 0.95, 0.05)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        glow.data.materials.append(step_glow_mat)
+        for col in list(glow.users_collection):
+            col.objects.unlink(glow)
+        collection.objects.link(glow)
+
         # Glass Balustrades
-        for b_side, b_offset in [("L", -0.5), ("R", 0.5)]:
+        for b_side, b_offset in [("L", -0.52), ("R", 0.52)]:
             bpy.ops.mesh.primitive_cube_add(
                 size=1.0,
-                location=(exc_x + offset_x + b_offset, exc_y, exc_h / 2.0 + 0.35),
+                location=(exc_x + offset_x + b_offset, exc_y, exc_h / 2.0 + 0.38),
                 rotation=(angle, 0.0, 0.0)
             )
             bal = bpy.context.active_object
             bal.name = f"Escalator_Balustrade_{direction}_{b_side}"
-            bal.scale = (0.05, exc_len, 0.75)
+            bal.scale = (0.04, exc_len, 0.78)
             bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
             bal.data.materials.append(glass_rail_mat)
-
             for col in list(bal.users_collection):
                 col.objects.unlink(bal)
             collection.objects.link(bal)
 
+            # Black rubber handrail on top of glass
+            bpy.ops.mesh.primitive_cylinder_add(
+                radius=0.035,
+                depth=exc_len,
+                location=(exc_x + offset_x + b_offset, exc_y, exc_h / 2.0 + 0.78),
+                rotation=(angle + math.radians(90.0), 0.0, 0.0)
+            )
+            rail = bpy.context.active_object
+            rail.name = f"Escalator_Handrail_{direction}_{b_side}"
+            rail.data.materials.append(handrail_mat)
+            for col in list(rail.users_collection):
+                col.objects.unlink(rail)
+            collection.objects.link(rail)
 
-def build_emergency_exit_signs(collection: bpy.types.Collection):
-    """Places illuminated glowing green EXIT signs above all doorway thresholds."""
-    exit_green = (0.05, 0.95, 0.20, 1.0)
-    exit_mat = create_pbr_mat(
-        "Sign_Emergency_Exit",
-        exit_green,
-        roughness=0.2,
-        emission_color=exit_green,
-        emission_strength=6.0
-    )
 
-    exit_locations = [
-        ("Exit_A", [8.0, 29.8, 2.9]),
-        ("Exit_B", [42.0, 29.8, 2.9]),
-        ("Exit_C", [8.0, 0.2, 2.9]),
-        ("Exit_D", [42.0, 0.2, 2.9]),
-        ("Main_Entrance", [25.0, 0.2, 3.0])
+def build_concourse_benches_and_planters(collection: bpy.types.Collection):
+    """Adds modern architectural seating benches and circular planters with greenery."""
+    bench_wood = create_pbr_mat("Bench_Teak", (0.45, 0.28, 0.16, 1.0), roughness=0.35)
+    bench_steel = create_pbr_mat("Bench_Steel", (0.85, 0.85, 0.88, 1.0), roughness=0.20, metallic=0.95)
+    planter_brass = create_pbr_mat("Planter_Brass", (0.75, 0.60, 0.25, 1.0), roughness=0.30, metallic=0.85)
+    foliage_mat = create_pbr_mat("Planter_Ficus_Foliage", (0.08, 0.40, 0.12, 1.0), roughness=0.55)
+
+    # 1. Concourse wooden benches
+    bench_positions = [
+        (13.0, 15.0),
+        (37.0, 15.0),
+        (25.0, 24.5),
+        (25.0, 3.5),
     ]
-
-    for ename, epos in exit_locations:
-        bpy.ops.mesh.primitive_cube_add(
-            size=1.0,
-            location=tuple(epos)
-        )
-        sign = bpy.context.active_object
-        sign.name = f"Emergency_{ename}"
-        sign.scale = (0.8, 0.12, 0.3)
+    for idx, (bx, by) in enumerate(bench_positions):
+        # Bench seat
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(bx, by, 0.45))
+        seat = bpy.context.active_object
+        seat.name = f"Mall_Bench_{idx}"
+        seat.scale = (2.2, 0.65, 0.10)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-        sign.data.materials.append(exit_mat)
+        seat.data.materials.append(bench_wood)
+        for col in list(seat.users_collection):
+            col.objects.unlink(seat)
+        collection.objects.link(seat)
 
-        for col in list(sign.users_collection):
-            col.objects.unlink(sign)
-        collection.objects.link(sign)
+        # Chrome legs
+        for leg_ox in [-0.9, 0.9]:
+            bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.40, location=(bx + leg_ox, by, 0.20))
+            leg = bpy.context.active_object
+            leg.name = f"Mall_Bench_Leg_{idx}_{leg_ox}"
+            leg.data.materials.append(bench_steel)
+            for col in list(leg.users_collection):
+                col.objects.unlink(leg)
+            collection.objects.link(leg)
 
-
-def build_atrium_planters(collection: bpy.types.Collection):
-    """Constructs modern commercial planter boxes with dark soil and lush greenery."""
-    planter_mat = create_pbr_mat("Planter_Concrete", (0.25, 0.26, 0.28, 1.0), roughness=0.7)
-    soil_mat = create_pbr_mat("Planter_Soil", (0.12, 0.08, 0.05, 1.0), roughness=0.95)
-    foliage_mat = create_pbr_mat("Planter_Foliage", (0.10, 0.42, 0.15, 1.0), roughness=0.6)
-
+    # 2. Modern circular brass planters with lush ficus trees
     planter_positions = [
-        [18.0, 15.0],
-        [32.0, 15.0],
-        [25.0, 20.0],
-        [25.0, 5.0]
+        (20.0, 15.0),
+        (30.0, 15.0),
+        (25.0, 19.5),
+        (25.0, 6.5),
     ]
-
     for idx, (px, py) in enumerate(planter_positions):
-        # Planter Box
-        bpy.ops.mesh.primitive_cube_add(
-            size=1.0,
-            location=(px, py, 0.35)
-        )
-        pbox = bpy.context.active_object
-        pbox.name = f"Planter_Box_{idx}"
-        pbox.scale = (1.4, 0.8, 0.7)
-        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-        pbox.data.materials.append(planter_mat)
+        # Brass planter cylinder
+        bpy.ops.mesh.primitive_cylinder_add(radius=0.75, depth=0.75, location=(px, py, 0.375))
+        pot = bpy.context.active_object
+        pot.name = f"Planter_Pot_{idx}"
+        pot.data.materials.append(planter_brass)
+        for col in list(pot.users_collection):
+            col.objects.unlink(pot)
+        collection.objects.link(pot)
 
-        for col in list(pbox.users_collection):
-            col.objects.unlink(pbox)
-        collection.objects.link(pbox)
-
-        # Foliage volume (organic cluster)
-        bpy.ops.mesh.primitive_uv_sphere_add(
-            segments=8,
-            ring_count=6,
-            radius=0.45,
-            location=(px, py, 0.95)
-        )
+        # Ficus greenery canopy
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.65, location=(px, py, 1.25))
         foliage = bpy.context.active_object
-        foliage.name = f"Planter_Foliage_{idx}"
-        foliage.scale = (1.3, 0.75, 0.65)
+        foliage.name = f"Planter_Greenery_{idx}"
+        foliage.scale = (1.2, 1.2, 1.1)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         foliage.data.materials.append(foliage_mat)
-
         for col in list(foliage.users_collection):
             col.objects.unlink(foliage)
         collection.objects.link(foliage)
 
 
+def build_ceiling_grid_and_lighting(collection: bpy.types.Collection, width: float, depth: float):
+    """Constructs commercial suspended ceiling grid with recessed linear LED lighting panels."""
+    ceiling_mat = create_pbr_mat("Ceiling_Acoustic_Tile", (0.90, 0.90, 0.92, 1.0), roughness=0.85)
+    led_diffuser_mat = create_pbr_mat(
+        "Ceiling_LED_Diffuser",
+        (1.0, 0.98, 0.95, 1.0),
+        roughness=0.1,
+        emission_color=(1.0, 0.98, 0.94, 1.0),
+        emission_strength=8.0
+    )
+
+    ceiling_z = 5.25
+
+    # Main ceiling plane
+    bpy.ops.mesh.primitive_plane_add(size=1.0, location=(width / 2.0, depth / 2.0, ceiling_z))
+    ceil = bpy.context.active_object
+    ceil.name = "Ceiling_Plane"
+    ceil.scale = (width, depth, 1.0)
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    ceil.data.materials.append(ceiling_mat)
+    for col in list(ceil.users_collection):
+        col.objects.unlink(ceil)
+    collection.objects.link(ceil)
+
+    # Recessed Linear LED Panel Arrays along corridors
+    led_positions = [
+        # West corridor
+        (8.0, 8.0), (8.0, 15.0), (8.0, 22.0),
+        # Central concourse
+        (17.0, 15.0), (25.0, 15.0), (33.0, 15.0),
+        # East corridor
+        (42.0, 8.0), (42.0, 15.0), (42.0, 22.0),
+        # Food court & atrium
+        (25.0, 22.0), (25.0, 8.0)
+    ]
+
+    for idx, (lx, ly) in enumerate(led_positions):
+        # Recessed LED housing
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(lx, ly, ceiling_z - 0.03))
+        panel = bpy.context.active_object
+        panel.name = f"Ceiling_LED_Panel_{idx}"
+        panel.scale = (2.4, 0.70, 0.05)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        panel.data.materials.append(led_diffuser_mat)
+        for col in list(panel.users_collection):
+            col.objects.unlink(panel)
+        collection.objects.link(panel)
+
+        # Actual downward area light
+        light_data = bpy.data.lights.new(name=f"Light_Ceiling_{idx}", type='AREA')
+        light_data.energy = 420.0
+        light_data.size = 2.4
+        light_data.size_y = 0.70
+        light_data.shape = 'RECTANGLE'
+        light_data.color = (1.0, 0.98, 0.94)  # 4200K neutral commercial white
+        light_obj = bpy.data.objects.new(f"Light_Ceiling_{idx}", light_data)
+        light_obj.location = (lx, ly, ceiling_z - 0.06)
+        collection.objects.link(light_obj)
+
+
 def build_cctv_camera_fixtures(cameras_data: List[Dict[str, Any]], collection: bpy.types.Collection):
     """Places visual 3D CCTV dome camera models at the physical camera locations."""
     cctv_body_mat = create_pbr_mat("CCTV_Body", (0.92, 0.92, 0.94, 1.0), roughness=0.3)
-    cctv_dome_mat = create_pbr_mat("CCTV_Dome", (0.05, 0.05, 0.05, 1.0), roughness=0.1, specular=0.9)
-    led_rec_mat = create_pbr_mat("CCTV_LED_REC", (0.95, 0.10, 0.10, 1.0), emission_color=(1.0, 0.1, 0.1, 1.0), emission_strength=5.0)
+    cctv_dome_mat = create_pbr_mat("CCTV_Dome", (0.05, 0.05, 0.05, 1.0), roughness=0.08, specular=0.95)
+    led_rec_mat = create_pbr_mat("CCTV_LED_REC", (1.0, 0.05, 0.05, 1.0), emission_color=(1.0, 0.05, 0.05, 1.0), emission_strength=6.0)
 
     for cam in cameras_data:
         cid = cam["camera_id"]
@@ -328,7 +457,7 @@ def build_cctv_camera_fixtures(cameras_data: List[Dict[str, Any]], collection: b
 
         # Ceiling mount bracket
         bpy.ops.mesh.primitive_cylinder_add(
-            vertices=12,
+            vertices=14,
             radius=0.15,
             depth=0.08,
             location=(cx, cy, cz - 0.04)
@@ -336,24 +465,22 @@ def build_cctv_camera_fixtures(cameras_data: List[Dict[str, Any]], collection: b
         bracket = bpy.context.active_object
         bracket.name = f"Mount_{cid}"
         bracket.data.materials.append(cctv_body_mat)
-
         for col in list(bracket.users_collection):
             col.objects.unlink(bracket)
         collection.objects.link(bracket)
 
         # Smoked Acrylic Dome
         bpy.ops.mesh.primitive_uv_sphere_add(
-            segments=12,
+            segments=14,
             ring_count=8,
             radius=0.12,
             location=(cx, cy, cz - 0.10)
         )
         dome = bpy.context.active_object
         dome.name = f"Dome_{cid}"
-        dome.scale = (1.0, 1.0, 0.7)
+        dome.scale = (1.0, 1.0, 0.70)
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         dome.data.materials.append(cctv_dome_mat)
-
         for col in list(dome.users_collection):
             col.objects.unlink(dome)
         collection.objects.link(dome)
@@ -368,7 +495,6 @@ def build_cctv_camera_fixtures(cameras_data: List[Dict[str, Any]], collection: b
         led = bpy.context.active_object
         led.name = f"LED_{cid}"
         led.data.materials.append(led_rec_mat)
-
         for col in list(led.users_collection):
             col.objects.unlink(led)
         collection.objects.link(led)
@@ -388,11 +514,12 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
     # 1. Floor
     dims = data.get("dimensions", {"width_x": 50.0, "depth_y": 30.0})
     W, H = dims["width_x"], dims["depth_y"]
-    create_polished_mall_floor(W, H)
+    create_luxury_marble_floor(W, H)
 
     # 2. Materials
-    wall_mat = create_pbr_mat("Wall_Drywall", (0.84, 0.84, 0.86, 1.0), roughness=0.85)
-    pillar_mat = create_pbr_mat("Pillar_Composite", (0.75, 0.75, 0.78, 1.0), roughness=0.45, specular=0.6)
+    wall_mat = create_pbr_mat("Wall_Drywall", (0.86, 0.86, 0.88, 1.0), roughness=0.85)
+    pillar_mat = create_pbr_mat("Pillar_Composite", (0.80, 0.80, 0.82, 1.0), roughness=0.40, specular=0.6)
+    chrome_kick_mat = create_pbr_mat("Pillar_Chrome_Kick", (0.90, 0.90, 0.92, 1.0), roughness=0.18, metallic=0.95)
     table_mat = create_pbr_mat("Table_Maple", (0.42, 0.28, 0.18, 1.0), roughness=0.40)
 
     # 3. Walls
@@ -400,8 +527,8 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
     bpy.context.scene.collection.children.link(walls_col)
     for w in data.get("walls", []):
         p1, p2 = w["start"], w["end"]
-        height = w.get("height", 3.2)
-        thickness = w.get("thickness", 0.2)
+        height = 5.25
+        thickness = w.get("thickness", 0.22)
         dx, dy = p2[0] - p1[0], p2[1] - p1[1]
         length = math.hypot(dx, dy)
         if length < 1e-4:
@@ -425,7 +552,7 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
             col.objects.unlink(wall_obj)
         walls_col.objects.link(wall_obj)
 
-    # 4. Obstacles
+    # 4. Obstacles (Pillars & Tables)
     obs_col = bpy.data.collections.new("Obstacles")
     bpy.context.scene.collection.children.link(obs_col)
     for obs in data.get("obstacles", []):
@@ -433,16 +560,37 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
         otype = obs.get("type", "box")
         oname = obs.get("name", "obstacle")
         if otype == "cylinder":
-            radius = obs.get("radius", 0.45)
-            h = obs.get("height", 3.2)
+            radius = obs.get("radius", 0.48)
+            h = 5.25
+
+            # Main column shaft
             bpy.ops.mesh.primitive_cylinder_add(
                 radius=radius,
-                depth=h,
-                location=tuple(pos)
+                depth=h - 0.6,
+                location=(pos[0], pos[1], (h - 0.6) / 2.0 + 0.6)
             )
             o_obj = bpy.context.active_object
             o_obj.name = f"Obs_{oname}"
-            o_obj.data.materials.append(pillar_mat if "pillar" in oname else table_mat)
+            o_obj.data.materials.append(pillar_mat)
+
+            for col in list(o_obj.users_collection):
+                col.objects.unlink(o_obj)
+            obs_col.objects.link(o_obj)
+
+            # Polished Stainless Steel Kick-Plate Base Ring
+            bpy.ops.mesh.primitive_cylinder_add(
+                radius=radius + 0.03,
+                depth=0.6,
+                location=(pos[0], pos[1], 0.30)
+            )
+            kick_obj = bpy.context.active_object
+            kick_obj.name = f"Kick_{oname}"
+            kick_obj.data.materials.append(chrome_kick_mat)
+
+            for col in list(kick_obj.users_collection):
+                col.objects.unlink(kick_obj)
+            obs_col.objects.link(kick_obj)
+
         else:
             size = obs.get("size", [1.0, 1.0, 1.0])
             bpy.ops.mesh.primitive_cube_add(size=1.0, location=tuple(pos))
@@ -452,44 +600,23 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
             bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
             o_obj.data.materials.append(table_mat)
 
-        for col in list(o_obj.users_collection):
-            col.objects.unlink(o_obj)
-        obs_col.objects.link(o_obj)
+            for col in list(o_obj.users_collection):
+                col.objects.unlink(o_obj)
+            obs_col.objects.link(o_obj)
 
-    # 5. Storefronts, Escalators, Greenery, Exit Signs
+    # 5. Storefronts, Escalators, Benches, Greenery, Ceiling
     decor_col = bpy.data.collections.new("Mall_Interior_Decor")
     bpy.context.scene.collection.children.link(decor_col)
     build_retail_storefronts(decor_col)
     build_escalators(decor_col)
-    build_atrium_planters(decor_col)
-    build_emergency_exit_signs(decor_col)
+    build_concourse_benches_and_planters(decor_col)
+    build_ceiling_grid_and_lighting(decor_col, W, H)
 
-    # 6. Physical CCTV Camera Fixtures
+    # 6. Physical CCTV Camera Mount Fixtures
     cams_data = data.get("cameras", [])
     build_cctv_camera_fixtures(cams_data, decor_col)
 
-    # 7. Lighting
-    light_col = bpy.data.collections.new("Lights")
-    bpy.context.scene.collection.children.link(light_col)
-    for l_data in data.get("lights", []):
-        name = l_data["name"]
-        pos = l_data["position"]
-        power = l_data.get("power", 450.0)
-        size = l_data.get("size", [4.0, 2.0])
-        color = l_data.get("color", [1.0, 1.0, 1.0])
-
-        light_data = bpy.data.lights.new(name=f"Data_{name}", type='AREA')
-        light_data.energy = power
-        light_data.size = size[0]
-        light_data.size_y = size[1]
-        light_data.shape = 'RECTANGLE'
-        light_data.color = tuple(color[:3])
-
-        light_obj = bpy.data.objects.new(name=f"Light_{name}", object_data=light_data)
-        light_obj.location = tuple(pos)
-        light_col.objects.link(light_obj)
-
-    # 8. Virtual Camera Objects
+    # 7. Virtual CCTV Cameras
     cam_col = bpy.data.collections.new("Cameras")
     bpy.context.scene.collection.children.link(cam_col)
     first_cam = None
@@ -509,6 +636,9 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
         cam_data.clip_start = 0.1
         cam_data.clip_end = 150.0
 
+        # Realistic CCTV depth of field focused on floor/pedestrian level
+        cam_data.dof.use_dof = False
+
         cam_obj = bpy.data.objects.new(name=cid, object_data=cam_data)
         cam_obj.location = pos
         direction = look_at - pos
@@ -521,7 +651,7 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
     if first_cam:
         bpy.context.scene.camera = first_cam
 
-    # 9. EEVEE Render Engine Settings
+    # 8. EEVEE Render Settings (High Fidelity, Clean Digital IP Camera Optics)
     scene = bpy.context.scene
     scene.render.engine = 'BLENDER_EEVEE_NEXT'
     scene.render.resolution_x = 640
@@ -529,20 +659,29 @@ def build_enhanced_venue(floor_plan_path: str, output_blend: str):
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
     scene.render.image_settings.color_mode = 'RGB'
-    scene.eevee.taa_render_samples = 16
+    scene.eevee.taa_render_samples = 24  # High quality rasterization
+
+    # Color Management: AgX or Filmic High Contrast
+    if hasattr(scene, "view_settings"):
+        try:
+            scene.view_settings.view_transform = 'AgX'
+            scene.view_settings.look = 'AgX - Medium High Contrast'
+        except Exception:
+            scene.view_settings.view_transform = 'Filmic'
+            scene.view_settings.look = 'Medium High Contrast'
 
     world = bpy.data.worlds.new("Mall_World_PBR")
     world.use_nodes = True
     bg_node = world.node_tree.nodes.get("Background")
     if bg_node:
-        bg_node.inputs["Color"].default_value = (0.07, 0.07, 0.09, 1.0)
-        bg_node.inputs["Strength"].default_value = 0.5
+        bg_node.inputs["Color"].default_value = (0.08, 0.08, 0.10, 1.0)
+        bg_node.inputs["Strength"].default_value = 0.6
     scene.world = world
 
     # Save
     os.makedirs(os.path.dirname(os.path.abspath(output_blend)), exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=output_blend)
-    print(f"[✓] High-Fidelity 3D Mall Scene saved to: {output_blend}")
+    print(f"[✓] Best-Version 3D Mall Scene saved to: {output_blend}")
     print(f"[✓] Scene statistics: {len(bpy.data.objects)} objects, {len(bpy.data.materials)} PBR materials.")
 
 
