@@ -2,3 +2,4 @@ tools/blender/
 venue/*.blend1
 *.glb
 *.blend
+output/

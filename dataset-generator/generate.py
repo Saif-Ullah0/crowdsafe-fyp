@@ -70,7 +70,7 @@ def ensure_floor_plan_map(host_python: str, force: bool = False):
     map_script = os.path.join(SCRIPT_DIR, "tools", "export_floor_plan_map.py")
     plan_json = os.path.join(SCRIPT_DIR, "venue", "mall_floor_plan.json")
 
-    if not os.path.exists(map_png) or force:
+    if force:
         print("[Generator] Exporting Architectural 2D Floor Plan with CCTV FOVs...")
         cmd = [
             host_python, map_script,
@@ -170,6 +170,12 @@ def main():
         action="store_true",
         help="Force rebuild of mall_scene.blend before generating dataset"
     )
+    parser.add_argument(
+        "--warmup-steps",
+        type=int,
+        default=60,
+        help="Number of crowd dynamics substeps to simulate prior to frame 0 (default: 60)"
+    )
     args = parser.parse_args()
 
     if args.fps <= 0:
@@ -180,7 +186,7 @@ def main():
     scenario_path = resolve_scenario_path(args.scenario)
     scenario_name = os.path.splitext(os.path.basename(scenario_path))[0]
     venue_blend = ensure_venue_scene(blender_bin, rebuild=args.rebuild_venue)
-    ensure_floor_plan_map(host_python)
+    ensure_floor_plan_map(host_python, force=True)
 
     if args.output:
         output_dir = os.path.abspath(args.output)
@@ -199,8 +205,14 @@ def main():
         "--cameras", args.cameras,
         "--mode", args.mode,
         "--character-style", args.character_style,
-        "--fps", str(args.fps)
+        "--fps", str(args.fps),
+        "--warmup-steps", str(args.warmup_steps)
     ]
+    if args.tracking_video:
+        cmd.append("--enable-tracking")
+    else:
+        cmd.append("--skip-tracking")
+
     if args.frames is not None:
         cmd.extend(["--frames", str(args.frames)])
 

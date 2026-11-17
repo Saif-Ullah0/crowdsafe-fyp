@@ -503,9 +503,13 @@ class RealisticHumanoidModel:
 
 
 class PhotorealisticTemplateLibrary:
-    """Loads and caches authentic 3D scanned/textured GLB characters as reusable archetypes."""
-    _templates = []
-    _initialized = False
+    """Loads and caches authentic 3D scanned/textured GLB characters as reusable archetypes.
+
+    Keeps full Armature and textured Child Meshes intact with complete PBR materials,
+    so instances duplicate with working skeletons for real walking kinematics.
+    """
+    _templates: List[Dict[str, Any]] = []
+    _initialized: bool = False
 
     @classmethod
     def reset(cls):
@@ -514,8 +518,12 @@ class PhotorealisticTemplateLibrary:
 
     @classmethod
     def init_templates(cls, assets_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        Import each GLB once. The master armature & child meshes are kept in memory
+        (hidden from viewport and render). Each agent instance duplicates this hierarchy.
+        """
         if cls._initialized and cls._templates:
-            valid = [t for t in cls._templates if t['mesh'].name in bpy.data.meshes]
+            valid = [t for t in cls._templates if t['armature'].name in bpy.data.objects]
             if len(valid) == len(cls._templates):
                 return cls._templates
 
@@ -532,95 +540,291 @@ class PhotorealisticTemplateLibrary:
             return []
 
         cls._templates = []
+
         for f in files:
             fpath = os.path.join(assets_dir, f)
             try:
-                bpy.ops.import_scene.gltf(filepath=fpath)
-                meshes = [o for o in bpy.context.selected_objects if o.type == 'MESH' and 'Icosphere' not in o.name]
-                if not meshes:
-                    continue
-                # Bake world transform into mesh data so meter scale is exact
-                for o in meshes:
-                    mat = o.matrix_world.copy()
-                    o.parent = None
-                    bm = bmesh.new()
-                    bm.from_mesh(o.data)
-                    bm.transform(mat)
-                    bm.to_mesh(o.data)
-                    bm.free()
-                    o.matrix_world.identity()
-
                 for o in bpy.data.objects:
                     o.select_set(False)
-                for o in meshes:
-                    o.select_set(True)
-                bpy.context.view_layer.objects.active = meshes[0]
-                if len(meshes) > 1:
-                    bpy.ops.object.join()
-                joined = bpy.context.active_object
-                for col in list(joined.users_collection):
-                    col.objects.unlink(joined)
-                max_z = max(v.co.z for v in joined.data.vertices)
+
+                bpy.ops.import_scene.gltf(filepath=fpath)
+                bpy.context.view_layer.update()
+                imported = list(bpy.context.selected_objects)
+
+                # Remove stray utility geometry (e.g. default cubes / 42-vert icospheres)
+                for o in list(imported):
+                    if 'Icosphere' in o.name or 'Cube' in o.name:
+                        imported.remove(o)
+                        bpy.data.objects.remove(o, do_unlink=True)
+
+                bpy.context.view_layer.update()
+
+                arm = next((o for o in imported if o.type == 'ARMATURE'), None)
+                if not arm:
+                    for o in imported:
+                        bpy.data.objects.remove(o, do_unlink=True)
+                    continue
+
+                meshes = [o for o in imported if o.type == 'MESH']
+                pb = arm.pose.bones
+
+                # Clear rogue glTF animations and reset pose bones to clean rest pose
+                if arm.animation_data:
+                    arm.animation_data_clear()
+                for b in pb:
+                    b.rotation_mode = 'XYZ'
+                    b.rotation_euler = (0.0, 0.0, 0.0)
+
+                # 1. Precise real world height calculation across all character mesh vertices
+                all_z = []
+                for m in meshes:
+                    for corner in m.bound_box:
+                        world_pt = m.matrix_world @ Vector(corner)
+                        all_z.append(world_pt.z)
+
+                current_h = (max(all_z) - min(all_z)) if all_z else 1.75
+
+                # Normalize scale to natural human height (~1.75m total)
+                target_h = 1.75
+                if current_h > 0.01:
+                    sf = target_h / current_h
+                    arm.scale = (arm.scale.x * sf, arm.scale.y * sf, arm.scale.z * sf)
+                    bpy.context.view_layer.update()
+
+                # 2. Find head bone
+                hname = next((b for b in ['Head', 'mixamorig:Head', 'head'] if b in pb), None)
+
+                # 3. Determine rest facing direction (+Y vs -Y)
+                # Empirically verified against facial accessory vertices (glasses, eyes, visor):
+                # Soldier faces +Y; Big Vegas, Boss Vernington, CZ, and Michelle face -Y.
+                faces_pos_y = ("soldier" in f.lower())
+
+                # Velocity yaw = 0 is +X.
+                # If model faces +Y, rotate -pi/2 to face +X.
+                # If model faces -Y, rotate +pi/2 to face +X.
+                yaw_offset = -math.pi / 2.0 if faces_pos_y else math.pi / 2.0
+                forward_sign = 1.0 if faces_pos_y else -1.0
+
+                # Hide master templates from viewport and render
+                for o in imported:
+                    o.hide_viewport = True
+                    o.hide_render = True
+
                 cls._templates.append({
                     "name": f,
-                    "mesh": joined.data,
-                    "height": max_z,
-                    "head_z": max_z - 0.12
+                    "armature": arm,
+                    "all_objs": imported,
+                    "head_bone_name": hname,
+                    "height": 1.75,
+                    "yaw_offset": yaw_offset,
+                    "forward_sign": forward_sign,
+                    "faces_pos_y": faces_pos_y
                 })
+                print(f"  [✓] Rigged GLB template '{f}' ready — height={target_h:.2f}m, head_bone='{hname}', yaw_offset={math.degrees(yaw_offset):.0f}°")
+
             except Exception as e:
+                import traceback
                 print(f"Warning: Failed to import glb template '{f}': {e}")
+                traceback.print_exc()
 
         cls._initialized = True
-        print(f"[✓] Initialized {len(cls._templates)} photorealistic character templates from GLB.")
+        print(f"[✓] Initialized {len(cls._templates)} rigged photorealistic character templates from GLB.")
         return cls._templates
 
 
 class PhotorealisticTexturedAgent:
-    """Instantiates a photorealistic, textured 3D character with real clothing, hair, and kinematics."""
+    """
+    Instantiates a photorealistic GLB character with full PBR textures and articulated
+    walking kinematics (alternating leg swing, arm counter-swing, knee bend, and gait bounce).
+    """
+
     def __init__(
         self,
         agent_id: int,
         collection: bpy.types.Collection,
         template: Dict[str, Any],
-        scale: float = 1.0
+        scale: float = 1.0,
+        target_collection: Optional[bpy.types.Collection] = None
     ):
         self.agent_id = agent_id
         self.collection = collection
         self.template = template
         self.scale_factor = scale
-        self.head_z_rel = template["head_z"] * scale
-
-        self.root = bpy.data.objects.new(f"Agent_{agent_id:04d}", template["mesh"])
-        self.root.scale = (scale, scale, scale)
-        self.collection.objects.link(self.root)
-        self.all_parts = [self.root]
+        self.head_bone_name = template["head_bone_name"]
+        self.yaw_offset = template["yaw_offset"]
+        self.forward_sign = template["forward_sign"]
+        self.faces_pos_y = template.get("faces_pos_y", False)
 
         self.prev_x = 0.0
         self.prev_y = 0.0
-        self.gait_phase = random.uniform(0.0, 2 * math.pi)
+        self.gait_phase = random.uniform(0.0, 2.0 * math.pi)
 
-    def set_pose(self, x: float, y: float, z: float = 0.0, yaw: float = 0.0, speed: float = 0.0, dt: float = 0.1):
+        # ── DUPLICATE THE RIGGED MASTER TEMPLATE ─────────────────────────────────
+        master_objs = template["all_objs"]
+        master_arm = template["armature"]
+
+        # Temporarily enable viewport visibility so the duplicate operator can select them
+        for o in master_objs:
+            o.hide_viewport = False
+            o.select_set(True)
+
+        for o in bpy.data.objects:
+            if o not in master_objs:
+                o.select_set(False)
+
+        bpy.context.view_layer.objects.active = master_arm
+        bpy.ops.object.duplicate(linked=False)
+
+        dup_all = list(bpy.context.selected_objects)
+        dup_arm = next((o for o in dup_all if o.type == 'ARMATURE'), None)
+        if dup_arm is None:
+            dup_arm = bpy.context.active_object
+
+        # Clear any animation data on the duplicate instance
+        if dup_arm.animation_data:
+            dup_arm.animation_data_clear()
+
+        # Re-hide master templates
+        for o in master_objs:
+            o.hide_viewport = True
+
+        # Configure duplicate
+        dup_arm.name = f"Agent_{agent_id:04d}_Rig"
+        dup_arm.scale = (dup_arm.scale.x * scale, dup_arm.scale.y * scale, dup_arm.scale.z * scale)
+
+        # Move duplicated objects into the target crowd collection
+        for o in dup_all:
+            o.hide_viewport = False
+            o.hide_render = False
+            for col in list(o.users_collection):
+                col.objects.unlink(o)
+            collection.objects.link(o)
+
+        self.root = dup_arm
+        self.all_parts = dup_all
+
+        # Cache pose bones for fast walking kinematic updates
+        pb = dup_arm.pose.bones
+        self.thigh_l = pb.get("LeftUpLeg") or pb.get("mixamorig:LeftUpLeg")
+        self.thigh_r = pb.get("RightUpLeg") or pb.get("mixamorig:RightUpLeg")
+        self.knee_l = pb.get("LeftLeg") or pb.get("mixamorig:LeftLeg")
+        self.knee_r = pb.get("RightLeg") or pb.get("mixamorig:RightLeg")
+        self.arm_l = pb.get("LeftArm") or pb.get("mixamorig:LeftArm")
+        self.arm_r = pb.get("RightArm") or pb.get("mixamorig:RightArm")
+        self.forearm_l = pb.get("LeftForeArm") or pb.get("mixamorig:LeftForeArm")
+        self.forearm_r = pb.get("RightForeArm") or pb.get("mixamorig:RightForeArm")
+        self.head_bone = pb.get(self.head_bone_name) if self.head_bone_name else None
+
+        # Ensure XYZ Euler rotation mode on walking joints
+        for b in [self.thigh_l, self.thigh_r, self.knee_l, self.knee_r, self.arm_l, self.arm_r, self.forearm_l, self.forearm_r]:
+            if b:
+                b.rotation_mode = 'XYZ'
+
+    def set_pose(
+        self,
+        x: float,
+        y: float,
+        z: float = 0.0,
+        yaw: float = 0.0,
+        speed: float = 1.2,
+        dt: float = 0.1
+    ):
+        """
+        Updates agent location, heading orientation, and animates authentic human walking gait
+        (alternating leg swing, natural downward hanging arm counter-balance, knee flexion, and gait bounce).
+        """
         dist_moved = math.hypot(x - self.prev_x, y - self.prev_y)
         self.prev_x = x
         self.prev_y = y
 
-        if dist_moved > 1e-4:
-            step_rate = max(4.0, speed * 5.0)
-            self.gait_phase += step_rate * dt
-            bob_z = 0.020 * math.sin(self.gait_phase)
-        else:
-            bob_z = 0.0
+        stride_len = 0.70 * self.scale_factor
+        # Natural relaxed resting downward arm posture
+        rest_arm = math.radians(76.0)
+        rest_forearm = math.radians(18.0) if not self.faces_pos_y else math.radians(15.0)
 
+        if dist_moved > 0.0005:
+            # Update gait phase based on actual ground displacement
+            stride_delta = (dist_moved / stride_len) * (2.0 * math.pi)
+            self.gait_phase = (self.gait_phase + stride_delta) % (2.0 * math.pi)
+
+            # Walking limb kinematic angles
+            leg_swing = math.radians(22.0) * math.sin(self.gait_phase)
+            arm_swing = math.radians(20.0) * math.sin(self.gait_phase)
+            bob_z = 0.020 * abs(math.sin(self.gait_phase))
+
+            # Left leg forward / Right leg backward
+            # For -Y models: thigh forward is +X rotation (-leg_swing * -1.0 = +leg_swing)
+            # For +Y models: thigh forward is -X rotation (-leg_swing * +1.0 = -leg_swing)
+            if self.thigh_l:
+                self.thigh_l.rotation_euler = Euler((-leg_swing * self.forward_sign, 0.0, 0.0), 'XYZ')
+            if self.thigh_r:
+                self.thigh_r.rotation_euler = Euler((leg_swing * self.forward_sign, 0.0, 0.0), 'XYZ')
+
+            # Natural knee bend on back leg
+            bend_l = max(0.0, -leg_swing)
+            bend_r = max(0.0, leg_swing)
+            if self.knee_l:
+                self.knee_l.rotation_euler = Euler((bend_l * 0.75 * self.forward_sign, 0.0, 0.0), 'XYZ')
+            if self.knee_r:
+                self.knee_r.rotation_euler = Euler((bend_r * 0.75 * self.forward_sign, 0.0, 0.0), 'XYZ')
+
+            # Arm counter-balance swing (opposite of leg swing) with relaxed downward base posture
+            if self.faces_pos_y:
+                # Soldier: arms hang down along local Z, swing along local X
+                if self.arm_l:
+                    self.arm_l.rotation_euler = Euler((arm_swing, 0.0, rest_arm), 'XYZ')
+                if self.arm_r:
+                    self.arm_r.rotation_euler = Euler((arm_swing, 0.0, rest_arm), 'XYZ')
+                if self.forearm_l:
+                    self.forearm_l.rotation_euler = Euler((0.0, 0.0, rest_forearm), 'XYZ')
+                if self.forearm_r:
+                    self.forearm_r.rotation_euler = Euler((0.0, 0.0, rest_forearm), 'XYZ')
+            else:
+                # Avaturn / Mixamo models (-Y facing):
+                # Arms hang down along local X (76 deg), swing along local Y
+                if self.arm_l:
+                    self.arm_l.rotation_euler = Euler((rest_arm, arm_swing, 0.0), 'XYZ')
+                if self.arm_r:
+                    self.arm_r.rotation_euler = Euler((rest_arm, arm_swing, 0.0), 'XYZ')
+                # Gentle elbow bend on forward swing
+                if self.forearm_l:
+                    self.forearm_l.rotation_euler = Euler((rest_forearm + math.radians(15.0) * max(0.0, -arm_swing), 0.0, 0.0), 'XYZ')
+                if self.forearm_r:
+                    self.forearm_r.rotation_euler = Euler((rest_forearm + math.radians(15.0) * max(0.0, arm_swing), 0.0, 0.0), 'XYZ')
+        else:
+            # Idle neutral stance
+            bob_z = 0.0
+            if self.thigh_l: self.thigh_l.rotation_euler = Euler((0.0, 0.0, 0.0), 'XYZ')
+            if self.thigh_r: self.thigh_r.rotation_euler = Euler((0.0, 0.0, 0.0), 'XYZ')
+            if self.knee_l: self.knee_l.rotation_euler = Euler((0.0, 0.0, 0.0), 'XYZ')
+            if self.knee_r: self.knee_r.rotation_euler = Euler((0.0, 0.0, 0.0), 'XYZ')
+            if self.faces_pos_y:
+                if self.arm_l: self.arm_l.rotation_euler = Euler((0.0, 0.0, rest_arm), 'XYZ')
+                if self.arm_r: self.arm_r.rotation_euler = Euler((0.0, 0.0, rest_arm), 'XYZ')
+                if self.forearm_l: self.forearm_l.rotation_euler = Euler((0.0, 0.0, rest_forearm), 'XYZ')
+                if self.forearm_r: self.forearm_r.rotation_euler = Euler((0.0, 0.0, rest_forearm), 'XYZ')
+            else:
+                if self.arm_l: self.arm_l.rotation_euler = Euler((rest_arm, 0.0, 0.0), 'XYZ')
+                if self.arm_r: self.arm_r.rotation_euler = Euler((rest_arm, 0.0, 0.0), 'XYZ')
+                if self.forearm_l: self.forearm_l.rotation_euler = Euler((rest_forearm, 0.0, 0.0), 'XYZ')
+                if self.forearm_r: self.forearm_r.rotation_euler = Euler((rest_forearm, 0.0, 0.0), 'XYZ')
+
+        # Update root position with gait bounce
         self.root.location = Vector((x, y, z + bob_z))
-        # glTF standard models face -Y. Point towards instantaneous velocity:
-        self.root.rotation_euler = Euler((0.0, 0.0, yaw + math.pi / 2.0), 'XYZ')
+        # Rotate character to face exact velocity heading using template-specific yaw offset
+        self.root.rotation_euler = Euler((0.0, 0.0, yaw + self.yaw_offset), 'XYZ')
 
     def get_head_world_position(self) -> Vector:
-        return self.root.location + Vector((0.0, 0.0, self.head_z_rel))
+        """Returns the exact 3D world center coordinate of the skeleton head."""
+        if self.head_bone:
+            return self.root.matrix_world @ (self.head_bone.head + Vector((0.0, 0.0, 0.10)))
+        return self.root.location + Vector((0.0, 0.0, 1.65 * self.scale_factor))
 
     def set_visibility(self, visible: bool):
-        self.root.hide_render = not visible
-        self.root.hide_viewport = not visible
+        """Hides or reveals all parts of the rigged character."""
+        for part in self.all_parts:
+            part.hide_render = not visible
+            part.hide_viewport = not visible
 
 
 def spawn_realistic_crowd(

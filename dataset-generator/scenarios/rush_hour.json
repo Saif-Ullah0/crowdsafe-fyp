@@ -1,24 +1,35 @@
 {
   "name": "rush_hour",
-  "description": "Heavy bi-directional foot traffic along the central corridor connecting entrance to food court and exits",
-  "num_agents": 120,
+  "description": "Heavy multi-directional pedestrian flow across central concourse, retail storefronts, escalators, and side corridors",
+  "num_agents": 65,
   "spawn_distribution": {
-    "N0": 0.25,
-    "N2": 0.25,
-    "N4": 0.25,
-    "N6": 0.125,
-    "N7": 0.125
+    "N0": 0.15,
+    "N5": 0.15,
+    "N2": 0.15,
+    "N2_E": 0.15,
+    "N4": 0.15,
+    "N1": 0.13,
+    "N3": 0.12
   },
   "route_patterns": [
-    {"from": "N0", "route": ["N5", "N2", "N4"], "weight": 0.35},
+    {"from": "N0", "route": ["N5", "N2", "N4"], "weight": 0.20},
+    {"from": "N0", "route": ["N5", "N2_E", "N4"], "weight": 0.20},
+    {"from": "N5", "route": ["N2", "N1", "N6"], "weight": 0.20},
+    {"from": "N5", "route": ["N2_E", "N3", "N7"], "weight": 0.20},
     {"from": "N2", "route": ["N1", "N10", "N6"], "weight": 0.25},
-    {"from": "N4", "route": ["N2", "N3", "N11", "N7"], "weight": 0.25},
-    {"from": "N6", "route": ["N10", "N1", "N2", "N5", "N0"], "weight": 0.075},
-    {"from": "N7", "route": ["N11", "N3", "N2", "N5", "N0"], "weight": 0.075}
+    {"from": "N2", "route": ["N4", "N2_E", "N3"], "weight": 0.25},
+    {"from": "N2_E", "route": ["N3", "N11", "N7"], "weight": 0.25},
+    {"from": "N2_E", "route": ["N4", "N2", "N1"], "weight": 0.25},
+    {"from": "N4", "route": ["N2", "N5", "N0"], "weight": 0.20},
+    {"from": "N4", "route": ["N2_E", "N5", "N0"], "weight": 0.20},
+    {"from": "N1", "route": ["N10", "N6"], "weight": 0.30},
+    {"from": "N1", "route": ["N2", "N3", "N7"], "weight": 0.20},
+    {"from": "N3", "route": ["N11", "N7"], "weight": 0.30},
+    {"from": "N3", "route": ["N2_E", "N1", "N6"], "weight": 0.20}
   ],
-  "speed_range": [1.2, 1.6],
-  "duration_frames": 100,
-  "fps": 1.0,
+  "speed_range": [1.1, 1.5],
+  "duration_frames": 80,
+  "fps": 10.0,
   "render_frame_step": 1,
-  "density_profile": "moderate_corridor"
+  "density_profile": "commercial_peak"
 }

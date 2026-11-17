@@ -19,6 +19,7 @@ import random
 import argparse
 from typing import Dict, List, Any
 
+import numpy as np
 import bpy
 from mathutils import Vector
 
@@ -52,6 +53,9 @@ def parse_args():
     parser.add_argument("--mode", default="clean", choices=["clean", "cctv"], help="Render mode: clean (default, crystal-clear 3D) or cctv")
     parser.add_argument("--fps", type=float, default=None, help="Override simulation framerate (FPS)")
     parser.add_argument("--character-style", default="realistic", choices=["realistic", "capsule"], help="Pedestrian avatar model style")
+    parser.add_argument("--warmup-steps", type=int, default=60, help="Number of physics substeps to simulate prior to frame 0 to eliminate initial spawn clumping")
+    parser.add_argument("--skip-tracking", action="store_true", default=True, help="Skip line-of-sight ray-cast tracking and JSON annotation files during visual iterations")
+    parser.add_argument("--enable-tracking", dest="skip_tracking", action="store_false", help="Enable ground-truth JSON annotations and tracking calculations")
     return parser.parse_args(script_args)
 
 
@@ -71,12 +75,6 @@ def setup_agents(scenario: Dict[str, Any], floor_plan: Dict[str, Any], engine: S
     for i in range(num_agents):
         # Pick spawn node based on weights
         spawn_node_id = random.choices(spawn_keys, weights=spawn_weights, k=1)[0]
-        base_pos = nav_nodes[spawn_node_id]["pos"]
-        # Add jitter around spawn node
-        start_x = base_pos[0] + random.uniform(-1.0, 1.0)
-        start_y = base_pos[1] + random.uniform(-1.0, 1.0)
-        start_x = max(1.0, min(49.0, start_x))
-        start_y = max(1.0, min(29.0, start_y))
 
         # Select matching route
         matching_routes = [r for r in route_patterns if r["from"] == spawn_node_id]
@@ -88,8 +86,33 @@ def setup_agents(scenario: Dict[str, Any], floor_plan: Dict[str, Any], engine: S
             # Fallback route: wander to central corridor and food court
             route = ["N2", "N4"]
 
+        # Distribute pedestrians naturally along corridor paths rather than clustering at spawn nodes
+        full_path = [spawn_node_id] + route
+        num_segs = max(1, len(full_path) - 1)
+        seg_idx = random.randint(0, num_segs - 1)
+        t = random.uniform(0.05, 0.95)
+
+        nA_id = full_path[seg_idx]
+        nB_id = full_path[min(seg_idx + 1, len(full_path) - 1)]
+        pA = np.array(nav_nodes[nA_id]["pos"], dtype=np.float64)
+        pB = np.array(nav_nodes[nB_id]["pos"], dtype=np.float64)
+        interp_pos = (1.0 - t) * pA + t * pB
+
+        dir_vec = pB - pA
+        dir_len = np.linalg.norm(dir_vec)
+        if dir_len > 1e-4:
+            perp = np.array([-dir_vec[1], dir_vec[0]]) / dir_len
+            init_yaw = math.atan2(dir_vec[1], dir_vec[0])
+        else:
+            perp = np.array([0.0, 1.0])
+            init_yaw = 0.0
+
+        lateral_offset = random.uniform(-0.35, 0.35)
+        start_pt = interp_pos + perp * lateral_offset
+        start_x = float(max(1.5, min(48.5, start_pt[0])))
+        start_y = float(max(1.5, min(28.5, start_pt[1])))
+
         desired_speed = random.uniform(speed_range[0], speed_range[1])
-        lateral_offset = random.uniform(-0.4, 0.4)
 
         # 10% child, 90% adult
         is_child = (random.random() < 0.10)
@@ -107,6 +130,8 @@ def setup_agents(scenario: Dict[str, Any], floor_plan: Dict[str, Any], engine: S
             height=height,
             color_idx=color_idx
         )
+        ped.route_idx = min(seg_idx, len(route) - 1)
+        ped.yaw_radians = init_yaw
         engine.add_agent(ped)
 
         agents_init_data.append({
@@ -115,7 +140,7 @@ def setup_agents(scenario: Dict[str, Any], floor_plan: Dict[str, Any], engine: S
             "y": start_y,
             "height": height,
             "color_idx": color_idx,
-            "yaw": 0.0
+            "yaw": init_yaw
         })
 
     return agents_init_data
@@ -156,8 +181,30 @@ def main():
     engine = SocialForceEngine(nav_nodes, walls, obstacles)
     agents_init_data = setup_agents(scenario, floor_plan, engine)
 
+    # 2b. Warmup crowd dynamics to reach steady-state dispersion prior to rendering Frame 0
+    warmup_steps = getattr(args, 'warmup_steps', 60)
+    if warmup_steps > 0:
+        print(f"[*] Warming up crowd dynamics for {warmup_steps} physics substeps to establish natural dispersion...")
+        for _ in range(warmup_steps):
+            engine.step(dt=sub_dt)
+        # Sync initial Blender spawn coordinates with warm engine state
+        warm_states = {s["id"]: s for s in engine.get_agent_states()}
+        for a_init in agents_init_data:
+            aid = a_init["id"]
+            if aid in warm_states:
+                a_init["x"] = warm_states[aid]["x"]
+                a_init["y"] = warm_states[aid]["y"]
+                a_init["yaw"] = warm_states[aid]["yaw"]
+        print("[✓] Crowd warmup complete — pedestrians dispersed naturally throughout corridors.")
+
     # 3. Spawn 3D Humanoid Models in Blender Scene
     scene = bpy.context.scene
+
+    # Ensure camera mounting fixtures never occlude camera view frustums
+    for o in bpy.data.objects:
+        if any(k in o.name for k in ['Dome_', 'Mount_', 'LED_CAM', 'LED_']):
+            o.hide_render = True
+
     if args.character_style == "realistic":
         agent_models = spawn_realistic_crowd(scene, agents_init_data)
     else:
@@ -180,7 +227,8 @@ def main():
     # Prepare output directories
     os.makedirs(args.output, exist_ok=True)
     anno_dir = os.path.join(args.output, "annotations")
-    os.makedirs(anno_dir, exist_ok=True)
+    if not args.skip_tracking:
+        os.makedirs(anno_dir, exist_ok=True)
 
     cam_output_dirs = {}
     for c in selected_cams:
@@ -239,38 +287,42 @@ def main():
             if os.path.exists(raw_filepath) and raw_filepath != final_filepath:
                 os.remove(raw_filepath)
 
-            # Compute ground truth annotations & line-of-sight ray-cast occlusion culling
-            tracking = track_camera_crowd(scene, cam_obj, agent_models, zones, depsgraph=depsgraph)
-            frame_vis_counts.append(tracking["total_visible_count"])
+            # Compute ground truth annotations & line-of-sight ray-cast occlusion culling (if enabled)
+            if not args.skip_tracking:
+                tracking = track_camera_crowd(scene, cam_obj, agent_models, zones, depsgraph=depsgraph)
+                frame_vis_counts.append(tracking["total_visible_count"])
 
-            # Structure Annotation JSON Payload
-            annotation_record = {
-                "frame_id": frame_idx,
-                "timestamp_sec": round(frame_idx * frame_interval_sec, 3),
-                "camera_id": cam_name,
-                "image_path": os.path.relpath(final_filepath, args.output),
-                "image_width": tracking["image_width"],
-                "image_height": tracking["image_height"],
-                "render_mode": args.mode,
-                "total_visible_count": tracking["total_visible_count"],
-                "total_occluded_count": tracking["total_occluded_count"],
-                "frustum_count": tracking["frustum_count"],
-                "head_coordinates": tracking["visible_heads"],
-                "occluded_heads": tracking["occluded_heads"],
-                "zone_densities": tracking["zone_densities"],
-                "calibration": camera_calibrations[cam_name]
-            }
+                # Structure Annotation JSON Payload
+                annotation_record = {
+                    "frame_id": frame_idx,
+                    "timestamp_sec": round(frame_idx * frame_interval_sec, 3),
+                    "camera_id": cam_name,
+                    "image_path": os.path.relpath(final_filepath, args.output),
+                    "image_width": tracking["image_width"],
+                    "image_height": tracking["image_height"],
+                    "render_mode": args.mode,
+                    "total_visible_count": tracking["total_visible_count"],
+                    "total_occluded_count": tracking["total_occluded_count"],
+                    "frustum_count": tracking["frustum_count"],
+                    "head_coordinates": tracking["visible_heads"],
+                    "occluded_heads": tracking["occluded_heads"],
+                    "zone_densities": tracking["zone_densities"],
+                    "calibration": camera_calibrations[cam_name]
+                }
 
-            anno_file = os.path.join(anno_dir, f"{cam_name.lower().replace('-', '_')}_frame_{frame_idx:04d}.json")
-            with open(anno_file, "w") as af:
-                json.dump(annotation_record, af, indent=2)
+                anno_file = os.path.join(anno_dir, f"{cam_name.lower().replace('-', '_')}_frame_{frame_idx:04d}.json")
+                with open(anno_file, "w") as af:
+                    json.dump(annotation_record, af, indent=2)
 
         # Progress log
         if (frame_idx + 1) % 5 == 0 or frame_idx == 0 or (frame_idx + 1) == num_frames:
             elapsed = time.time() - start_time
             fps_speed = (frame_idx + 1) / max(elapsed, 0.001)
-            vis_str = ", ".join(f"{c.name}: {cnt}" for c, cnt in zip(selected_cams, frame_vis_counts))
-            print(f"[{frame_idx+1:03d}/{num_frames}] Progress | {fps_speed:.1f} sim-fps | Visible Heads ({vis_str})")
+            if frame_vis_counts:
+                vis_str = ", ".join(f"{c.name}: {cnt}" for c, cnt in zip(selected_cams, frame_vis_counts))
+                print(f"[{frame_idx+1:03d}/{num_frames}] Progress | {fps_speed:.2f} sim-fps | Visible Heads ({vis_str})")
+            else:
+                print(f"[{frame_idx+1:03d}/{num_frames}] Progress | {fps_speed:.2f} sim-fps | Rendered 4 views")
 
     # 6. Export Scenario Run Metadata
     elapsed_total = round(time.time() - start_time, 2)

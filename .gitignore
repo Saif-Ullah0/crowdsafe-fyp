@@ -13,6 +13,12 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
 # OS & Preview Output Files
 .DS_Store
 Thumbs.db

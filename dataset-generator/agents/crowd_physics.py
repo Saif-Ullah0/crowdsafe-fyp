@@ -104,6 +104,20 @@ class SocialForceEngine:
                 cx, cy = obs["position"][0], obs["position"][1]
                 radius = obs["radius"]
                 self._cyl_obstacles.append((np.array([cx, cy], dtype=np.float64), radius))
+            elif obs.get("type") == "box":
+                cx, cy = obs["position"][0], obs["position"][1]
+                sx, sy = obs["size"][0], obs["size"][1]
+                hx, hy = sx / 2.0, sy / 2.0
+                c1 = np.array([cx - hx, cy - hy], dtype=np.float64)
+                c2 = np.array([cx + hx, cy - hy], dtype=np.float64)
+                c3 = np.array([cx + hx, cy + hy], dtype=np.float64)
+                c4 = np.array([cx - hx, cy + hy], dtype=np.float64)
+                self._wall_segments.extend([
+                    (c1, c2),
+                    (c2, c3),
+                    (c3, c4),
+                    (c4, c1)
+                ])
 
         self.agents: List[PedestrianAgent] = []
 
@@ -142,10 +156,17 @@ class SocialForceEngine:
                 agent.route_idx += 1
                 new_target = agent.get_current_waypoint(self.nav_nodes)
                 if new_target is None:
-                    agent.reached_goal = True
-                    continue
-                diff = new_target - positions[i]
-                dist = np.linalg.norm(diff)
+                    # In continuous mall surveillance, shoppers loop or reverse their route to continue shopping
+                    if len(agent.route) > 1:
+                        agent.route = list(reversed(agent.route))
+                        agent.route_idx = 1
+                        new_target = agent.get_current_waypoint(self.nav_nodes)
+                    else:
+                        agent.reached_goal = True
+                        continue
+                if new_target is not None:
+                    diff = new_target - positions[i]
+                    dist = np.linalg.norm(diff)
 
             if dist > 1e-4:
                 e_dir = diff / dist
@@ -264,6 +285,37 @@ class SocialForceEngine:
         
         # Update positions
         new_positions = positions + new_velocities * dt
+
+        # Continuous collision clamp against all wall segments to guarantee zero tunneling
+        for i in range(num_agents):
+            p_new = new_positions[i]
+            r_i = radii[i] + 0.08  # safety buffer
+
+            for p1, p2 in self._wall_segments:
+                seg_vec = p2 - p1
+                seg_len_sq = np.dot(seg_vec, seg_vec)
+                if seg_len_sq < 1e-8:
+                    continue
+
+                t = np.clip(np.dot(p_new - p1, seg_vec) / seg_len_sq, 0.0, 1.0)
+                closest = p1 + t * seg_vec
+                diff = p_new - closest
+                dist = np.linalg.norm(diff)
+
+                if dist < r_i:
+                    if dist < 1e-4:
+                        n = np.array([-seg_vec[1], seg_vec[0]], dtype=np.float64)
+                        n_norm = np.linalg.norm(n)
+                        n = n / n_norm if n_norm > 1e-4 else np.array([0.0, 1.0], dtype=np.float64)
+                    else:
+                        n = diff / dist
+                    p_new = closest + n * r_i
+                    # Zero out velocity normal to obstacle
+                    v_dot_n = np.dot(new_velocities[i], n)
+                    if v_dot_n < 0:
+                        new_velocities[i] -= v_dot_n * n
+
+            new_positions[i] = p_new
 
         # Apply back to agent objects and calculate dynamic orientation & gait
         for idx, agent in enumerate(active_agents):
