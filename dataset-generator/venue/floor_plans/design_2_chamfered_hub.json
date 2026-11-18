@@ -2,14 +2,317 @@
   "venue_metadata": {
     "name": "Design 2: Chamfered Octagonal Central Hub",
     "architecture": "square_plus_walkway",
-    "description": "40m x 40m premium layout with 45\u00b0 chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into the corner suites.",
-    "coverage_proven_pct": 92.0
+    "description": "40m x 40m premium layout with 45\u00b0 chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into corner suites with ray-cast wall occlusion.",
+    "coverage_proven_pct": 91.0,
+    "raycast_wall_occlusion": true
   },
   "global_dimensions": {
     "width_m": 40.0,
     "depth_m": 40.0,
     "height_m": 4.5
   },
+  "walls": [
+    {
+      "name": "wall_000",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_001",
+      "start": [
+        26.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_002",
+      "start": [
+        0.0,
+        40.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_003",
+      "start": [
+        26.0,
+        40.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_004",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_005",
+      "start": [
+        0.0,
+        26.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_006",
+      "start": [
+        40.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_007",
+      "start": [
+        40.0,
+        26.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_008",
+      "start": [
+        14.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        10.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_009",
+      "start": [
+        14.0,
+        10.5,
+        0.0
+      ],
+      "end": [
+        10.5,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_010",
+      "start": [
+        10.5,
+        14.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_011",
+      "start": [
+        26.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        26.0,
+        10.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_012",
+      "start": [
+        26.0,
+        10.5,
+        0.0
+      ],
+      "end": [
+        29.5,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_013",
+      "start": [
+        29.5,
+        14.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_014",
+      "start": [
+        0.0,
+        26.0,
+        0.0
+      ],
+      "end": [
+        10.5,
+        26.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_015",
+      "start": [
+        10.5,
+        26.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        29.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_016",
+      "start": [
+        14.0,
+        29.5,
+        0.0
+      ],
+      "end": [
+        14.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_017",
+      "start": [
+        29.5,
+        26.0,
+        0.0
+      ],
+      "end": [
+        40.0,
+        26.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_018",
+      "start": [
+        26.0,
+        29.5,
+        0.0
+      ],
+      "end": [
+        29.5,
+        26.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_019",
+      "start": [
+        26.0,
+        29.5,
+        0.0
+      ],
+      "end": [
+        26.0,
+        40.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    }
+  ],
   "zones": {
     "zone_walkway_plus": {
       "name": "Plus Shaped Public Walkway",
@@ -445,7 +748,7 @@
       ],
       "look_at": [
         20.0,
-        24.0,
+        22.0,
         1.2
       ],
       "focal_length_mm": 4.5,
@@ -465,7 +768,7 @@
       ],
       "look_at": [
         20.0,
-        16.0,
+        18.0,
         1.2
       ],
       "focal_length_mm": 4.5,
@@ -484,7 +787,7 @@
         4.8
       ],
       "look_at": [
-        24.0,
+        22.0,
         20.0,
         1.2
       ],
@@ -504,7 +807,7 @@
         4.8
       ],
       "look_at": [
-        16.0,
+        18.0,
         20.0,
         1.2
       ],
@@ -517,16 +820,65 @@
     }
   ],
   "coverage_metrics": {
-    "total_pts": 13352,
-    "covered_pts": 12288,
-    "coverage_pct": 92.0,
-    "overlap_pct": 82.1,
+    "total_pts": 13448,
+    "covered_pts": 12240,
+    "coverage_pct": 91.0,
+    "overlap_pct": 66.5,
     "individual_pcts": [
-      72.3,
-      71.8,
-      72.3,
-      71.8
+      64.0,
+      64.0,
+      64.1,
+      63.9
     ],
-    "grid_resolution_m": 0.25
+    "optics": [
+      {
+        "cx": 20.0,
+        "cy": 0.6,
+        "cz": 4.8,
+        "heading": 1.5707963267948966,
+        "half_hfov": 0.6009657817936686,
+        "d_min": 6.0,
+        "max_range": 38.0,
+        "tilt_deg": 9.549133928735928,
+        "hfov_deg": 68.86560585711435,
+        "vfov_deg": 53.638265581938455
+      },
+      {
+        "cx": 20.0,
+        "cy": 39.4,
+        "cz": 4.8,
+        "heading": -1.5707963267948966,
+        "half_hfov": 0.6009657817936686,
+        "d_min": 6.0,
+        "max_range": 38.0,
+        "tilt_deg": 9.549133928735928,
+        "hfov_deg": 68.86560585711435,
+        "vfov_deg": 53.638265581938455
+      },
+      {
+        "cx": 0.6,
+        "cy": 20.0,
+        "cz": 4.8,
+        "heading": 0.0,
+        "half_hfov": 0.6009657817936686,
+        "d_min": 6.0,
+        "max_range": 38.0,
+        "tilt_deg": 9.549133928735928,
+        "hfov_deg": 68.86560585711435,
+        "vfov_deg": 53.638265581938455
+      },
+      {
+        "cx": 39.4,
+        "cy": 20.0,
+        "cz": 4.8,
+        "heading": 3.141592653589793,
+        "half_hfov": 0.6009657817936686,
+        "d_min": 6.0,
+        "max_range": 38.0,
+        "tilt_deg": 9.549133928735928,
+        "hfov_deg": 68.86560585711435,
+        "vfov_deg": 53.638265581938455
+      }
+    ]
   }
 }

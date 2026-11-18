@@ -2,14 +2,257 @@
   "venue_metadata": {
     "name": "Design 3: Commercial Retail Arcade with Vitrines",
     "architecture": "square_plus_walkway",
-    "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, and inward-swinging commercial glass doors.",
-    "coverage_proven_pct": 96.5
+    "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, inward-swinging commercial glass doors, and wall-clipped camera beams.",
+    "coverage_proven_pct": 96.0,
+    "raycast_wall_occlusion": true
   },
   "global_dimensions": {
     "width_m": 34.0,
     "depth_m": 34.0,
     "height_m": 4.5
   },
+  "walls": [
+    {
+      "name": "wall_000",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        12.5,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_001",
+      "start": [
+        21.5,
+        0.0,
+        0.0
+      ],
+      "end": [
+        34.0,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_002",
+      "start": [
+        0.0,
+        34.0,
+        0.0
+      ],
+      "end": [
+        12.5,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_003",
+      "start": [
+        21.5,
+        34.0,
+        0.0
+      ],
+      "end": [
+        34.0,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_004",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_005",
+      "start": [
+        0.0,
+        21.5,
+        0.0
+      ],
+      "end": [
+        0.0,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_006",
+      "start": [
+        34.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        34.0,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_007",
+      "start": [
+        34.0,
+        21.5,
+        0.0
+      ],
+      "end": [
+        34.0,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_008",
+      "start": [
+        12.5,
+        0.0,
+        0.0
+      ],
+      "end": [
+        12.5,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_009",
+      "start": [
+        0.0,
+        12.5,
+        0.0
+      ],
+      "end": [
+        12.5,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_010",
+      "start": [
+        21.5,
+        0.0,
+        0.0
+      ],
+      "end": [
+        21.5,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_011",
+      "start": [
+        21.5,
+        12.5,
+        0.0
+      ],
+      "end": [
+        34.0,
+        12.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_012",
+      "start": [
+        0.0,
+        21.5,
+        0.0
+      ],
+      "end": [
+        12.5,
+        21.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_013",
+      "start": [
+        12.5,
+        21.5,
+        0.0
+      ],
+      "end": [
+        12.5,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_014",
+      "start": [
+        21.5,
+        21.5,
+        0.0
+      ],
+      "end": [
+        34.0,
+        21.5,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_015",
+      "start": [
+        21.5,
+        21.5,
+        0.0
+      ],
+      "end": [
+        21.5,
+        34.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    }
+  ],
   "zones": {
     "zone_walkway_plus": {
       "name": "Plus Shaped Public Walkway",
@@ -413,7 +656,7 @@
       ],
       "look_at": [
         17.0,
-        20.0,
+        18.0,
         1.2
       ],
       "focal_length_mm": 5.2,
@@ -433,7 +676,7 @@
       ],
       "look_at": [
         17.0,
-        14.0,
+        16.0,
         1.2
       ],
       "focal_length_mm": 5.2,
@@ -452,7 +695,7 @@
         4.2
       ],
       "look_at": [
-        20.0,
+        18.0,
         17.0,
         1.2
       ],
@@ -472,7 +715,7 @@
         4.2
       ],
       "look_at": [
-        14.0,
+        16.0,
         17.0,
         1.2
       ],
@@ -485,16 +728,65 @@
     }
   ],
   "coverage_metrics": {
-    "total_pts": 8424,
-    "covered_pts": 8128,
-    "coverage_pct": 96.5,
-    "overlap_pct": 75.7,
+    "total_pts": 8496,
+    "covered_pts": 8152,
+    "coverage_pct": 96.0,
+    "overlap_pct": 56.4,
     "individual_pcts": [
-      68.0,
-      67.5,
-      68.0,
-      67.5
+      51.4,
+      51.4,
+      51.4,
+      51.4
     ],
-    "grid_resolution_m": 0.25
+    "optics": [
+      {
+        "cx": 17.0,
+        "cy": 0.5,
+        "cz": 4.2,
+        "heading": 1.5707963267948966,
+        "half_hfov": 0.5354557061220118,
+        "d_min": 6.0,
+        "max_range": 33.0,
+        "tilt_deg": 9.727578551401603,
+        "hfov_deg": 61.35870415397718,
+        "vfov_deg": 47.25875546131363
+      },
+      {
+        "cx": 17.0,
+        "cy": 33.5,
+        "cz": 4.2,
+        "heading": -1.5707963267948966,
+        "half_hfov": 0.5354557061220118,
+        "d_min": 6.0,
+        "max_range": 33.0,
+        "tilt_deg": 9.727578551401603,
+        "hfov_deg": 61.35870415397718,
+        "vfov_deg": 47.25875546131363
+      },
+      {
+        "cx": 0.5,
+        "cy": 17.0,
+        "cz": 4.2,
+        "heading": 0.0,
+        "half_hfov": 0.5354557061220118,
+        "d_min": 6.0,
+        "max_range": 33.0,
+        "tilt_deg": 9.727578551401603,
+        "hfov_deg": 61.35870415397718,
+        "vfov_deg": 47.25875546131363
+      },
+      {
+        "cx": 33.5,
+        "cy": 17.0,
+        "cz": 4.2,
+        "heading": 3.141592653589793,
+        "half_hfov": 0.5354557061220118,
+        "d_min": 6.0,
+        "max_range": 33.0,
+        "tilt_deg": 9.727578551401603,
+        "hfov_deg": 61.35870415397718,
+        "vfov_deg": 47.25875546131363
+      }
+    ]
   }
 }
