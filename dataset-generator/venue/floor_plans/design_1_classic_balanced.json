@@ -3,7 +3,7 @@
     "name": "Design 1: Classic Balanced Cross Concourse",
     "architecture": "square_plus_walkway",
     "description": "Harmonious 1:1:1 proportion with four equal 144 m\u00b2 retail rooms, a 12m wide plus walkway, inward doors, and 4 high-elevation dome cameras with ray-cast wall occlusion.",
-    "coverage_proven_pct": 95.6,
+    "coverage_proven_pct": 80.7,
     "raycast_wall_occlusion": true
   },
   "global_dimensions": {
@@ -656,13 +656,16 @@
       ],
       "look_at": [
         18.0,
-        20.0,
+        5.0,
         1.2
       ],
-      "focal_length_mm": 5.0,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 35.0,
+      "max_range_m": 19.5,
+      "perp_axis": "y",
+      "perp_dir": "+",
+      "perp_val": 19.5,
       "color": "#00E5FF",
       "mount": "Over South Main Exit Portal"
     },
@@ -676,13 +679,16 @@
       ],
       "look_at": [
         18.0,
-        16.0,
+        31.0,
         1.2
       ],
-      "focal_length_mm": 5.0,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 35.0,
+      "max_range_m": 19.5,
+      "perp_axis": "y",
+      "perp_dir": "-",
+      "perp_val": 16.5,
       "color": "#76FF03",
       "mount": "Over North Transit Exit Portal"
     },
@@ -695,14 +701,17 @@
         4.5
       ],
       "look_at": [
-        20.0,
+        5.0,
         18.0,
         1.2
       ],
-      "focal_length_mm": 5.0,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 35.0,
+      "max_range_m": 19.5,
+      "perp_axis": "x",
+      "perp_dir": "+",
+      "perp_val": 19.5,
       "color": "#FFD600",
       "mount": "Over West Corridor Exit Portal"
     },
@@ -715,28 +724,31 @@
         4.5
       ],
       "look_at": [
-        16.0,
+        31.0,
         18.0,
         1.2
       ],
-      "focal_length_mm": 5.0,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 35.0,
+      "max_range_m": 19.5,
+      "perp_axis": "x",
+      "perp_dir": "-",
+      "perp_val": 16.5,
       "color": "#FF3D00",
       "mount": "Over East Retail Exit Portal"
     }
   ],
   "coverage_metrics": {
     "total_pts": 11520,
-    "covered_pts": 11008,
-    "coverage_pct": 95.6,
-    "overlap_pct": 58.4,
+    "covered_pts": 9296,
+    "coverage_pct": 80.7,
+    "overlap_pct": 30.3,
     "individual_pcts": [
-      57.6,
-      57.6,
-      57.6,
-      57.6
+      30.6,
+      30.6,
+      30.6,
+      30.6
     ],
     "optics": [
       {
@@ -744,48 +756,60 @@
         "cy": 0.5,
         "cz": 4.5,
         "heading": 1.5707963267948966,
-        "half_hfov": 0.5528258116099538,
-        "d_min": 6.0,
-        "max_range": 35.0,
-        "tilt_deg": 9.605204155012945,
-        "hfov_deg": 63.3491716222894,
-        "vfov_deg": 48.93107022132549
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.8159851301115238,
+        "max_range": 19.5,
+        "tilt_deg": 36.25383773744479,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "+",
+        "perp_val": 19.5
       },
       {
         "cx": 18.0,
         "cy": 35.5,
         "cz": 4.5,
         "heading": -1.5707963267948966,
-        "half_hfov": 0.5528258116099538,
-        "d_min": 6.0,
-        "max_range": 35.0,
-        "tilt_deg": 9.605204155012945,
-        "hfov_deg": 63.3491716222894,
-        "vfov_deg": 48.93107022132549
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.8159851301115238,
+        "max_range": 19.5,
+        "tilt_deg": 36.25383773744479,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "-",
+        "perp_val": 16.5
       },
       {
         "cx": 0.5,
         "cy": 18.0,
         "cz": 4.5,
         "heading": 0.0,
-        "half_hfov": 0.5528258116099538,
-        "d_min": 6.0,
-        "max_range": 35.0,
-        "tilt_deg": 9.605204155012945,
-        "hfov_deg": 63.3491716222894,
-        "vfov_deg": 48.93107022132549
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.8159851301115238,
+        "max_range": 19.5,
+        "tilt_deg": 36.25383773744479,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "+",
+        "perp_val": 19.5
       },
       {
         "cx": 35.5,
         "cy": 18.0,
         "cz": 4.5,
         "heading": 3.141592653589793,
-        "half_hfov": 0.5528258116099538,
-        "d_min": 6.0,
-        "max_range": 35.0,
-        "tilt_deg": 9.605204155012945,
-        "hfov_deg": 63.3491716222894,
-        "vfov_deg": 48.93107022132549
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.8159851301115238,
+        "max_range": 19.5,
+        "tilt_deg": 36.25383773744479,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "-",
+        "perp_val": 16.5
       }
     ]
   }

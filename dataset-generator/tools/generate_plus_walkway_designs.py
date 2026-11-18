@@ -62,7 +62,8 @@ def compute_realistic_visibility_polygon(
     f_mm = cam.get("focal_length_mm", 5.0)
     sw_mm = cam.get("sensor_width_mm", 6.17)
     sh_mm = cam.get("sensor_height_mm", 4.55)
-    max_range = cam.get("max_range_m", 36.0)
+    # Reduced realistic effective range to maintain crisp DORI image quality without pixelation
+    max_range = float(cam.get("max_range_m", 19.5))
 
     dx = lx - cx
     dy = ly - cy
@@ -85,7 +86,12 @@ def compute_realistic_visibility_polygon(
         d_min = cz / math.tan(bottom_angle)
     else:
         d_min = 1.0
-    d_min = max(0.5, min(d_min, 6.0))
+    d_min = max(0.5, min(d_min, 5.0))
+
+    # Perpendicular cutoff line across walkway
+    perp_axis = cam.get("perp_axis")
+    perp_dir = cam.get("perp_dir")
+    perp_val = cam.get("perp_val")
 
     theta_start = heading - half_hfov
     theta_end = heading + half_hfov
@@ -110,6 +116,7 @@ def compute_realistic_visibility_polygon(
         rdy = math.sin(ang)
 
         closest_t = max_range
+        # 1. Wall check
         for (wx1, wy1), (wx2, wy2) in wall_segments:
             denom = rdx * (wy2 - wy1) - rdy * (wx2 - wx1)
             if abs(denom) < 1e-8:
@@ -119,6 +126,18 @@ def compute_realistic_visibility_polygon(
             if t > 0.05 and 0.0 <= u <= 1.0:
                 if t < closest_t:
                     closest_t = t
+
+        # 2. Perpendicular line check (no crossing perpendicular walkway)
+        if perp_axis == 'y' and abs(rdy) > 1e-5 and perp_val is not None:
+            t_perp = (perp_val - cy) / rdy
+            if t_perp > 0.05 and t_perp < closest_t:
+                if (perp_dir == '+' and rdy > 0) or (perp_dir == '-' and rdy < 0):
+                    closest_t = t_perp
+        elif perp_axis == 'x' and abs(rdx) > 1e-5 and perp_val is not None:
+            t_perp = (perp_val - cx) / rdx
+            if t_perp > 0.05 and t_perp < closest_t:
+                if (perp_dir == '+' and rdx > 0) or (perp_dir == '-' and rdx < 0):
+                    closest_t = t_perp
 
         t_far = closest_t
         t_near = min(closest_t, d_min)
@@ -176,7 +195,10 @@ def calculate_grid_coverage_with_walls(
             "max_range": max_range,
             "tilt_deg": math.degrees(tilt_rad),
             "hfov_deg": math.degrees(hfov_rad),
-            "vfov_deg": math.degrees(vfov_rad)
+            "vfov_deg": math.degrees(vfov_rad),
+            "perp_axis": c.get("perp_axis"),
+            "perp_dir": c.get("perp_dir"),
+            "perp_val": c.get("perp_val")
         })
 
     # Point in polygon test
@@ -219,6 +241,21 @@ def calculate_grid_coverage_with_walls(
                 # Nadir blind spot & max range check
                 if dist < opt["d_min"] or dist > opt["max_range"]:
                     continue
+
+                # Perpendicular line cutoff check (no crossing perpendicular corridor)
+                perp_axis = opt.get("perp_axis")
+                perp_dir = opt.get("perp_dir")
+                perp_val = opt.get("perp_val")
+                if perp_axis == 'y' and perp_val is not None:
+                    if perp_dir == '+' and py > perp_val:
+                        continue
+                    elif perp_dir == '-' and py < perp_val:
+                        continue
+                elif perp_axis == 'x' and perp_val is not None:
+                    if perp_dir == '+' and px > perp_val:
+                        continue
+                    elif perp_dir == '-' and px < perp_val:
+                        continue
 
                 # Angle check within horizontal FOV
                 pt_ang = math.atan2(py - cy, px - cx)
@@ -306,11 +343,14 @@ def build_design_1():
             "camera_id": "CAM-S",
             "name": "South Exit Surveillance Dome",
             "position": [18.0, 0.5, 4.5],
-            "look_at": [18.0, 20.0, 1.2],
-            "focal_length_mm": 5.0,
+            "look_at": [18.0, 5.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 35.0,
+            "max_range_m": 19.5,
+            "perp_axis": "y",
+            "perp_dir": "+",
+            "perp_val": 19.5,
             "color": "#00E5FF",
             "mount": "Over South Main Exit Portal"
         },
@@ -318,11 +358,14 @@ def build_design_1():
             "camera_id": "CAM-N",
             "name": "North Exit Surveillance Dome",
             "position": [18.0, 35.5, 4.5],
-            "look_at": [18.0, 16.0, 1.2],
-            "focal_length_mm": 5.0,
+            "look_at": [18.0, 31.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 35.0,
+            "max_range_m": 19.5,
+            "perp_axis": "y",
+            "perp_dir": "-",
+            "perp_val": 16.5,
             "color": "#76FF03",
             "mount": "Over North Transit Exit Portal"
         },
@@ -330,11 +373,14 @@ def build_design_1():
             "camera_id": "CAM-W",
             "name": "West Exit Surveillance Dome",
             "position": [0.5, 18.0, 4.5],
-            "look_at": [20.0, 18.0, 1.2],
-            "focal_length_mm": 5.0,
+            "look_at": [5.0, 18.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 35.0,
+            "max_range_m": 19.5,
+            "perp_axis": "x",
+            "perp_dir": "+",
+            "perp_val": 19.5,
             "color": "#FFD600",
             "mount": "Over West Corridor Exit Portal"
         },
@@ -342,11 +388,14 @@ def build_design_1():
             "camera_id": "CAM-E",
             "name": "East Exit Surveillance Dome",
             "position": [35.5, 18.0, 4.5],
-            "look_at": [16.0, 18.0, 1.2],
-            "focal_length_mm": 5.0,
+            "look_at": [31.0, 18.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 35.0,
+            "max_range_m": 19.5,
+            "perp_axis": "x",
+            "perp_dir": "-",
+            "perp_val": 16.5,
             "color": "#FF3D00",
             "mount": "Over East Retail Exit Portal"
         }
@@ -450,11 +499,14 @@ def build_design_2():
             "camera_id": "CAM-S",
             "name": "South Grand Portal Camera",
             "position": [20.0, 0.6, 4.8],
-            "look_at": [20.0, 22.0, 1.2],
-            "focal_length_mm": 4.5,
+            "look_at": [20.0, 5.1, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 38.0,
+            "max_range_m": 21.5,
+            "perp_axis": "y",
+            "perp_dir": "+",
+            "perp_val": 21.5,
             "color": "#00E5FF",
             "mount": "Over South Grand Entrance Header"
         },
@@ -462,11 +514,14 @@ def build_design_2():
             "camera_id": "CAM-N",
             "name": "North Galleria Portal Camera",
             "position": [20.0, 39.4, 4.8],
-            "look_at": [20.0, 18.0, 1.2],
-            "focal_length_mm": 4.5,
+            "look_at": [20.0, 34.9, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 38.0,
+            "max_range_m": 21.5,
+            "perp_axis": "y",
+            "perp_dir": "-",
+            "perp_val": 18.5,
             "color": "#76FF03",
             "mount": "Over North Galleria Exit Header"
         },
@@ -474,11 +529,14 @@ def build_design_2():
             "camera_id": "CAM-W",
             "name": "West Boulevard Portal Camera",
             "position": [0.6, 20.0, 4.8],
-            "look_at": [22.0, 20.0, 1.2],
-            "focal_length_mm": 4.5,
+            "look_at": [5.1, 20.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 38.0,
+            "max_range_m": 21.5,
+            "perp_axis": "x",
+            "perp_dir": "+",
+            "perp_val": 21.5,
             "color": "#FFD600",
             "mount": "Over West Boulevard Exit Header"
         },
@@ -486,11 +544,14 @@ def build_design_2():
             "camera_id": "CAM-E",
             "name": "East Esplanade Portal Camera",
             "position": [39.4, 20.0, 4.8],
-            "look_at": [18.0, 20.0, 1.2],
-            "focal_length_mm": 4.5,
+            "look_at": [34.9, 20.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 38.0,
+            "max_range_m": 21.5,
+            "perp_axis": "x",
+            "perp_dir": "-",
+            "perp_val": 18.5,
             "color": "#FF3D00",
             "mount": "Over East Esplanade Exit Header"
         }
@@ -582,11 +643,14 @@ def build_design_3():
             "camera_id": "CAM-S",
             "name": "South Arcade Camera",
             "position": [17.0, 0.5, 4.2],
-            "look_at": [17.0, 18.0, 1.2],
-            "focal_length_mm": 5.2,
+            "look_at": [17.0, 5.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 33.0,
+            "max_range_m": 18.5,
+            "perp_axis": "y",
+            "perp_dir": "+",
+            "perp_val": 18.5,
             "color": "#00E5FF",
             "mount": "Over South Arcade Exit Portal"
         },
@@ -594,11 +658,14 @@ def build_design_3():
             "camera_id": "CAM-N",
             "name": "North Arcade Camera",
             "position": [17.0, 33.5, 4.2],
-            "look_at": [17.0, 16.0, 1.2],
-            "focal_length_mm": 5.2,
+            "look_at": [17.0, 29.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 33.0,
+            "max_range_m": 18.5,
+            "perp_axis": "y",
+            "perp_dir": "-",
+            "perp_val": 15.5,
             "color": "#76FF03",
             "mount": "Over North Arcade Exit Portal"
         },
@@ -606,11 +673,14 @@ def build_design_3():
             "camera_id": "CAM-W",
             "name": "West Promenade Camera",
             "position": [0.5, 17.0, 4.2],
-            "look_at": [18.0, 17.0, 1.2],
-            "focal_length_mm": 5.2,
+            "look_at": [5.0, 17.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 33.0,
+            "max_range_m": 18.5,
+            "perp_axis": "x",
+            "perp_dir": "+",
+            "perp_val": 18.5,
             "color": "#FFD600",
             "mount": "Over West Promenade Exit Portal"
         },
@@ -618,11 +688,14 @@ def build_design_3():
             "camera_id": "CAM-E",
             "name": "East Promenade Camera",
             "position": [33.5, 17.0, 4.2],
-            "look_at": [16.0, 17.0, 1.2],
-            "focal_length_mm": 5.2,
+            "look_at": [29.0, 17.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 33.0,
+            "max_range_m": 18.5,
+            "perp_axis": "x",
+            "perp_dir": "-",
+            "perp_val": 15.5,
             "color": "#FF3D00",
             "mount": "Over East Promenade Exit Portal"
         }
@@ -714,11 +787,14 @@ def build_design_4():
             "camera_id": "CAM-S",
             "name": "South Turnstile Gate Camera",
             "position": [19.0, 0.6, 4.6],
-            "look_at": [19.0, 20.0, 1.2],
-            "focal_length_mm": 4.8,
+            "look_at": [19.0, 5.1, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 36.0,
+            "max_range_m": 20.5,
+            "perp_axis": "y",
+            "perp_dir": "+",
+            "perp_val": 20.5,
             "color": "#00E5FF",
             "mount": "Over South Turnstile Gate Header"
         },
@@ -726,11 +802,14 @@ def build_design_4():
             "camera_id": "CAM-N",
             "name": "North Turnstile Gate Camera",
             "position": [19.0, 37.4, 4.6],
-            "look_at": [19.0, 18.0, 1.2],
-            "focal_length_mm": 4.8,
+            "look_at": [19.0, 32.9, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 36.0,
+            "max_range_m": 20.5,
+            "perp_axis": "y",
+            "perp_dir": "-",
+            "perp_val": 17.5,
             "color": "#76FF03",
             "mount": "Over North Turnstile Gate Header"
         },
@@ -738,11 +817,14 @@ def build_design_4():
             "camera_id": "CAM-W",
             "name": "West Transit Gate Camera",
             "position": [0.6, 19.0, 4.6],
-            "look_at": [20.0, 19.0, 1.2],
-            "focal_length_mm": 4.8,
+            "look_at": [5.1, 19.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 36.0,
+            "max_range_m": 20.5,
+            "perp_axis": "x",
+            "perp_dir": "+",
+            "perp_val": 20.5,
             "color": "#FFD600",
             "mount": "Over West Transit Gate Header"
         },
@@ -750,11 +832,14 @@ def build_design_4():
             "camera_id": "CAM-E",
             "name": "East Transit Gate Camera",
             "position": [37.4, 19.0, 4.6],
-            "look_at": [18.0, 19.0, 1.2],
-            "focal_length_mm": 4.8,
+            "look_at": [32.9, 19.0, 1.2],
+            "focal_length_mm": 2.4,
             "sensor_width_mm": 6.17,
             "sensor_height_mm": 4.55,
-            "max_range_m": 36.0,
+            "max_range_m": 20.5,
+            "perp_axis": "x",
+            "perp_dir": "-",
+            "perp_val": 17.5,
             "color": "#FF3D00",
             "mount": "Over East Transit Gate Header"
         }
@@ -866,6 +951,18 @@ def render_svg_cad(design):
 
         blind_arc_d = f"M {tx(cpos[0])} {ty(cpos[1])} L {tx(p_b1_x)} {ty(p_b1_y)} A {d_min*scale} {d_min*scale} 0 0 0 {tx(p_b2_x)} {ty(p_b2_y)} Z"
         svg.append(f'<path d="{blind_arc_d}" fill="#ff3838" fill-opacity="0.25" stroke="#ff3838" stroke-width="1.2" stroke-dasharray="2,2" class="nadir-blind-zone"/>')
+
+    # 2b. Draw Perpendicular Handover Lines across the plus walkway
+    mid = W / 2.0
+    cw = design["corridor_width_m"]
+    rw = (W - cw) / 2.0
+    svg.append(f'<!-- Perpendicular Corridor Optical Boundaries -->')
+    svg.append(f'<line x1="{tx(rw)}" y1="{ty(mid-1.5)}" x2="{tx(rw+cw)}" y2="{ty(mid-1.5)}" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>')
+    svg.append(f'<line x1="{tx(rw)}" y1="{ty(mid+1.5)}" x2="{tx(rw+cw)}" y2="{ty(mid+1.5)}" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>')
+    svg.append(f'<line x1="{tx(mid-1.5)}" y1="{ty(rw)}" x2="{tx(mid-1.5)}" y2="{ty(rw+cw)}" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>')
+    svg.append(f'<line x1="{tx(mid+1.5)}" y1="{ty(rw)}" x2="{tx(mid+1.5)}" y2="{ty(rw+cw)}" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>')
+    svg.append(f'<rect x="{tx(mid)-85}" y="{ty(mid)-11}" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>')
+    svg.append(f'<text x="{tx(mid)}" y="{ty(mid)+4}" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>')
 
     # 3. Draw Solid Walls
     for (x1, y1), (x2, y2) in wall_segs:
@@ -1132,30 +1229,38 @@ def generate_showcase_html(designs):
       </div>
     </div>
 
-    <!-- Real-Life CCTV vs. Naive Triangles Explainer -->
-    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Real-Life CCTV Principles Explainer -->
+    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="space-y-1.5">
-        <div class="text-xs font-mono font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span> 1. Real 3D Frustum vs. 2D Triangle
+        <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> 1. Reduced Power / Range
         </div>
         <p class="text-xs text-slate-300 leading-relaxed">
-          Cameras are mounted at <strong>4.2m - 4.8m ceiling elevation</strong> angled downward at 28° - 32° tilt. The 3D rectangular pyramid projects a perspective trapezoid onto the floor with horizontal (HFOV) and vertical (VFOV) boundaries.
+          In real CCTV, ranges are capped to <strong>18.5m - 21.5m</strong>. Shooting 36m+ across the building severely degrades pixel density (DORI standard), causing blurry/poor images.
+        </p>
+      </div>
+      <div class="space-y-1.5">
+        <div class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 inline-block"></span> 2. Perpendicular Line Boundary
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Cameras do <strong>not cross the perpendicular line</strong> of the public walkway. Each exit dome monitors its own wing up to the central junction, where it hands off tracking seamlessly with a 3m handover zone.
         </p>
       </div>
       <div class="space-y-1.5">
         <div class="text-xs font-mono font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-rose-400 inline-block"></span> 2. Nadir Blind Spot Under Mount
+          <span class="w-2 h-2 rounded-full bg-rose-400 inline-block"></span> 3. Nadir Blind Spot
         </div>
         <p class="text-xs text-slate-300 leading-relaxed">
-          Because of downward tilt limits, there is a physical <strong>dead zone of 2.8m - 3.2m</strong> directly beneath each camera where heads cannot be captured. This is clearly drawn and accounted for in our coverage integrals.
+          Because of 32° - 36° downward tilt and 4.2m - 4.8m ceiling mount, there is an authentic <strong>1.8m - 2.1m dead zone</strong> directly beneath each camera header before the optical frustum hits the floor.
         </p>
       </div>
       <div class="space-y-1.5">
         <div class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> 3. Strict Wall Occlusion (Zero Leakage)
+          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> 4. Strict Wall Occlusion
         </div>
         <p class="text-xs text-slate-300 leading-relaxed">
-          Unlike naive 2D wedges, every optical ray undergoes <strong>ray-casting against all wall segments</strong>. Rays terminate on wall surfaces with zero penetration into corner rooms, casting natural architectural corner shadows.
+          Every optical ray undergoes <strong>ray-casting against solid walls</strong>. Rays terminate immediately upon wall contact with zero penetration into corner rooms.
         </p>
       </div>
     </div>
@@ -1167,6 +1272,9 @@ def generate_showcase_html(designs):
       <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">CAD Display Layers:</span>
       <button onclick="toggleLayer('fov-cone')" id="btn-fov" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow">
         ✓ Ray-Cast Visibility Polygons
+      </button>
+      <button onclick="toggleLayer('perp-line')" id="btn-perp" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors shadow">
+        ✓ Perpendicular Handover Lines
       </button>
       <button onclick="toggleLayer('nadir-blind-zone')" id="btn-blind" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-rose-600 text-white hover:bg-rose-500 transition-colors shadow">
         ✓ Nadir Blind Zones
@@ -1369,6 +1477,10 @@ def generate_showcase_html(designs):
         const btn = document.getElementById('btn-fov');
         btn.textContent = isVisible ? '✓ Ray-Cast Visibility Polygons' : '✗ Ray-Cast Visibility Polygons';
         btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
+      } else if (layerClass === 'perp-line') {
+        const btn = document.getElementById('btn-perp');
+        btn.textContent = isVisible ? '✓ Perpendicular Handover Lines' : '✗ Perpendicular Handover Lines';
+        btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
       } else if (layerClass === 'nadir-blind-zone') {
         const btn = document.getElementById('btn-blind');
         btn.textContent = isVisible ? '✓ Nadir Blind Zones' : '✗ Nadir Blind Zones';

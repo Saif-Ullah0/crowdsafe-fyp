@@ -59,7 +59,8 @@ def compute_raycast_visibility_polygon(
     f_mm = cam.get("focal_length_mm", 5.0)
     sw_mm = cam.get("sensor_width_mm", 6.17)
     sh_mm = cam.get("sensor_height_mm", 4.55)
-    max_range = cam.get("max_range_m", 36.0)
+    # Reduced realistic effective range to maintain crisp DORI image quality without pixelation
+    max_range = float(cam.get("max_range_m", 19.5))
 
     dx = lx - cx
     dy = ly - cy
@@ -82,7 +83,12 @@ def compute_raycast_visibility_polygon(
         d_min = cz / math.tan(bottom_angle)
     else:
         d_min = 1.0
-    d_min = max(0.5, min(d_min, 6.0))
+    d_min = max(0.5, min(d_min, 5.0))
+
+    # Perpendicular cutoff line across walkway (no crossing perpendicular corridor)
+    perp_axis = cam.get("perp_axis")
+    perp_dir = cam.get("perp_dir")
+    perp_val = cam.get("perp_val")
 
     theta_start = heading - half_hfov
     theta_end = heading + half_hfov
@@ -107,7 +113,7 @@ def compute_raycast_visibility_polygon(
         rdx = math.cos(ang)
         rdy = math.sin(ang)
 
-        # Intersect with all wall segments
+        # 1. Intersect with all wall segments
         closest_t = max_range
         for (wx1, wy1), (wx2, wy2) in wall_segments:
             denom = rdx * (wy2 - wy1) - rdy * (wx2 - wx1)
@@ -118,6 +124,18 @@ def compute_raycast_visibility_polygon(
             if t > 0.05 and 0.0 <= u <= 1.0:
                 if t < closest_t:
                     closest_t = t
+
+        # 2. Intersect with perpendicular line of public walkway (no crossing perpendicular corridor)
+        if perp_axis == 'y' and abs(rdy) > 1e-5 and perp_val is not None:
+            t_perp = (perp_val - cy) / rdy
+            if t_perp > 0.05 and t_perp < closest_t:
+                if (perp_dir == '+' and rdy > 0) or (perp_dir == '-' and rdy < 0):
+                    closest_t = t_perp
+        elif perp_axis == 'x' and abs(rdx) > 1e-5 and perp_val is not None:
+            t_perp = (perp_val - cx) / rdx
+            if t_perp > 0.05 and t_perp < closest_t:
+                if (perp_dir == '+' and rdx > 0) or (perp_dir == '-' and rdx < 0):
+                    closest_t = t_perp
 
         t_far = closest_t
         t_near = min(closest_t, d_min)
@@ -432,6 +450,34 @@ def draw_cad_floor_plan(
             bbox=dict(boxstyle="square,pad=0.35", facecolor='#FFFFFF', edgecolor=color, linewidth=1.5, alpha=0.95),
             arrowprops=dict(arrowstyle="->", color=color, lw=1.2, shrinkA=4, shrinkB=6)
         )
+
+    # 5b. Draw Perpendicular Handover Lines across public walkway
+    rw = None
+    for z_id, z_data in data.get("zones", {}).items():
+        if "room" in z_id.lower() or "room" in z_data.get("type", "").lower():
+            poly = z_data.get("polygon", [])
+            if poly:
+                xs = [p[0] for p in poly]
+                ys = [p[1] for p in poly]
+                if min(xs) == 0.0 and min(ys) == 0.0:
+                    rw = max(xs)
+                    break
+    if rw is None:
+        rw = W * 0.333
+    cw = W - 2.0 * rw
+
+    drawn_perps = set()
+    for cam in cameras:
+        p_axis = cam.get("perp_axis")
+        p_val = cam.get("perp_val")
+        if p_axis and p_val is not None:
+            key = (p_axis, round(p_val, 1))
+            if key not in drawn_perps:
+                drawn_perps.add(key)
+                if p_axis == 'y':
+                    ax.plot([rw, rw + cw], [p_val, p_val], color='#D97706', linestyle='--', linewidth=2.0, alpha=0.9, zorder=9)
+                elif p_axis == 'x':
+                    ax.plot([p_val, p_val], [rw, rw + cw], color='#D97706', linestyle='--', linewidth=2.0, alpha=0.9, zorder=9)
 
     # 6. Architectural Scale Bar (10 meters)
     scale_x0 = 3.0

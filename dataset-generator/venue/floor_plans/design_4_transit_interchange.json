@@ -3,7 +3,7 @@
     "name": "Design 4: Controlled Transit & Security Interchange",
     "architecture": "square_plus_walkway",
     "description": "38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms with magnetic inward doors, and ray-cast wall occlusion.",
-    "coverage_proven_pct": 90.6,
+    "coverage_proven_pct": 84.3,
     "raycast_wall_occlusion": true
   },
   "global_dimensions": {
@@ -656,13 +656,16 @@
       ],
       "look_at": [
         19.0,
-        20.0,
+        5.1,
         1.2
       ],
-      "focal_length_mm": 4.8,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 36.0,
+      "max_range_m": 20.5,
+      "perp_axis": "y",
+      "perp_dir": "+",
+      "perp_val": 20.5,
       "color": "#00E5FF",
       "mount": "Over South Turnstile Gate Header"
     },
@@ -676,13 +679,16 @@
       ],
       "look_at": [
         19.0,
-        18.0,
+        32.9,
         1.2
       ],
-      "focal_length_mm": 4.8,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 36.0,
+      "max_range_m": 20.5,
+      "perp_axis": "y",
+      "perp_dir": "-",
+      "perp_val": 17.5,
       "color": "#76FF03",
       "mount": "Over North Turnstile Gate Header"
     },
@@ -695,14 +701,17 @@
         4.6
       ],
       "look_at": [
-        20.0,
+        5.1,
         19.0,
         1.2
       ],
-      "focal_length_mm": 4.8,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 36.0,
+      "max_range_m": 20.5,
+      "perp_axis": "x",
+      "perp_dir": "+",
+      "perp_val": 20.5,
       "color": "#FFD600",
       "mount": "Over West Transit Gate Header"
     },
@@ -715,28 +724,31 @@
         4.6
       ],
       "look_at": [
-        18.0,
+        32.9,
         19.0,
         1.2
       ],
-      "focal_length_mm": 4.8,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 36.0,
+      "max_range_m": 20.5,
+      "perp_axis": "x",
+      "perp_dir": "-",
+      "perp_val": 17.5,
       "color": "#FF3D00",
       "mount": "Over East Transit Gate Header"
     }
   ],
   "coverage_metrics": {
     "total_pts": 10560,
-    "covered_pts": 9568,
-    "coverage_pct": 90.6,
-    "overlap_pct": 60.4,
+    "covered_pts": 8904,
+    "coverage_pct": 84.3,
+    "overlap_pct": 21.2,
     "individual_pcts": [
-      51.0,
-      51.0,
-      51.0,
-      51.0
+      29.3,
+      29.3,
+      29.3,
+      29.3
     ],
     "optics": [
       {
@@ -744,48 +756,60 @@
         "cy": 0.6,
         "cz": 4.6,
         "heading": 1.5707963267948966,
-        "half_hfov": 0.5712321778806648,
-        "d_min": 6.0,
-        "max_range": 36.0,
-        "tilt_deg": 9.940573033113026,
-        "hfov_deg": 65.45838582925678,
-        "vfov_deg": 50.71800479571606
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "+",
+        "perp_val": 20.5
       },
       {
         "cx": 19.0,
         "cy": 37.4,
         "cz": 4.6,
         "heading": -1.5707963267948966,
-        "half_hfov": 0.5712321778806648,
-        "d_min": 6.0,
-        "max_range": 36.0,
-        "tilt_deg": 9.940573033113026,
-        "hfov_deg": 65.45838582925678,
-        "vfov_deg": 50.71800479571606
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "-",
+        "perp_val": 17.5
       },
       {
         "cx": 0.6,
         "cy": 19.0,
         "cz": 4.6,
         "heading": 0.0,
-        "half_hfov": 0.5712321778806648,
-        "d_min": 6.0,
-        "max_range": 36.0,
-        "tilt_deg": 9.940573033113026,
-        "hfov_deg": 65.45838582925678,
-        "vfov_deg": 50.71800479571606
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "+",
+        "perp_val": 20.5
       },
       {
         "cx": 37.4,
         "cy": 19.0,
         "cz": 4.6,
         "heading": 3.141592653589793,
-        "half_hfov": 0.5712321778806648,
-        "d_min": 6.0,
-        "max_range": 36.0,
-        "tilt_deg": 9.940573033113026,
-        "hfov_deg": 65.45838582925678,
-        "vfov_deg": 50.71800479571606
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "-",
+        "perp_val": 17.5
       }
     ]
   }

@@ -3,7 +3,7 @@
     "name": "Design 3: Commercial Retail Arcade with Vitrines",
     "architecture": "square_plus_walkway",
     "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, inward-swinging commercial glass doors, and wall-clipped camera beams.",
-    "coverage_proven_pct": 96.0,
+    "coverage_proven_pct": 83.9,
     "raycast_wall_occlusion": true
   },
   "global_dimensions": {
@@ -656,13 +656,16 @@
       ],
       "look_at": [
         17.0,
-        18.0,
+        5.0,
         1.2
       ],
-      "focal_length_mm": 5.2,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 33.0,
+      "max_range_m": 18.5,
+      "perp_axis": "y",
+      "perp_dir": "+",
+      "perp_val": 18.5,
       "color": "#00E5FF",
       "mount": "Over South Arcade Exit Portal"
     },
@@ -676,13 +679,16 @@
       ],
       "look_at": [
         17.0,
-        16.0,
+        29.0,
         1.2
       ],
-      "focal_length_mm": 5.2,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 33.0,
+      "max_range_m": 18.5,
+      "perp_axis": "y",
+      "perp_dir": "-",
+      "perp_val": 15.5,
       "color": "#76FF03",
       "mount": "Over North Arcade Exit Portal"
     },
@@ -695,14 +701,17 @@
         4.2
       ],
       "look_at": [
-        18.0,
+        5.0,
         17.0,
         1.2
       ],
-      "focal_length_mm": 5.2,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 33.0,
+      "max_range_m": 18.5,
+      "perp_axis": "x",
+      "perp_dir": "+",
+      "perp_val": 18.5,
       "color": "#FFD600",
       "mount": "Over West Promenade Exit Portal"
     },
@@ -715,28 +724,31 @@
         4.2
       ],
       "look_at": [
-        16.0,
+        29.0,
         17.0,
         1.2
       ],
-      "focal_length_mm": 5.2,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 33.0,
+      "max_range_m": 18.5,
+      "perp_axis": "x",
+      "perp_dir": "-",
+      "perp_val": 15.5,
       "color": "#FF3D00",
       "mount": "Over East Promenade Exit Portal"
     }
   ],
   "coverage_metrics": {
     "total_pts": 8496,
-    "covered_pts": 8152,
-    "coverage_pct": 96.0,
-    "overlap_pct": 56.4,
+    "covered_pts": 7128,
+    "coverage_pct": 83.9,
+    "overlap_pct": 21.5,
     "individual_pcts": [
-      51.4,
-      51.4,
-      51.4,
-      51.4
+      29.6,
+      29.6,
+      29.6,
+      29.6
     ],
     "optics": [
       {
@@ -744,48 +756,60 @@
         "cy": 0.5,
         "cz": 4.2,
         "heading": 1.5707963267948966,
-        "half_hfov": 0.5354557061220118,
-        "d_min": 6.0,
-        "max_range": 33.0,
-        "tilt_deg": 9.727578551401603,
-        "hfov_deg": 61.35870415397718,
-        "vfov_deg": 47.25875546131363
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.9574193548387108,
+        "max_range": 18.5,
+        "tilt_deg": 33.690067525979785,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "+",
+        "perp_val": 18.5
       },
       {
         "cx": 17.0,
         "cy": 33.5,
         "cz": 4.2,
         "heading": -1.5707963267948966,
-        "half_hfov": 0.5354557061220118,
-        "d_min": 6.0,
-        "max_range": 33.0,
-        "tilt_deg": 9.727578551401603,
-        "hfov_deg": 61.35870415397718,
-        "vfov_deg": 47.25875546131363
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.9574193548387108,
+        "max_range": 18.5,
+        "tilt_deg": 33.690067525979785,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "-",
+        "perp_val": 15.5
       },
       {
         "cx": 0.5,
         "cy": 17.0,
         "cz": 4.2,
         "heading": 0.0,
-        "half_hfov": 0.5354557061220118,
-        "d_min": 6.0,
-        "max_range": 33.0,
-        "tilt_deg": 9.727578551401603,
-        "hfov_deg": 61.35870415397718,
-        "vfov_deg": 47.25875546131363
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.9574193548387108,
+        "max_range": 18.5,
+        "tilt_deg": 33.690067525979785,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "+",
+        "perp_val": 18.5
       },
       {
         "cx": 33.5,
         "cy": 17.0,
         "cz": 4.2,
         "heading": 3.141592653589793,
-        "half_hfov": 0.5354557061220118,
-        "d_min": 6.0,
-        "max_range": 33.0,
-        "tilt_deg": 9.727578551401603,
-        "hfov_deg": 61.35870415397718,
-        "vfov_deg": 47.25875546131363
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.9574193548387108,
+        "max_range": 18.5,
+        "tilt_deg": 33.690067525979785,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "-",
+        "perp_val": 15.5
       }
     ]
   }

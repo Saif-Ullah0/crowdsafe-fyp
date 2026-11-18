@@ -3,7 +3,7 @@
     "name": "Design 2: Chamfered Octagonal Central Hub",
     "architecture": "square_plus_walkway",
     "description": "40m x 40m premium layout with 45\u00b0 chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into corner suites with ray-cast wall occlusion.",
-    "coverage_proven_pct": 91.0,
+    "coverage_proven_pct": 82.4,
     "raycast_wall_occlusion": true
   },
   "global_dimensions": {
@@ -748,13 +748,16 @@
       ],
       "look_at": [
         20.0,
-        22.0,
+        5.1,
         1.2
       ],
-      "focal_length_mm": 4.5,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 38.0,
+      "max_range_m": 21.5,
+      "perp_axis": "y",
+      "perp_dir": "+",
+      "perp_val": 21.5,
       "color": "#00E5FF",
       "mount": "Over South Grand Entrance Header"
     },
@@ -768,13 +771,16 @@
       ],
       "look_at": [
         20.0,
-        18.0,
+        34.9,
         1.2
       ],
-      "focal_length_mm": 4.5,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 38.0,
+      "max_range_m": 21.5,
+      "perp_axis": "y",
+      "perp_dir": "-",
+      "perp_val": 18.5,
       "color": "#76FF03",
       "mount": "Over North Galleria Exit Header"
     },
@@ -787,14 +793,17 @@
         4.8
       ],
       "look_at": [
-        22.0,
+        5.1,
         20.0,
         1.2
       ],
-      "focal_length_mm": 4.5,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 38.0,
+      "max_range_m": 21.5,
+      "perp_axis": "x",
+      "perp_dir": "+",
+      "perp_val": 21.5,
       "color": "#FFD600",
       "mount": "Over West Boulevard Exit Header"
     },
@@ -807,28 +816,31 @@
         4.8
       ],
       "look_at": [
-        18.0,
+        34.9,
         20.0,
         1.2
       ],
-      "focal_length_mm": 4.5,
+      "focal_length_mm": 2.4,
       "sensor_width_mm": 6.17,
       "sensor_height_mm": 4.55,
-      "max_range_m": 38.0,
+      "max_range_m": 21.5,
+      "perp_axis": "x",
+      "perp_dir": "-",
+      "perp_val": 18.5,
       "color": "#FF3D00",
       "mount": "Over East Esplanade Exit Header"
     }
   ],
   "coverage_metrics": {
     "total_pts": 13448,
-    "covered_pts": 12240,
-    "coverage_pct": 91.0,
-    "overlap_pct": 66.5,
+    "covered_pts": 11076,
+    "coverage_pct": 82.4,
+    "overlap_pct": 39.8,
     "individual_pcts": [
-      64.0,
-      64.0,
-      64.1,
-      63.9
+      33.2,
+      33.2,
+      33.2,
+      33.2
     ],
     "optics": [
       {
@@ -836,48 +848,60 @@
         "cy": 0.6,
         "cz": 4.8,
         "heading": 1.5707963267948966,
-        "half_hfov": 0.6009657817936686,
-        "d_min": 6.0,
-        "max_range": 38.0,
-        "tilt_deg": 9.549133928735928,
-        "hfov_deg": 68.86560585711435,
-        "vfov_deg": 53.638265581938455
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.6636471990464843,
+        "max_range": 21.5,
+        "tilt_deg": 38.65980825409009,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "+",
+        "perp_val": 21.5
       },
       {
         "cx": 20.0,
         "cy": 39.4,
         "cz": 4.8,
         "heading": -1.5707963267948966,
-        "half_hfov": 0.6009657817936686,
-        "d_min": 6.0,
-        "max_range": 38.0,
-        "tilt_deg": 9.549133928735928,
-        "hfov_deg": 68.86560585711435,
-        "vfov_deg": 53.638265581938455
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.6636471990464843,
+        "max_range": 21.5,
+        "tilt_deg": 38.65980825409009,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "-",
+        "perp_val": 18.5
       },
       {
         "cx": 0.6,
         "cy": 20.0,
         "cz": 4.8,
         "heading": 0.0,
-        "half_hfov": 0.6009657817936686,
-        "d_min": 6.0,
-        "max_range": 38.0,
-        "tilt_deg": 9.549133928735928,
-        "hfov_deg": 68.86560585711435,
-        "vfov_deg": 53.638265581938455
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.6636471990464843,
+        "max_range": 21.5,
+        "tilt_deg": 38.65980825409009,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "+",
+        "perp_val": 21.5
       },
       {
         "cx": 39.4,
         "cy": 20.0,
         "cz": 4.8,
         "heading": 3.141592653589793,
-        "half_hfov": 0.6009657817936686,
-        "d_min": 6.0,
-        "max_range": 38.0,
-        "tilt_deg": 9.549133928735928,
-        "hfov_deg": 68.86560585711435,
-        "vfov_deg": 53.638265581938455
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.6636471990464843,
+        "max_range": 21.5,
+        "tilt_deg": 38.65980825409009,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "-",
+        "perp_val": 18.5
       }
     ]
   }
