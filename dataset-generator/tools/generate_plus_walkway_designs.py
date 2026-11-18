@@ -155,7 +155,8 @@ def calculate_grid_coverage_with_walls(
     wall_segments: list,
     W: float,
     D: float,
-    grid_step: float = 0.25
+    grid_step: float = 0.25,
+    fountain: dict = None
 ) -> dict:
     """
     Rigorously tests every 0.25m grid point in the walkway against
@@ -231,6 +232,13 @@ def calculate_grid_coverage_with_walls(
             # Check if inside walkway polygon
             if not point_in_poly(px, py, walkway_poly):
                 continue
+
+            # Exclude central fountain obstacle (non-walkable water basin)
+            if fountain:
+                fcx, fcy = fountain["center"]
+                frad = fountain["radius"]
+                if math.hypot(px - fcx, py - fcy) < frad:
+                    continue
 
             total_walkway_pts += 1
             cams_seeing = 0
@@ -415,16 +423,35 @@ def build_design_1():
         {"id": "EXIT_E", "name": "East Retail Exit Portal", "x1": 36.0, "y1": 12.0, "x2": 36.0, "y2": 24.0, "cam_id": "CAM-E"}
     ]
 
-    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W)
+    fountain = {
+        "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+        "name": "Central Granite Tiered Fountain & Pedestrian Rotary",
+        "type": "fountain_roundabout",
+        "shape": "circle",
+        "center": [18.0, 18.0],
+        "position": [18.0, 18.0, 0.0],
+        "radius": 2.8,
+        "height": 1.2,
+        "rotary_lane_width_m": 3.2,
+        "is_walkable": False,
+        "description": "Central architectural water fountain and pedestrian circulation roundabout. Circulates crowd streams smoothly between North, South, East, and West concourses."
+    }
+
+    fountain_area = math.pi * (fountain["radius"] ** 2)
+    walkable_area = 720.0 - fountain_area
+    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W, fountain=fountain)
 
     return {
         "title": "Design 1: Classic Balanced Cross Concourse",
         "slug": "design_1_classic_balanced",
-        "description": "Harmonious 1:1:1 proportion with four equal 144 m² retail rooms, a 12m wide plus walkway, inward doors, and 4 high-elevation dome cameras with ray-cast wall occlusion.",
+        "description": "Harmonious 1:1:1 proportion with four equal 144 m² retail rooms, a 12m wide plus walkway, inward doors, a 5.6m central fountain roundabout, and 4 high-elevation dome cameras with ray-cast wall occlusion.",
         "width_m": W,
         "depth_m": W,
         "corridor_width_m": cw,
         "walkway_area_m2": 720.0,
+        "walkable_area_m2": round(walkable_area, 1),
+        "fountain_area_m2": round(fountain_area, 1),
+        "fountain": fountain,
         "room_area_m2": 144.0,
         "total_area_m2": W * W,
         "walkway_poly": walkway_poly,
@@ -434,11 +461,12 @@ def build_design_1():
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
+            "Central Fountain & Pedestrian Roundabout: 5.6m diameter architectural water fountain acting as a traffic roundabout with 3.2m circulation lanes.",
             "Real-Life Wall Occlusion: 100% ray-casting stops dead at solid walls; zero coverage leaks into corner rooms.",
             "Inward-Opening Doors: Doors swing 90° into corner rooms, maintaining zero corridor obstruction.",
-            f"Mathematical Coverage: {stats['coverage_pct']}% of entire plus concourse fully illuminated by the 4 cameras.",
-            f"Multi-View Overlap: {stats['overlap_pct']}% of central intersection cross-monitored by 2+ camera views.",
-            "Nadir Blind Spot Accounted For: 3.0m blind zone directly under each camera mount clearly identified."
+            f"Walkable Coverage: {stats['coverage_pct']}% of net pedestrian concourse ({walkable_area:.0f} m²) illuminated by 4 cameras.",
+            f"Multi-View Overlap: {stats['overlap_pct']}% of central roundabout cross-monitored by 2+ camera views.",
+            "Bounded Power Range: Realistic 19.5m distance and perpendicular line handover preventing image degradation."
         ]
     }
 
@@ -571,16 +599,35 @@ def build_design_2():
         {"id": "EXIT_E", "name": "East Esplanade Portal", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E"}
     ]
 
-    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W)
+    fountain = {
+        "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+        "name": "Grand Octagonal Cascade Fountain & Civic Roundabout",
+        "type": "fountain_roundabout",
+        "shape": "circle",
+        "center": [20.0, 20.0],
+        "position": [20.0, 20.0, 0.0],
+        "radius": 3.4,
+        "height": 1.4,
+        "rotary_lane_width_m": 4.6,
+        "is_walkable": False,
+        "description": "Grand tiered cascade fountain with perimeter stone seating ledge and an expansive pedestrian roundabout connecting the 4 diagonal boulevards."
+    }
+
+    fountain_area = math.pi * (fountain["radius"] ** 2)
+    walkable_area = 856.0 - fountain_area
+    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W, fountain=fountain)
 
     return {
         "title": "Design 2: Chamfered Octagonal Central Hub",
         "slug": "design_2_chamfered_hub",
-        "description": "40m x 40m premium layout with 45° chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into corner suites with ray-cast wall occlusion.",
+        "description": "40m x 40m premium layout with 45° chamfered corner rooms expanding into an octagonal central atrium. Features a 6.8m grand cascade fountain roundabout with 4.6m rotary lanes.",
         "width_m": W,
         "depth_m": W,
         "corridor_width_m": cw,
         "walkway_area_m2": 856.0,
+        "walkable_area_m2": round(walkable_area, 1),
+        "fountain_area_m2": round(fountain_area, 1),
+        "fountain": fountain,
         "room_area_m2": 189.9,
         "total_area_m2": W * W,
         "walkway_poly": walkway_poly,
@@ -590,9 +637,10 @@ def build_design_2():
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
+            "Civic Cascade Fountain & Roundabout: 6.8m diameter tiered water monument providing 4.6m wide rotary lanes for smooth 4-way crowd flow.",
             "Octagonal Center Atrium: Expands line-of-sight between all 4 corridors and corner room entries.",
-            f"Mathematical Coverage: {stats['coverage_pct']}% of the walkway region under active surveillance.",
-            f"Intersection Overlap: {stats['overlap_pct']}% of the central hub covered by 3 or all 4 cameras simultaneously.",
+            f"Walkable Coverage: {stats['coverage_pct']}% of net pedestrian concourse ({walkable_area:.0f} m²) under active surveillance.",
+            f"Multi-View Overlap: {stats['overlap_pct']}% of the central rotary hub covered by 3 or all 4 cameras simultaneously.",
             "Grand Double Inward Doors: 1.6m wide double doors swinging inward into room chambers.",
             "Zero Wall Penetration: 100% ray-cast occlusion culls rays at chamfered room walls."
         ]
@@ -715,16 +763,35 @@ def build_design_3():
         {"id": "EXIT_E", "name": "East Promenade Exit", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E"}
     ]
 
-    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W)
+    fountain = {
+        "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+        "name": "Boutique Illuminated Water Jet Fountain & Retail Roundabout",
+        "type": "fountain_roundabout",
+        "shape": "circle",
+        "center": [17.0, 17.0],
+        "position": [17.0, 17.0, 0.0],
+        "radius": 2.2,
+        "height": 1.0,
+        "rotary_lane_width_m": 2.3,
+        "is_walkable": False,
+        "description": "Circular flush-jet water feature and pedestrian rotary island allowing continuous shopper circulation between retail arcade wings."
+    }
+
+    fountain_area = math.pi * (fountain["radius"] ** 2)
+    walkable_area = 531.0 - fountain_area
+    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W, fountain=fountain)
 
     return {
         "title": "Design 3: Commercial Retail Arcade with Vitrines",
         "slug": "design_3_retail_arcade",
-        "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, inward-swinging commercial glass doors, and wall-clipped camera beams.",
+        "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display vitrines, inward glass doors, and a central 4.4m illuminated fountain roundabout.",
         "width_m": W,
         "depth_m": W,
         "corridor_width_m": cw,
         "walkway_area_m2": 531.0,
+        "walkable_area_m2": round(walkable_area, 1),
+        "fountain_area_m2": round(fountain_area, 1),
+        "fountain": fountain,
         "room_area_m2": 156.25,
         "total_area_m2": W * W,
         "walkway_poly": walkway_poly,
@@ -734,9 +801,10 @@ def build_design_3():
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
+            "Boutique Fountain Roundabout: 4.4m diameter flush water jet fountain organizing shopper flow with 2.3m rotary aisles.",
             "Storefront Vitrines: Transparent display glazing alongside corridors for high pedestrian engagement.",
-            f"Mathematical Coverage: {stats['coverage_pct']}% of the walkway region monitored.",
-            "Focused Surveillance Corridor: 5.2mm lenses channel optical rays directly along the 9m walking corridor.",
+            f"Walkable Coverage: {stats['coverage_pct']}% of net pedestrian concourse ({walkable_area:.0f} m²) monitored.",
+            f"Multi-View Overlap: {stats['overlap_pct']}% of the central retail plaza cross-monitored by 2+ cameras.",
             "Zero Corridor Protrusion: Doors swing safely into boutiques away from customer traffic.",
             "Physically Bounded: Rays stop dead at boutique walls."
         ]
@@ -859,16 +927,35 @@ def build_design_4():
         {"id": "EXIT_E", "name": "East Transit Portal", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E", "has_turnstiles": True}
     ]
 
-    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W)
+    fountain = {
+        "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+        "name": "Rotary Clock Tower Fountain & Transit Circulation Roundabout",
+        "type": "fountain_roundabout",
+        "shape": "circle",
+        "center": [19.0, 19.0],
+        "position": [19.0, 19.0, 0.0],
+        "radius": 2.5,
+        "height": 1.3,
+        "rotary_lane_width_m": 2.5,
+        "is_walkable": False,
+        "description": "Iconic central transit clock tower pillar surrounded by a stepped water cascade basin and dedicated rotary concourse lane."
+    }
+
+    fountain_area = math.pi * (fountain["radius"] ** 2)
+    walkable_area = 660.0 - fountain_area
+    stats = calculate_grid_coverage_with_walls(walkway_poly, corner_rooms, cameras, wall_segments, W, W, fountain=fountain)
 
     return {
         "title": "Design 4: Controlled Transit & Security Interchange",
         "slug": "design_4_transit_interchange",
-        "description": "38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms with magnetic inward doors, and ray-cast wall occlusion.",
+        "description": "38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms, and a 5.0m central clock tower fountain roundabout.",
         "width_m": W,
         "depth_m": W,
         "corridor_width_m": cw,
         "walkway_area_m2": 660.0,
+        "walkable_area_m2": round(walkable_area, 1),
+        "fountain_area_m2": round(fountain_area, 1),
+        "fountain": fountain,
         "room_area_m2": 196.0,
         "total_area_m2": W * W,
         "walkway_poly": walkway_poly,
@@ -878,8 +965,10 @@ def build_design_4():
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
+            "Transit Clock Tower Fountain & Roundabout: 5.0m diameter stepped water basin with a 4-face clock pillar guiding pedestrian transfer flow with 2.5m rotary lanes.",
             "Egress Compliance: All room doors open inward, preventing crowd crush hazards in transit lanes.",
-            f"Mathematical Coverage: {stats['coverage_pct']}% of the walkway concourse actively monitored.",
+            f"Walkable Coverage: {stats['coverage_pct']}% of net pedestrian concourse ({walkable_area:.0f} m²) actively monitored.",
+            f"Multi-View Overlap: {stats['overlap_pct']}% of central transit rotary cross-monitored by 2+ cameras.",
             "Turnstile Line Monitoring: Cameras mounted directly above gates capture incoming & outgoing faces.",
             "Dedicated Security Command: SW corner hosts a direct-access CCTV surveillance and dispatch center.",
             "Zero Wall Penetration: 100% ray-cast line-of-sight verification."
@@ -963,6 +1052,44 @@ def render_svg_cad(design):
     svg.append(f'<line x1="{tx(mid+1.5)}" y1="{ty(rw)}" x2="{tx(mid+1.5)}" y2="{ty(rw+cw)}" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>')
     svg.append(f'<rect x="{tx(mid)-85}" y="{ty(mid)-11}" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>')
     svg.append(f'<text x="{tx(mid)}" y="{ty(mid)+4}" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>')
+
+    # 2c. Draw Central Fountain & Pedestrian Circulation Roundabout
+    fountain = design.get("fountain")
+    if fountain:
+        fcx, fcy = fountain["center"]
+        frad = fountain["radius"]
+        lane_w = fountain.get("rotary_lane_width_m", 3.0)
+        lane_r = frad + lane_w * 0.5
+
+        # Rotary Pedestrian Traffic Guide Circle (Dashed lane)
+        svg.append(f'<!-- Central Pedestrian Roundabout Rotary Lane -->')
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{lane_r*scale}" fill="none" stroke="#388bfd" stroke-width="1.8" stroke-dasharray="6,6" opacity="0.85" class="central-fountain"/>')
+
+        # 4 Rotary Circulation Direction Arrows (Counter-Clockwise Pedestrian Roundabout)
+        # S (bottom, heading East +X)
+        svg.append(f'<path d="M {tx(fcx)-18} {ty(fcy-lane_r)} L {tx(fcx)+18} {ty(fcy-lane_r)} M {tx(fcx)+10} {ty(fcy-lane_r)-5} L {tx(fcx)+18} {ty(fcy-lane_r)} L {tx(fcx)+10} {ty(fcy-lane_r)+5}" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>')
+        # E (right, heading North +Y -> upwards in SVG)
+        svg.append(f'<path d="M {tx(fcx+lane_r)} {ty(fcy)+18} L {tx(fcx+lane_r)} {ty(fcy)-18} M {tx(fcx+lane_r)-5} {ty(fcy)-10} L {tx(fcx+lane_r)} {ty(fcy)-18} L {tx(fcx+lane_r)+5} {ty(fcy)-10}" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>')
+        # N (top, heading West -X)
+        svg.append(f'<path d="M {tx(fcx)+18} {ty(fcy+lane_r)} L {tx(fcx)-18} {ty(fcy+lane_r)} M {tx(fcx)-10} {ty(fcy+lane_r)-5} L {tx(fcx)-18} {ty(fcy+lane_r)} L {tx(fcx)-10} {ty(fcy+lane_r)+5}" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>')
+        # W (left, heading South -Y -> downwards in SVG)
+        svg.append(f'<path d="M {tx(fcx-lane_r)} {ty(fcy)-18} L {tx(fcx-lane_r)} {ty(fcy)+18} M {tx(fcx-lane_r)-5} {ty(fcy)+10} L {tx(fcx-lane_r)} {ty(fcy)+18} L {tx(fcx-lane_r)+5} {ty(fcy)+10}" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>')
+
+        # Outer Coping / Masonry Border Ring
+        svg.append(f'<!-- Fountain Stone Basin & Reflecting Pool -->')
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{frad*scale}" fill="#161b22" stroke="#58a6ff" stroke-width="3" class="central-fountain"/>')
+        # Water Pool (Azure fill)
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{(frad-0.3)*scale}" fill="#0d419d" fill-opacity="0.80" stroke="#388bfd" stroke-width="1.5" class="central-fountain"/>')
+        # Concentric Ripple Rings
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{(frad*0.65)*scale}" fill="none" stroke="#79c0ff" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.8" class="central-fountain"/>')
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{(frad*0.4)*scale}" fill="none" stroke="#a5d6ff" stroke-width="1.0" stroke-dasharray="2,2" opacity="0.9" class="central-fountain"/>')
+        # Center Pedestal & Jet Nozzle
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{(frad*0.22)*scale}" fill="#21262d" stroke="#f0883e" stroke-width="1.8" class="central-fountain"/>')
+        svg.append(f'<circle cx="{tx(fcx)}" cy="{ty(fcy)}" r="{(frad*0.09)*scale}" fill="#ffffff" stroke="#388bfd" stroke-width="1.2" class="central-fountain"/>')
+
+        # Architectural Badge / Label
+        svg.append(f'<rect x="{tx(fcx)-100}" y="{ty(fcy)-frad*scale-25}" width="200" height="20" rx="4" fill="#0d1117" stroke="#388bfd" stroke-width="1" class="central-fountain"/>')
+        svg.append(f'<text x="{tx(fcx)}" y="{ty(fcy)-frad*scale-11}" fill="#58a6ff" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle" class="central-fountain">PEDESTRIAN ROTARY FOUNTAIN</text>')
 
     # 3. Draw Solid Walls
     for (x1, y1), (x2, y2) in wall_segs:
@@ -1091,37 +1218,102 @@ def export_json_spec(design):
 
     cw = design["corridor_width_m"]
     half_w = W / 2.0
-    nav_nodes = {
-        "EXIT_S": {"name": "South Exit Portal", "pos": [half_w, 1.0], "type": "entrance_exit"},
-        "EXIT_N": {"name": "North Exit Portal", "pos": [half_w, D - 1.0], "type": "entrance_exit"},
-        "EXIT_W": {"name": "West Exit Portal", "pos": [1.0, half_w], "type": "entrance_exit"},
-        "EXIT_E": {"name": "East Exit Portal", "pos": [W - 1.0, half_w], "type": "entrance_exit"},
-        "HUB_CENTER": {"name": "Central Plus Intersection", "pos": [half_w, half_w], "type": "atrium"},
-        "WING_S": {"name": "South Walkway Wing", "pos": [half_w, half_w * 0.5], "type": "corridor"},
-        "WING_N": {"name": "North Walkway Wing", "pos": [half_w, half_w * 1.5], "type": "corridor"},
-        "WING_W": {"name": "West Walkway Wing", "pos": [half_w * 0.5, half_w], "type": "corridor"},
-        "WING_E": {"name": "East Walkway Wing", "pos": [half_w * 1.5, half_w], "type": "corridor"}
-    }
 
-    edges = [
-        {"from": "EXIT_S", "to": "WING_S", "capacity": 150, "width_m": cw},
-        {"from": "WING_S", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
-        {"from": "EXIT_N", "to": "WING_N", "capacity": 150, "width_m": cw},
-        {"from": "WING_N", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
-        {"from": "EXIT_W", "to": "WING_W", "capacity": 150, "width_m": cw},
-        {"from": "WING_W", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
-        {"from": "EXIT_E", "to": "WING_E", "capacity": 150, "width_m": cw},
-        {"from": "WING_E", "to": "HUB_CENTER", "capacity": 150, "width_m": cw}
-    ]
+    obstacles = []
+    fountain = design.get("fountain")
+    if fountain:
+        obstacles.append({
+            "id": fountain["id"],
+            "name": fountain["name"],
+            "type": fountain["type"],
+            "shape": fountain["shape"],
+            "position": fountain["position"],
+            "radius": fountain["radius"],
+            "height": fountain["height"],
+            "rotary_lane_width_m": fountain["rotary_lane_width_m"],
+            "is_walkable": False,
+            "description": fountain["description"]
+        })
 
-    for r in design["corner_rooms"]:
-        door = r["door"]
-        node_id = f"DOOR_{r['id']}"
-        room_node = f"INSIDE_{r['id']}"
-        nav_nodes[node_id] = {"name": f"Inward Door {r['id']}", "pos": [door["x"], door["y"]], "type": "door_portal"}
-        nav_nodes[room_node] = {"name": f"Interior {r['id']}", "pos": [door["x"] + (1.5 if door["x"] > half_w else -1.5), door["y"]], "type": "destination"}
-        edges.append({"from": "HUB_CENTER", "to": node_id, "capacity": 60, "width_m": door["width"]})
-        edges.append({"from": node_id, "to": room_node, "capacity": 60, "width_m": door["width"]})
+        fcx, fcy = fountain["center"]
+        lane_r = fountain["radius"] + fountain["rotary_lane_width_m"] * 0.5
+        nav_nodes = {
+            "EXIT_S": {"name": "South Exit Portal", "pos": [half_w, 1.0], "type": "entrance_exit"},
+            "EXIT_N": {"name": "North Exit Portal", "pos": [half_w, D - 1.0], "type": "entrance_exit"},
+            "EXIT_W": {"name": "West Exit Portal", "pos": [1.0, half_w], "type": "entrance_exit"},
+            "EXIT_E": {"name": "East Exit Portal", "pos": [W - 1.0, half_w], "type": "entrance_exit"},
+            "WING_S": {"name": "South Walkway Wing", "pos": [half_w, half_w * 0.5], "type": "corridor"},
+            "WING_N": {"name": "North Walkway Wing", "pos": [half_w, half_w * 1.5], "type": "corridor"},
+            "WING_W": {"name": "West Walkway Wing", "pos": [half_w * 0.5, half_w], "type": "corridor"},
+            "WING_E": {"name": "East Walkway Wing", "pos": [half_w * 1.5, half_w], "type": "corridor"},
+            "ROTARY_S": {"name": "South Roundabout Rotary Node", "pos": [fcx, fcy - lane_r], "type": "roundabout_lane"},
+            "ROTARY_E": {"name": "East Roundabout Rotary Node", "pos": [fcx + lane_r, fcy], "type": "roundabout_lane"},
+            "ROTARY_N": {"name": "North Roundabout Rotary Node", "pos": [fcx, fcy + lane_r], "type": "roundabout_lane"},
+            "ROTARY_W": {"name": "West Roundabout Rotary Node", "pos": [fcx - lane_r, fcy], "type": "roundabout_lane"}
+        }
+
+        edges = [
+            {"from": "EXIT_S", "to": "WING_S", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_N", "to": "WING_N", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_W", "to": "WING_W", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_E", "to": "WING_E", "capacity": 150, "width_m": cw},
+            {"from": "WING_S", "to": "ROTARY_S", "capacity": 150, "width_m": cw},
+            {"from": "WING_E", "to": "ROTARY_E", "capacity": 150, "width_m": cw},
+            {"from": "WING_N", "to": "ROTARY_N", "capacity": 150, "width_m": cw},
+            {"from": "WING_W", "to": "ROTARY_W", "capacity": 150, "width_m": cw},
+            # Roundabout circulating ring
+            {"from": "ROTARY_S", "to": "ROTARY_E", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_E", "to": "ROTARY_N", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_N", "to": "ROTARY_W", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_W", "to": "ROTARY_S", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_E", "to": "ROTARY_S", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_N", "to": "ROTARY_E", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_W", "to": "ROTARY_N", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]},
+            {"from": "ROTARY_S", "to": "ROTARY_W", "capacity": 120, "width_m": fountain["rotary_lane_width_m"]}
+        ]
+
+        for r in design["corner_rooms"]:
+            door = r["door"]
+            node_id = f"DOOR_{r['id']}"
+            room_node = f"INSIDE_{r['id']}"
+            nav_nodes[node_id] = {"name": f"Inward Door {r['id']}", "pos": [door["x"], door["y"]], "type": "door_portal"}
+            nav_nodes[room_node] = {"name": f"Interior {r['id']}", "pos": [door["x"] + (1.5 if door["x"] > half_w else -1.5), door["y"]], "type": "destination"}
+            closest_rotary = min(["ROTARY_S", "ROTARY_E", "ROTARY_N", "ROTARY_W"], 
+                                 key=lambda rk: math.hypot(nav_nodes[rk]["pos"][0] - door["x"], nav_nodes[rk]["pos"][1] - door["y"]))
+            edges.append({"from": closest_rotary, "to": node_id, "capacity": 60, "width_m": door["width"]})
+            edges.append({"from": node_id, "to": room_node, "capacity": 60, "width_m": door["width"]})
+    else:
+        nav_nodes = {
+            "EXIT_S": {"name": "South Exit Portal", "pos": [half_w, 1.0], "type": "entrance_exit"},
+            "EXIT_N": {"name": "North Exit Portal", "pos": [half_w, D - 1.0], "type": "entrance_exit"},
+            "EXIT_W": {"name": "West Exit Portal", "pos": [1.0, half_w], "type": "entrance_exit"},
+            "EXIT_E": {"name": "East Exit Portal", "pos": [W - 1.0, half_w], "type": "entrance_exit"},
+            "HUB_CENTER": {"name": "Central Plus Intersection", "pos": [half_w, half_w], "type": "atrium"},
+            "WING_S": {"name": "South Walkway Wing", "pos": [half_w, half_w * 0.5], "type": "corridor"},
+            "WING_N": {"name": "North Walkway Wing", "pos": [half_w, half_w * 1.5], "type": "corridor"},
+            "WING_W": {"name": "West Walkway Wing", "pos": [half_w * 0.5, half_w], "type": "corridor"},
+            "WING_E": {"name": "East Walkway Wing", "pos": [half_w * 1.5, half_w], "type": "corridor"}
+        }
+
+        edges = [
+            {"from": "EXIT_S", "to": "WING_S", "capacity": 150, "width_m": cw},
+            {"from": "WING_S", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_N", "to": "WING_N", "capacity": 150, "width_m": cw},
+            {"from": "WING_N", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_W", "to": "WING_W", "capacity": 150, "width_m": cw},
+            {"from": "WING_W", "to": "HUB_CENTER", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_E", "to": "WING_E", "capacity": 150, "width_m": cw},
+            {"from": "WING_E", "to": "HUB_CENTER", "capacity": 150, "width_m": cw}
+        ]
+
+        for r in design["corner_rooms"]:
+            door = r["door"]
+            node_id = f"DOOR_{r['id']}"
+            room_node = f"INSIDE_{r['id']}"
+            nav_nodes[node_id] = {"name": f"Inward Door {r['id']}", "pos": [door["x"], door["y"]], "type": "door_portal"}
+            nav_nodes[room_node] = {"name": f"Interior {r['id']}", "pos": [door["x"] + (1.5 if door["x"] > half_w else -1.5), door["y"]], "type": "destination"}
+            edges.append({"from": "HUB_CENTER", "to": node_id, "capacity": 60, "width_m": door["width"]})
+            edges.append({"from": node_id, "to": room_node, "capacity": 60, "width_m": door["width"]})
 
     json_data = {
         "venue_metadata": {
@@ -1138,6 +1330,7 @@ def export_json_spec(design):
         },
         "walls": walls_list,
         "zones": zones,
+        "obstacles": obstacles,
         "navigation_graph": {
             "nodes": nav_nodes,
             "edges": edges
@@ -1230,7 +1423,7 @@ def generate_showcase_html(designs):
     </div>
 
     <!-- Real-Life CCTV Principles Explainer -->
-    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
       <div class="space-y-1.5">
         <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> 1. Reduced Power / Range
@@ -1263,6 +1456,14 @@ def generate_showcase_html(designs):
           Every optical ray undergoes <strong>ray-casting against solid walls</strong>. Rays terminate immediately upon wall contact with zero penetration into corner rooms.
         </p>
       </div>
+      <div class="space-y-1.5">
+        <div class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-sky-400 inline-block"></span> 5. Fountain Roundabout
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          A central architectural fountain functions as a <strong>pedestrian rotary roundabout</strong>. Crowds circulate smoothly around the perimeter lane without 4-way head-on collisions.
+        </p>
+      </div>
     </div>
   </header>
 
@@ -1272,6 +1473,9 @@ def generate_showcase_html(designs):
       <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">CAD Display Layers:</span>
       <button onclick="toggleLayer('fov-cone')" id="btn-fov" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow">
         ✓ Ray-Cast Visibility Polygons
+      </button>
+      <button onclick="toggleLayer('central-fountain')" id="btn-fountain" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-colors shadow">
+        ✓ Fountain & Roundabout
       </button>
       <button onclick="toggleLayer('perp-line')" id="btn-perp" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors shadow">
         ✓ Perpendicular Handover Lines
@@ -1450,6 +1654,31 @@ def generate_showcase_html(designs):
         html.append(f"""
             </div>
           </div>
+
+          <!-- Central Fountain & Roundabout Architecture -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Central Fountain & Pedestrian Roundabout
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Feature:</span>
+                <span class="font-semibold text-sky-400">{d['fountain']['name']}</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Fountain Basin Diameter:</span>
+                <span class="font-mono text-white font-bold">{d['fountain']['radius']*2.0:.1f}m ({d['fountain_area_m2']:.1f} m² obstacle)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Pedestrian Rotary Lane:</span>
+                <span class="font-mono text-emerald-400 font-bold">{d['fountain']['rotary_lane_width_m']:.1f}m Clear Circulation Lane</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Net Walkable Concourse:</span>
+                <span class="font-mono text-blue-400 font-bold">{d['walkable_area_m2']:.1f} m² ({stats['coverage_pct']}% Ray-Cast Covered)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -1477,6 +1706,10 @@ def generate_showcase_html(designs):
         const btn = document.getElementById('btn-fov');
         btn.textContent = isVisible ? '✓ Ray-Cast Visibility Polygons' : '✗ Ray-Cast Visibility Polygons';
         btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
+      } else if (layerClass === 'central-fountain') {
+        const btn = document.getElementById('btn-fountain');
+        btn.textContent = isVisible ? '✓ Fountain & Roundabout' : '✗ Fountain & Roundabout';
+        btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
       } else if (layerClass === 'perp-line') {
         const btn = document.getElementById('btn-perp');
         btn.textContent = isVisible ? '✓ Perpendicular Handover Lines' : '✗ Perpendicular Handover Lines';

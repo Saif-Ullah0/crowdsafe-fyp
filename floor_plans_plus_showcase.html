@@ -64,7 +64,7 @@
     </div>
 
     <!-- Real-Life CCTV Principles Explainer -->
-    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
       <div class="space-y-1.5">
         <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> 1. Reduced Power / Range
@@ -97,6 +97,14 @@
           Every optical ray undergoes <strong>ray-casting against solid walls</strong>. Rays terminate immediately upon wall contact with zero penetration into corner rooms.
         </p>
       </div>
+      <div class="space-y-1.5">
+        <div class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-sky-400 inline-block"></span> 5. Fountain Roundabout
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          A central architectural fountain functions as a <strong>pedestrian rotary roundabout</strong>. Crowds circulate smoothly around the perimeter lane without 4-way head-on collisions.
+        </p>
+      </div>
     </div>
   </header>
 
@@ -106,6 +114,9 @@
       <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">CAD Display Layers:</span>
       <button onclick="toggleLayer('fov-cone')" id="btn-fov" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow">
         ✓ Ray-Cast Visibility Polygons
+      </button>
+      <button onclick="toggleLayer('central-fountain')" id="btn-fountain" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-colors shadow">
+        ✓ Fountain & Roundabout
       </button>
       <button onclick="toggleLayer('perp-line')" id="btn-perp" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors shadow">
         ✓ Perpendicular Handover Lines
@@ -145,14 +156,14 @@
               </span>
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Design 1: Classic Balanced Cross Concourse</h2>
-            <p class="text-slate-400 text-sm mt-1 max-w-2xl">Harmonious 1:1:1 proportion with four equal 144 m² retail rooms, a 12m wide plus walkway, inward doors, and 4 high-elevation dome cameras with ray-cast wall occlusion.</p>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">Harmonious 1:1:1 proportion with four equal 144 m² retail rooms, a 12m wide plus walkway, inward doors, a 5.6m central fountain roundabout, and 4 high-elevation dome cameras with ray-cast wall occlusion.</p>
           </div>
 
           <!-- Key Metrics Badges -->
           <div class="flex flex-wrap gap-3 items-center">
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-blue-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">LOS Coverage</div>
-              <div class="text-2xl font-black text-blue-400">80.7%</div>
+              <div class="text-2xl font-black text-blue-400">80.0%</div>
               <div class="text-xs text-emerald-400 font-semibold">Target: ≥80% (PASS)</div>
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-emerald-500/40 text-center">
@@ -162,7 +173,7 @@
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-purple-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">Multi-Overlap</div>
-              <div class="text-2xl font-black text-purple-400">30.3%</div>
+              <div class="text-2xl font-black text-purple-400">27.9%</div>
               <div class="text-xs text-slate-400 font-mono">Central Intersect</div>
             </div>
           </div>
@@ -208,6 +219,21 @@
 <line x1="450.0" y1="540.0" x2="450.0" y2="300.0" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>
 <rect x="335.0" y="409.0" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>
 <text x="420.0" y="424.0" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>
+<!-- Central Pedestrian Roundabout Rotary Lane -->
+<circle cx="420.0" cy="420.0" r="88.0" fill="none" stroke="#388bfd" stroke-width="1.8" stroke-dasharray="6,6" opacity="0.85" class="central-fountain"/>
+<path d="M 402.0 508.0 L 438.0 508.0 M 430.0 503.0 L 438.0 508.0 L 430.0 513.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 508.0 438.0 L 508.0 402.0 M 503.0 410.0 L 508.0 402.0 L 513.0 410.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 438.0 332.0 L 402.0 332.0 M 410.0 327.0 L 402.0 332.0 L 410.0 337.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 332.0 402.0 L 332.0 438.0 M 327.0 430.0 L 332.0 438.0 L 337.0 430.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<!-- Fountain Stone Basin & Reflecting Pool -->
+<circle cx="420.0" cy="420.0" r="56.0" fill="#161b22" stroke="#58a6ff" stroke-width="3" class="central-fountain"/>
+<circle cx="420.0" cy="420.0" r="50.0" fill="#0d419d" fill-opacity="0.80" stroke="#388bfd" stroke-width="1.5" class="central-fountain"/>
+<circle cx="420.0" cy="420.0" r="36.4" fill="none" stroke="#79c0ff" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.8" class="central-fountain"/>
+<circle cx="420.0" cy="420.0" r="22.4" fill="none" stroke="#a5d6ff" stroke-width="1.0" stroke-dasharray="2,2" opacity="0.9" class="central-fountain"/>
+<circle cx="420.0" cy="420.0" r="12.32" fill="#21262d" stroke="#f0883e" stroke-width="1.8" class="central-fountain"/>
+<circle cx="420.0" cy="420.0" r="5.04" fill="#ffffff" stroke="#388bfd" stroke-width="1.2" class="central-fountain"/>
+<rect x="320.0" y="339.0" width="200" height="20" rx="4" fill="#0d1117" stroke="#388bfd" stroke-width="1" class="central-fountain"/>
+<text x="420.0" y="353.0" fill="#58a6ff" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle" class="central-fountain">PEDESTRIAN ROTARY FOUNTAIN</text>
 <line x1="60.0" y1="780.0" x2="300.0" y2="780.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="540.0" y1="780.0" x2="780.0" y2="780.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="60.0" y1="60.0" x2="300.0" y2="60.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
@@ -318,6 +344,11 @@
 
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
+                <span>Central Fountain & Pedestrian Roundabout: 5.6m diameter architectural water fountain acting as a traffic roundabout with 3.2m circulation lanes.</span>
+              </li>
+            
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
                 <span>Real-Life Wall Occlusion: 100% ray-casting stops dead at solid walls; zero coverage leaks into corner rooms.</span>
               </li>
             
@@ -328,17 +359,17 @@
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Mathematical Coverage: 80.7% of entire plus concourse fully illuminated by the 4 cameras.</span>
+                <span>Walkable Coverage: 80.0% of net pedestrian concourse (695 m²) illuminated by 4 cameras.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Multi-View Overlap: 30.3% of central intersection cross-monitored by 2+ camera views.</span>
+                <span>Multi-View Overlap: 27.9% of central roundabout cross-monitored by 2+ camera views.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Nadir Blind Spot Accounted For: 3.0m blind zone directly under each camera mount clearly identified.</span>
+                <span>Bounded Power Range: Realistic 19.5m distance and perpendicular line handover preventing image degradation.</span>
               </li>
             
             </ul>
@@ -370,7 +401,7 @@
                     <td class="text-slate-300">4.5m elev</td>
                     <td class="text-slate-400">36.3° / 104.2°</td>
                     <td class="text-rose-400">0.82m</td>
-                    <td class="text-blue-400 font-bold">30.6%</td>
+                    <td class="text-blue-400 font-bold">28.7%</td>
                   </tr>
             
                   <tr>
@@ -381,7 +412,7 @@
                     <td class="text-slate-300">4.5m elev</td>
                     <td class="text-slate-400">36.3° / 104.2°</td>
                     <td class="text-rose-400">0.82m</td>
-                    <td class="text-blue-400 font-bold">30.6%</td>
+                    <td class="text-blue-400 font-bold">28.7%</td>
                   </tr>
             
                   <tr>
@@ -392,7 +423,7 @@
                     <td class="text-slate-300">4.5m elev</td>
                     <td class="text-slate-400">36.3° / 104.2°</td>
                     <td class="text-rose-400">0.82m</td>
-                    <td class="text-blue-400 font-bold">30.6%</td>
+                    <td class="text-blue-400 font-bold">28.7%</td>
                   </tr>
             
                   <tr>
@@ -403,14 +434,14 @@
                     <td class="text-slate-300">4.5m elev</td>
                     <td class="text-slate-400">36.3° / 104.2°</td>
                     <td class="text-rose-400">0.82m</td>
-                    <td class="text-blue-400 font-bold">30.6%</td>
+                    <td class="text-blue-400 font-bold">28.7%</td>
                   </tr>
             
                 </tbody>
               </table>
             </div>
             <div class="mt-3 p-3 rounded-lg bg-[#0d1117] border border-[#21262d] text-xs text-slate-400">
-              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">80.7%</strong> of the public plus concourse, surpassing the 80% requirement.
+              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">80.0%</strong> of the public plus concourse, surpassing the 80% requirement.
             </div>
           </div>
 
@@ -463,6 +494,31 @@
             
             </div>
           </div>
+
+          <!-- Central Fountain & Roundabout Architecture -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Central Fountain & Pedestrian Roundabout
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Feature:</span>
+                <span class="font-semibold text-sky-400">Central Granite Tiered Fountain & Pedestrian Rotary</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Fountain Basin Diameter:</span>
+                <span class="font-mono text-white font-bold">5.6m (24.6 m² obstacle)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Pedestrian Rotary Lane:</span>
+                <span class="font-mono text-emerald-400 font-bold">3.2m Clear Circulation Lane</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Net Walkable Concourse:</span>
+                <span class="font-mono text-blue-400 font-bold">695.4 m² (80.0% Ray-Cast Covered)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -484,14 +540,14 @@
               </span>
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Design 2: Chamfered Octagonal Central Hub</h2>
-            <p class="text-slate-400 text-sm mt-1 max-w-2xl">40m x 40m premium layout with 45° chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into corner suites with ray-cast wall occlusion.</p>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">40m x 40m premium layout with 45° chamfered corner rooms expanding into an octagonal central atrium. Features a 6.8m grand cascade fountain roundabout with 4.6m rotary lanes.</p>
           </div>
 
           <!-- Key Metrics Badges -->
           <div class="flex flex-wrap gap-3 items-center">
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-blue-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">LOS Coverage</div>
-              <div class="text-2xl font-black text-blue-400">82.4%</div>
+              <div class="text-2xl font-black text-blue-400">81.6%</div>
               <div class="text-xs text-emerald-400 font-semibold">Target: ≥80% (PASS)</div>
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-emerald-500/40 text-center">
@@ -501,7 +557,7 @@
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-purple-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">Multi-Overlap</div>
-              <div class="text-2xl font-black text-purple-400">39.8%</div>
+              <div class="text-2xl font-black text-purple-400">37.0%</div>
               <div class="text-xs text-slate-400 font-mono">Central Intersect</div>
             </div>
           </div>
@@ -547,6 +603,21 @@
 <line x1="490.0" y1="580.0" x2="490.0" y2="340.0" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>
 <rect x="375.0" y="449.0" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>
 <text x="460.0" y="464.0" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>
+<!-- Central Pedestrian Roundabout Rotary Lane -->
+<circle cx="460.0" cy="460.0" r="113.99999999999999" fill="none" stroke="#388bfd" stroke-width="1.8" stroke-dasharray="6,6" opacity="0.85" class="central-fountain"/>
+<path d="M 442.0 574.0 L 478.0 574.0 M 470.0 569.0 L 478.0 574.0 L 470.0 579.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 574.0 478.0 L 574.0 442.0 M 569.0 450.0 L 574.0 442.0 L 579.0 450.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 478.0 346.0 L 442.0 346.0 M 450.0 341.0 L 442.0 346.0 L 450.0 351.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 346.0 442.0 L 346.0 478.0 M 341.0 470.0 L 346.0 478.0 L 351.0 470.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<!-- Fountain Stone Basin & Reflecting Pool -->
+<circle cx="460.0" cy="460.0" r="68.0" fill="#161b22" stroke="#58a6ff" stroke-width="3" class="central-fountain"/>
+<circle cx="460.0" cy="460.0" r="62.0" fill="#0d419d" fill-opacity="0.80" stroke="#388bfd" stroke-width="1.5" class="central-fountain"/>
+<circle cx="460.0" cy="460.0" r="44.2" fill="none" stroke="#79c0ff" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.8" class="central-fountain"/>
+<circle cx="460.0" cy="460.0" r="27.200000000000003" fill="none" stroke="#a5d6ff" stroke-width="1.0" stroke-dasharray="2,2" opacity="0.9" class="central-fountain"/>
+<circle cx="460.0" cy="460.0" r="14.96" fill="#21262d" stroke="#f0883e" stroke-width="1.8" class="central-fountain"/>
+<circle cx="460.0" cy="460.0" r="6.12" fill="#ffffff" stroke="#388bfd" stroke-width="1.2" class="central-fountain"/>
+<rect x="360.0" y="367.0" width="200" height="20" rx="4" fill="#0d1117" stroke="#388bfd" stroke-width="1" class="central-fountain"/>
+<text x="460.0" y="381.0" fill="#58a6ff" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle" class="central-fountain">PEDESTRIAN ROTARY FOUNTAIN</text>
 <line x1="60.0" y1="860.0" x2="340.0" y2="860.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="580.0" y1="860.0" x2="860.0" y2="860.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="60.0" y1="60.0" x2="340.0" y2="60.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
@@ -661,17 +732,22 @@
 
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
+                <span>Civic Cascade Fountain & Roundabout: 6.8m diameter tiered water monument providing 4.6m wide rotary lanes for smooth 4-way crowd flow.</span>
+              </li>
+            
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
                 <span>Octagonal Center Atrium: Expands line-of-sight between all 4 corridors and corner room entries.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Mathematical Coverage: 82.4% of the walkway region under active surveillance.</span>
+                <span>Walkable Coverage: 81.6% of net pedestrian concourse (820 m²) under active surveillance.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Intersection Overlap: 39.8% of the central hub covered by 3 or all 4 cameras simultaneously.</span>
+                <span>Multi-View Overlap: 37.0% of the central rotary hub covered by 3 or all 4 cameras simultaneously.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
@@ -713,7 +789,7 @@
                     <td class="text-slate-300">4.8m elev</td>
                     <td class="text-slate-400">38.7° / 104.2°</td>
                     <td class="text-rose-400">0.66m</td>
-                    <td class="text-blue-400 font-bold">33.2%</td>
+                    <td class="text-blue-400 font-bold">31.2%</td>
                   </tr>
             
                   <tr>
@@ -724,7 +800,7 @@
                     <td class="text-slate-300">4.8m elev</td>
                     <td class="text-slate-400">38.7° / 104.2°</td>
                     <td class="text-rose-400">0.66m</td>
-                    <td class="text-blue-400 font-bold">33.2%</td>
+                    <td class="text-blue-400 font-bold">31.2%</td>
                   </tr>
             
                   <tr>
@@ -735,7 +811,7 @@
                     <td class="text-slate-300">4.8m elev</td>
                     <td class="text-slate-400">38.7° / 104.2°</td>
                     <td class="text-rose-400">0.66m</td>
-                    <td class="text-blue-400 font-bold">33.2%</td>
+                    <td class="text-blue-400 font-bold">31.2%</td>
                   </tr>
             
                   <tr>
@@ -746,14 +822,14 @@
                     <td class="text-slate-300">4.8m elev</td>
                     <td class="text-slate-400">38.7° / 104.2°</td>
                     <td class="text-rose-400">0.66m</td>
-                    <td class="text-blue-400 font-bold">33.2%</td>
+                    <td class="text-blue-400 font-bold">31.2%</td>
                   </tr>
             
                 </tbody>
               </table>
             </div>
             <div class="mt-3 p-3 rounded-lg bg-[#0d1117] border border-[#21262d] text-xs text-slate-400">
-              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">82.4%</strong> of the public plus concourse, surpassing the 80% requirement.
+              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">81.6%</strong> of the public plus concourse, surpassing the 80% requirement.
             </div>
           </div>
 
@@ -806,6 +882,31 @@
             
             </div>
           </div>
+
+          <!-- Central Fountain & Roundabout Architecture -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Central Fountain & Pedestrian Roundabout
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Feature:</span>
+                <span class="font-semibold text-sky-400">Grand Octagonal Cascade Fountain & Civic Roundabout</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Fountain Basin Diameter:</span>
+                <span class="font-mono text-white font-bold">6.8m (36.3 m² obstacle)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Pedestrian Rotary Lane:</span>
+                <span class="font-mono text-emerald-400 font-bold">4.6m Clear Circulation Lane</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Net Walkable Concourse:</span>
+                <span class="font-mono text-blue-400 font-bold">819.7 m² (81.6% Ray-Cast Covered)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -827,14 +928,14 @@
               </span>
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Design 3: Commercial Retail Arcade with Vitrines</h2>
-            <p class="text-slate-400 text-sm mt-1 max-w-2xl">Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, inward-swinging commercial glass doors, and wall-clipped camera beams.</p>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display vitrines, inward glass doors, and a central 4.4m illuminated fountain roundabout.</p>
           </div>
 
           <!-- Key Metrics Badges -->
           <div class="flex flex-wrap gap-3 items-center">
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-blue-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">LOS Coverage</div>
-              <div class="text-2xl font-black text-blue-400">83.9%</div>
+              <div class="text-2xl font-black text-blue-400">83.4%</div>
               <div class="text-xs text-emerald-400 font-semibold">Target: ≥80% (PASS)</div>
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-emerald-500/40 text-center">
@@ -844,7 +945,7 @@
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-purple-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">Multi-Overlap</div>
-              <div class="text-2xl font-black text-purple-400">21.5%</div>
+              <div class="text-2xl font-black text-purple-400">19.1%</div>
               <div class="text-xs text-slate-400 font-mono">Central Intersect</div>
             </div>
           </div>
@@ -890,6 +991,21 @@
 <line x1="430.0" y1="490.0" x2="430.0" y2="310.0" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>
 <rect x="315.0" y="389.0" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>
 <text x="400.0" y="404.0" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>
+<!-- Central Pedestrian Roundabout Rotary Lane -->
+<circle cx="400.0" cy="400.0" r="67.0" fill="none" stroke="#388bfd" stroke-width="1.8" stroke-dasharray="6,6" opacity="0.85" class="central-fountain"/>
+<path d="M 382.0 467.0 L 418.0 467.0 M 410.0 462.0 L 418.0 467.0 L 410.0 472.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 467.0 418.0 L 467.0 382.0 M 462.0 390.0 L 467.0 382.0 L 472.0 390.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 418.0 333.0 L 382.0 333.0 M 390.0 328.0 L 382.0 333.0 L 390.0 338.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 333.0 382.0 L 333.0 418.0 M 328.0 410.0 L 333.0 418.0 L 338.0 410.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<!-- Fountain Stone Basin & Reflecting Pool -->
+<circle cx="400.0" cy="400.0" r="44.0" fill="#161b22" stroke="#58a6ff" stroke-width="3" class="central-fountain"/>
+<circle cx="400.0" cy="400.0" r="38.0" fill="#0d419d" fill-opacity="0.80" stroke="#388bfd" stroke-width="1.5" class="central-fountain"/>
+<circle cx="400.0" cy="400.0" r="28.6" fill="none" stroke="#79c0ff" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.8" class="central-fountain"/>
+<circle cx="400.0" cy="400.0" r="17.6" fill="none" stroke="#a5d6ff" stroke-width="1.0" stroke-dasharray="2,2" opacity="0.9" class="central-fountain"/>
+<circle cx="400.0" cy="400.0" r="9.680000000000001" fill="#21262d" stroke="#f0883e" stroke-width="1.8" class="central-fountain"/>
+<circle cx="400.0" cy="400.0" r="3.96" fill="#ffffff" stroke="#388bfd" stroke-width="1.2" class="central-fountain"/>
+<rect x="300.0" y="331.0" width="200" height="20" rx="4" fill="#0d1117" stroke="#388bfd" stroke-width="1" class="central-fountain"/>
+<text x="400.0" y="345.0" fill="#58a6ff" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle" class="central-fountain">PEDESTRIAN ROTARY FOUNTAIN</text>
 <line x1="60.0" y1="740.0" x2="310.0" y2="740.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="490.0" y1="740.0" x2="740.0" y2="740.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="60.0" y1="60.0" x2="310.0" y2="60.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
@@ -1000,17 +1116,22 @@
 
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
+                <span>Boutique Fountain Roundabout: 4.4m diameter flush water jet fountain organizing shopper flow with 2.3m rotary aisles.</span>
+              </li>
+            
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
                 <span>Storefront Vitrines: Transparent display glazing alongside corridors for high pedestrian engagement.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Mathematical Coverage: 83.9% of the walkway region monitored.</span>
+                <span>Walkable Coverage: 83.4% of net pedestrian concourse (516 m²) monitored.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Focused Surveillance Corridor: 5.2mm lenses channel optical rays directly along the 9m walking corridor.</span>
+                <span>Multi-View Overlap: 19.1% of the central retail plaza cross-monitored by 2+ cameras.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
@@ -1052,7 +1173,7 @@
                     <td class="text-slate-300">4.2m elev</td>
                     <td class="text-slate-400">33.7° / 104.2°</td>
                     <td class="text-rose-400">0.96m</td>
-                    <td class="text-blue-400 font-bold">29.6%</td>
+                    <td class="text-blue-400 font-bold">27.8%</td>
                   </tr>
             
                   <tr>
@@ -1063,7 +1184,7 @@
                     <td class="text-slate-300">4.2m elev</td>
                     <td class="text-slate-400">33.7° / 104.2°</td>
                     <td class="text-rose-400">0.96m</td>
-                    <td class="text-blue-400 font-bold">29.6%</td>
+                    <td class="text-blue-400 font-bold">27.8%</td>
                   </tr>
             
                   <tr>
@@ -1074,7 +1195,7 @@
                     <td class="text-slate-300">4.2m elev</td>
                     <td class="text-slate-400">33.7° / 104.2°</td>
                     <td class="text-rose-400">0.96m</td>
-                    <td class="text-blue-400 font-bold">29.6%</td>
+                    <td class="text-blue-400 font-bold">27.8%</td>
                   </tr>
             
                   <tr>
@@ -1085,14 +1206,14 @@
                     <td class="text-slate-300">4.2m elev</td>
                     <td class="text-slate-400">33.7° / 104.2°</td>
                     <td class="text-rose-400">0.96m</td>
-                    <td class="text-blue-400 font-bold">29.6%</td>
+                    <td class="text-blue-400 font-bold">27.8%</td>
                   </tr>
             
                 </tbody>
               </table>
             </div>
             <div class="mt-3 p-3 rounded-lg bg-[#0d1117] border border-[#21262d] text-xs text-slate-400">
-              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">83.9%</strong> of the public plus concourse, surpassing the 80% requirement.
+              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">83.4%</strong> of the public plus concourse, surpassing the 80% requirement.
             </div>
           </div>
 
@@ -1145,6 +1266,31 @@
             
             </div>
           </div>
+
+          <!-- Central Fountain & Roundabout Architecture -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Central Fountain & Pedestrian Roundabout
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Feature:</span>
+                <span class="font-semibold text-sky-400">Boutique Illuminated Water Jet Fountain & Retail Roundabout</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Fountain Basin Diameter:</span>
+                <span class="font-mono text-white font-bold">4.4m (15.2 m² obstacle)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Pedestrian Rotary Lane:</span>
+                <span class="font-mono text-emerald-400 font-bold">2.3m Clear Circulation Lane</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Net Walkable Concourse:</span>
+                <span class="font-mono text-blue-400 font-bold">515.8 m² (83.4% Ray-Cast Covered)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -1166,14 +1312,14 @@
               </span>
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Design 4: Controlled Transit & Security Interchange</h2>
-            <p class="text-slate-400 text-sm mt-1 max-w-2xl">38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms with magnetic inward doors, and ray-cast wall occlusion.</p>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms, and a 5.0m central clock tower fountain roundabout.</p>
           </div>
 
           <!-- Key Metrics Badges -->
           <div class="flex flex-wrap gap-3 items-center">
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-blue-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">LOS Coverage</div>
-              <div class="text-2xl font-black text-blue-400">84.3%</div>
+              <div class="text-2xl font-black text-blue-400">83.8%</div>
               <div class="text-xs text-emerald-400 font-semibold">Target: ≥80% (PASS)</div>
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-emerald-500/40 text-center">
@@ -1183,7 +1329,7 @@
             </div>
             <div class="px-4 py-2.5 rounded-xl bg-[#0d1117] border border-purple-500/40 text-center">
               <div class="text-xs font-mono text-slate-400 uppercase">Multi-Overlap</div>
-              <div class="text-2xl font-black text-purple-400">21.2%</div>
+              <div class="text-2xl font-black text-purple-400">18.8%</div>
               <div class="text-xs text-slate-400 font-mono">Central Intersect</div>
             </div>
           </div>
@@ -1229,6 +1375,21 @@
 <line x1="470.0" y1="540.0" x2="470.0" y2="340.0" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="4,4" class="perp-line"/>
 <rect x="355.0" y="429.0" width="170" height="22" rx="4" fill="#161b22" stroke="#e3b341" stroke-width="1" class="perp-line"/>
 <text x="440.0" y="444.0" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle" class="perp-line">PERPENDICULAR HANDOVER</text>
+<!-- Central Pedestrian Roundabout Rotary Lane -->
+<circle cx="440.0" cy="440.0" r="75.0" fill="none" stroke="#388bfd" stroke-width="1.8" stroke-dasharray="6,6" opacity="0.85" class="central-fountain"/>
+<path d="M 422.0 515.0 L 458.0 515.0 M 450.0 510.0 L 458.0 515.0 L 450.0 520.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 515.0 458.0 L 515.0 422.0 M 510.0 430.0 L 515.0 422.0 L 520.0 430.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 458.0 365.0 L 422.0 365.0 M 430.0 360.0 L 422.0 365.0 L 430.0 370.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<path d="M 365.0 422.0 L 365.0 458.0 M 360.0 450.0 L 365.0 458.0 L 370.0 450.0" stroke="#58a6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" class="central-fountain"/>
+<!-- Fountain Stone Basin & Reflecting Pool -->
+<circle cx="440.0" cy="440.0" r="50.0" fill="#161b22" stroke="#58a6ff" stroke-width="3" class="central-fountain"/>
+<circle cx="440.0" cy="440.0" r="44.0" fill="#0d419d" fill-opacity="0.80" stroke="#388bfd" stroke-width="1.5" class="central-fountain"/>
+<circle cx="440.0" cy="440.0" r="32.5" fill="none" stroke="#79c0ff" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.8" class="central-fountain"/>
+<circle cx="440.0" cy="440.0" r="20.0" fill="none" stroke="#a5d6ff" stroke-width="1.0" stroke-dasharray="2,2" opacity="0.9" class="central-fountain"/>
+<circle cx="440.0" cy="440.0" r="11.0" fill="#21262d" stroke="#f0883e" stroke-width="1.8" class="central-fountain"/>
+<circle cx="440.0" cy="440.0" r="4.5" fill="#ffffff" stroke="#388bfd" stroke-width="1.2" class="central-fountain"/>
+<rect x="340.0" y="365.0" width="200" height="20" rx="4" fill="#0d1117" stroke="#388bfd" stroke-width="1" class="central-fountain"/>
+<text x="440.0" y="379.0" fill="#58a6ff" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle" class="central-fountain">PEDESTRIAN ROTARY FOUNTAIN</text>
 <line x1="60.0" y1="820.0" x2="340.0" y2="820.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="540.0" y1="820.0" x2="820.0" y2="820.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
 <line x1="60.0" y1="60.0" x2="340.0" y2="60.0" stroke="#58a6ff" stroke-width="3" stroke-linecap="square"/>
@@ -1339,12 +1500,22 @@
 
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
+                <span>Transit Clock Tower Fountain & Roundabout: 5.0m diameter stepped water basin with a 4-face clock pillar guiding pedestrian transfer flow with 2.5m rotary lanes.</span>
+              </li>
+            
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
                 <span>Egress Compliance: All room doors open inward, preventing crowd crush hazards in transit lanes.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
                 <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
-                <span>Mathematical Coverage: 84.3% of the walkway concourse actively monitored.</span>
+                <span>Walkable Coverage: 83.8% of net pedestrian concourse (640 m²) actively monitored.</span>
+              </li>
+            
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-0.5 font-bold">✓</span>
+                <span>Multi-View Overlap: 18.8% of central transit rotary cross-monitored by 2+ cameras.</span>
               </li>
             
               <li class="flex items-start gap-2.5">
@@ -1391,7 +1562,7 @@
                     <td class="text-slate-300">4.6m elev</td>
                     <td class="text-slate-400">37.1° / 104.2°</td>
                     <td class="text-rose-400">0.77m</td>
-                    <td class="text-blue-400 font-bold">29.3%</td>
+                    <td class="text-blue-400 font-bold">27.6%</td>
                   </tr>
             
                   <tr>
@@ -1402,7 +1573,7 @@
                     <td class="text-slate-300">4.6m elev</td>
                     <td class="text-slate-400">37.1° / 104.2°</td>
                     <td class="text-rose-400">0.77m</td>
-                    <td class="text-blue-400 font-bold">29.3%</td>
+                    <td class="text-blue-400 font-bold">27.6%</td>
                   </tr>
             
                   <tr>
@@ -1413,7 +1584,7 @@
                     <td class="text-slate-300">4.6m elev</td>
                     <td class="text-slate-400">37.1° / 104.2°</td>
                     <td class="text-rose-400">0.77m</td>
-                    <td class="text-blue-400 font-bold">29.3%</td>
+                    <td class="text-blue-400 font-bold">27.6%</td>
                   </tr>
             
                   <tr>
@@ -1424,14 +1595,14 @@
                     <td class="text-slate-300">4.6m elev</td>
                     <td class="text-slate-400">37.1° / 104.2°</td>
                     <td class="text-rose-400">0.77m</td>
-                    <td class="text-blue-400 font-bold">29.3%</td>
+                    <td class="text-blue-400 font-bold">27.6%</td>
                   </tr>
             
                 </tbody>
               </table>
             </div>
             <div class="mt-3 p-3 rounded-lg bg-[#0d1117] border border-[#21262d] text-xs text-slate-400">
-              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">84.3%</strong> of the public plus concourse, surpassing the 80% requirement.
+              <span class="text-emerald-400 font-semibold">Zero Wall Penetration:</span> Every ray is bounded by solid walls. The combined union of the 4 cameras monitors <strong class="text-white">83.8%</strong> of the public plus concourse, surpassing the 80% requirement.
             </div>
           </div>
 
@@ -1484,6 +1655,31 @@
             
             </div>
           </div>
+
+          <!-- Central Fountain & Roundabout Architecture -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Central Fountain & Pedestrian Roundabout
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Feature:</span>
+                <span class="font-semibold text-sky-400">Rotary Clock Tower Fountain & Transit Circulation Roundabout</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Fountain Basin Diameter:</span>
+                <span class="font-mono text-white font-bold">5.0m (19.6 m² obstacle)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Pedestrian Rotary Lane:</span>
+                <span class="font-mono text-emerald-400 font-bold">2.5m Clear Circulation Lane</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Net Walkable Concourse:</span>
+                <span class="font-mono text-blue-400 font-bold">640.4 m² (83.8% Ray-Cast Covered)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -1509,6 +1705,10 @@
         const btn = document.getElementById('btn-fov');
         btn.textContent = isVisible ? '✓ Ray-Cast Visibility Polygons' : '✗ Ray-Cast Visibility Polygons';
         btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
+      } else if (layerClass === 'central-fountain') {
+        const btn = document.getElementById('btn-fountain');
+        btn.textContent = isVisible ? '✓ Fountain & Roundabout' : '✗ Fountain & Roundabout';
+        btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
       } else if (layerClass === 'perp-line') {
         const btn = document.getElementById('btn-perp');
         btn.textContent = isVisible ? '✓ Perpendicular Handover Lines' : '✗ Perpendicular Handover Lines';

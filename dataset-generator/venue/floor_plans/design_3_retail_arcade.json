@@ -2,8 +2,8 @@
   "venue_metadata": {
     "name": "Design 3: Commercial Retail Arcade with Vitrines",
     "architecture": "square_plus_walkway",
-    "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, inward-swinging commercial glass doors, and wall-clipped camera beams.",
-    "coverage_proven_pct": 83.9,
+    "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display vitrines, inward glass doors, and a central 4.4m illuminated fountain roundabout.",
+    "coverage_proven_pct": 83.4,
     "raycast_wall_occlusion": true
   },
   "global_dimensions": {
@@ -407,6 +407,24 @@
       "door_opening": "inward"
     }
   },
+  "obstacles": [
+    {
+      "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+      "name": "Boutique Illuminated Water Jet Fountain & Retail Roundabout",
+      "type": "fountain_roundabout",
+      "shape": "circle",
+      "position": [
+        17.0,
+        17.0,
+        0.0
+      ],
+      "radius": 2.2,
+      "height": 1.0,
+      "rotary_lane_width_m": 2.3,
+      "is_walkable": false,
+      "description": "Circular flush-jet water feature and pedestrian rotary island allowing continuous shopper circulation between retail arcade wings."
+    }
+  ],
   "navigation_graph": {
     "nodes": {
       "EXIT_S": {
@@ -441,14 +459,6 @@
         ],
         "type": "entrance_exit"
       },
-      "HUB_CENTER": {
-        "name": "Central Plus Intersection",
-        "pos": [
-          17.0,
-          17.0
-        ],
-        "type": "atrium"
-      },
       "WING_S": {
         "name": "South Walkway Wing",
         "pos": [
@@ -480,6 +490,38 @@
           17.0
         ],
         "type": "corridor"
+      },
+      "ROTARY_S": {
+        "name": "South Roundabout Rotary Node",
+        "pos": [
+          17.0,
+          13.65
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_E": {
+        "name": "East Roundabout Rotary Node",
+        "pos": [
+          20.35,
+          17.0
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_N": {
+        "name": "North Roundabout Rotary Node",
+        "pos": [
+          17.0,
+          20.35
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_W": {
+        "name": "West Roundabout Rotary Node",
+        "pos": [
+          13.65,
+          17.0
+        ],
+        "type": "roundabout_lane"
       },
       "DOOR_ROOM_SW": {
         "name": "Inward Door ROOM_SW",
@@ -554,20 +596,8 @@
         "width_m": 9.0
       },
       {
-        "from": "WING_S",
-        "to": "HUB_CENTER",
-        "capacity": 150,
-        "width_m": 9.0
-      },
-      {
         "from": "EXIT_N",
         "to": "WING_N",
-        "capacity": 150,
-        "width_m": 9.0
-      },
-      {
-        "from": "WING_N",
-        "to": "HUB_CENTER",
         "capacity": 150,
         "width_m": 9.0
       },
@@ -578,25 +608,85 @@
         "width_m": 9.0
       },
       {
-        "from": "WING_W",
-        "to": "HUB_CENTER",
-        "capacity": 150,
-        "width_m": 9.0
-      },
-      {
         "from": "EXIT_E",
         "to": "WING_E",
         "capacity": 150,
         "width_m": 9.0
       },
       {
-        "from": "WING_E",
-        "to": "HUB_CENTER",
+        "from": "WING_S",
+        "to": "ROTARY_S",
         "capacity": 150,
         "width_m": 9.0
       },
       {
-        "from": "HUB_CENTER",
+        "from": "WING_E",
+        "to": "ROTARY_E",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_N",
+        "to": "ROTARY_N",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_W",
+        "to": "ROTARY_W",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "ROTARY_E",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_E",
+        "to": "ROTARY_N",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "ROTARY_W",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_W",
+        "to": "ROTARY_S",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_E",
+        "to": "ROTARY_S",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "ROTARY_E",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_W",
+        "to": "ROTARY_N",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "ROTARY_W",
+        "capacity": 120,
+        "width_m": 2.3
+      },
+      {
+        "from": "ROTARY_S",
         "to": "DOOR_ROOM_SW",
         "capacity": 60,
         "width_m": 1.1
@@ -608,7 +698,7 @@
         "width_m": 1.1
       },
       {
-        "from": "HUB_CENTER",
+        "from": "ROTARY_S",
         "to": "DOOR_ROOM_SE",
         "capacity": 60,
         "width_m": 1.1
@@ -620,7 +710,7 @@
         "width_m": 1.1
       },
       {
-        "from": "HUB_CENTER",
+        "from": "ROTARY_N",
         "to": "DOOR_ROOM_NW",
         "capacity": 60,
         "width_m": 1.1
@@ -632,7 +722,7 @@
         "width_m": 1.1
       },
       {
-        "from": "HUB_CENTER",
+        "from": "ROTARY_N",
         "to": "DOOR_ROOM_NE",
         "capacity": 60,
         "width_m": 1.1
@@ -740,15 +830,15 @@
     }
   ],
   "coverage_metrics": {
-    "total_pts": 8496,
-    "covered_pts": 7128,
-    "coverage_pct": 83.9,
-    "overlap_pct": 21.5,
+    "total_pts": 8248,
+    "covered_pts": 6880,
+    "coverage_pct": 83.4,
+    "overlap_pct": 19.1,
     "individual_pcts": [
-      29.6,
-      29.6,
-      29.6,
-      29.6
+      27.8,
+      27.8,
+      27.8,
+      27.8
     ],
     "optics": [
       {

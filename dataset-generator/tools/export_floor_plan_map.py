@@ -300,14 +300,118 @@ def draw_cad_floor_plan(
 
             ax.scatter(pos[0], pos[1], s=m_size, c=node_col, edgecolors='#2C3E50', linewidths=0.8, zorder=5)
 
-    # 3. Draw Obstacles (Pillars, tables, benches, kiosks)
+    # 3. Draw Obstacles (Pillars, tables, benches, kiosks, fountains)
     obstacles = data.get("obstacles", [])
     for obs in obstacles:
         pos = obs["position"]
         otype = obs.get("type", "box")
         oname = obs.get("name", "")
 
-        if otype == "cylinder":
+        if otype in ["fountain_roundabout", "fountain"]:
+            radius = obs.get("radius", 2.8)
+            lane_w = obs.get("rotary_lane_width_m", 3.0)
+            rotary_r = radius + lane_w * 0.5
+
+            # 1. Rotary pedestrian guide lane (dashed circle)
+            rotary_circ = patches.Circle(
+                (pos[0], pos[1]),
+                radius=rotary_r,
+                facecolor='none',
+                edgecolor='#0284C7',
+                linewidth=1.4,
+                linestyle='--',
+                alpha=0.75,
+                zorder=5
+            )
+            ax.add_patch(rotary_circ)
+
+            # 2. Rotary flow arrows (Counter-clockwise pedestrian traffic flow)
+            for ang_deg in [0, 90, 180, 270]:
+                rad = math.radians(ang_deg)
+                ax_pos = (pos[0] + rotary_r * math.cos(rad), pos[1] + rotary_r * math.sin(rad))
+                tang_rad = rad + math.pi / 2.0
+                dx = 0.8 * math.cos(tang_rad)
+                dy = 0.8 * math.sin(tang_rad)
+                ax.annotate(
+                    '',
+                    xy=(ax_pos[0] + dx, ax_pos[1] + dy),
+                    xytext=(ax_pos[0] - dx, ax_pos[1] - dy),
+                    arrowprops=dict(arrowstyle="-|>", color='#0284C7', lw=1.8, mutation_scale=12),
+                    zorder=6
+                )
+
+            # 3. Outer Stone Coping Border Ring
+            outer_ring = patches.Circle(
+                (pos[0], pos[1]),
+                radius=radius,
+                facecolor='#1E293B',
+                edgecolor='#0284C7',
+                linewidth=2.2,
+                zorder=6
+            )
+            ax.add_patch(outer_ring)
+
+            # 4. Azure Water Reflecting Pool
+            water_pool = patches.Circle(
+                (pos[0], pos[1]),
+                radius=radius * 0.88,
+                facecolor='#0284C7',
+                edgecolor='#38BDF8',
+                linewidth=1.2,
+                alpha=0.65,
+                zorder=7
+            )
+            ax.add_patch(water_pool)
+
+            # 5. Concentric Water Ripples
+            ripple1 = patches.Circle(
+                (pos[0], pos[1]),
+                radius=radius * 0.6,
+                facecolor='none',
+                edgecolor='#BAE6FD',
+                linewidth=1.0,
+                linestyle=':',
+                alpha=0.85,
+                zorder=7
+            )
+            ax.add_patch(ripple1)
+            ripple2 = patches.Circle(
+                (pos[0], pos[1]),
+                radius=radius * 0.38,
+                facecolor='none',
+                edgecolor='#E0F2FE',
+                linewidth=0.8,
+                linestyle=':',
+                alpha=0.9,
+                zorder=7
+            )
+            ax.add_patch(ripple2)
+
+            # 6. Center Pedestal & Fountain Jet
+            pedestal = patches.Circle(
+                (pos[0], pos[1]),
+                radius=radius * 0.22,
+                facecolor='#334155',
+                edgecolor='#F59E0B',
+                linewidth=1.5,
+                zorder=8
+            )
+            ax.add_patch(pedestal)
+
+            # 7. Text Callout Label
+            ax.text(
+                pos[0], pos[1] - radius - 0.7,
+                "CENTRAL FOUNTAIN & ROUNDABOUT",
+                fontsize=7.5,
+                fontweight='bold',
+                fontfamily='monospace',
+                color='#0369A1',
+                ha='center',
+                va='top',
+                zorder=9,
+                bbox=dict(boxstyle="round,pad=0.25", facecolor='#F0F9FF', edgecolor='#0284C7', linewidth=1.0, alpha=0.95)
+            )
+        elif otype == "cylinder":
             radius = obs.get("radius", 0.5)
             # Pillars are solid concrete gray, tables are amber
             if "pillar" in oname:
