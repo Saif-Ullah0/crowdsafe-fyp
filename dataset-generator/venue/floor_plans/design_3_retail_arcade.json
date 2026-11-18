@@ -425,39 +425,153 @@
       "description": "Circular flush-jet water feature and pedestrian rotary island allowing continuous shopper circulation between retail arcade wings."
     }
   ],
+  "exit_gateways": [
+    {
+      "id": "EXIT_S",
+      "gateway_id": "GW-S",
+      "name": "South Arcade Egress Gateway",
+      "direction": "south",
+      "x1": 12.5,
+      "y1": 0.0,
+      "x2": 21.5,
+      "y2": 0.0,
+      "cam_id": "CAM-S",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 1.8,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.2,
+      "throughput_ppm": 480,
+      "emergency_breakout": true
+    },
+    {
+      "id": "EXIT_N",
+      "gateway_id": "GW-N",
+      "name": "North Arcade Egress Gateway",
+      "direction": "north",
+      "x1": 12.5,
+      "y1": 34.0,
+      "x2": 21.5,
+      "y2": 34.0,
+      "cam_id": "CAM-N",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 1.8,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.2,
+      "throughput_ppm": 480,
+      "emergency_breakout": true
+    },
+    {
+      "id": "EXIT_W",
+      "gateway_id": "GW-W",
+      "name": "West Promenade Egress Gateway",
+      "direction": "west",
+      "x1": 0.0,
+      "y1": 12.5,
+      "x2": 0.0,
+      "y2": 21.5,
+      "cam_id": "CAM-W",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 1.8,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.2,
+      "throughput_ppm": 480,
+      "emergency_breakout": true
+    },
+    {
+      "id": "EXIT_E",
+      "gateway_id": "GW-E",
+      "name": "East Promenade Egress Gateway",
+      "direction": "east",
+      "x1": 34.0,
+      "y1": 12.5,
+      "x2": 34.0,
+      "y2": 21.5,
+      "cam_id": "CAM-E",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 1.8,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.2,
+      "throughput_ppm": 480,
+      "emergency_breakout": true
+    }
+  ],
   "navigation_graph": {
     "nodes": {
       "EXIT_S": {
         "name": "South Exit Portal",
         "pos": [
           17.0,
-          1.0
+          0.0
         ],
         "type": "entrance_exit"
+      },
+      "GW_S": {
+        "name": "South Exit Gateway",
+        "pos": [
+          17.0,
+          0.7
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-S",
+        "lanes": 5
       },
       "EXIT_N": {
         "name": "North Exit Portal",
         "pos": [
           17.0,
-          33.0
+          34.0
         ],
         "type": "entrance_exit"
+      },
+      "GW_N": {
+        "name": "North Exit Gateway",
+        "pos": [
+          17.0,
+          33.3
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-N",
+        "lanes": 5
       },
       "EXIT_W": {
         "name": "West Exit Portal",
         "pos": [
-          1.0,
+          0.0,
           17.0
         ],
         "type": "entrance_exit"
       },
+      "GW_W": {
+        "name": "West Exit Gateway",
+        "pos": [
+          0.7,
+          17.0
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-W",
+        "lanes": 5
+      },
       "EXIT_E": {
         "name": "East Exit Portal",
         "pos": [
-          33.0,
+          34.0,
           17.0
         ],
         "type": "entrance_exit"
+      },
+      "GW_E": {
+        "name": "East Exit Gateway",
+        "pos": [
+          33.3,
+          17.0
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-E",
+        "lanes": 5
       },
       "WING_S": {
         "name": "South Walkway Wing",
@@ -591,24 +705,48 @@
     "edges": [
       {
         "from": "EXIT_S",
+        "to": "GW_S",
+        "capacity": 200,
+        "width_m": 9.0
+      },
+      {
+        "from": "GW_S",
         "to": "WING_S",
         "capacity": 150,
         "width_m": 9.0
       },
       {
         "from": "EXIT_N",
+        "to": "GW_N",
+        "capacity": 200,
+        "width_m": 9.0
+      },
+      {
+        "from": "GW_N",
         "to": "WING_N",
         "capacity": 150,
         "width_m": 9.0
       },
       {
         "from": "EXIT_W",
+        "to": "GW_W",
+        "capacity": 200,
+        "width_m": 9.0
+      },
+      {
+        "from": "GW_W",
         "to": "WING_W",
         "capacity": 150,
         "width_m": 9.0
       },
       {
         "from": "EXIT_E",
+        "to": "GW_E",
+        "capacity": 200,
+        "width_m": 9.0
+      },
+      {
+        "from": "GW_E",
         "to": "WING_E",
         "capacity": 150,
         "width_m": 9.0

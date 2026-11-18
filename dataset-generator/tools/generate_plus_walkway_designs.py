@@ -417,10 +417,10 @@ def build_design_1():
     ]
 
     exits = [
-        {"id": "EXIT_S", "name": "South Main Exit Portal", "x1": 12.0, "y1": 0.0, "x2": 24.0, "y2": 0.0, "cam_id": "CAM-S"},
-        {"id": "EXIT_N", "name": "North Transit Exit Portal", "x1": 12.0, "y1": 36.0, "x2": 24.0, "y2": 36.0, "cam_id": "CAM-N"},
-        {"id": "EXIT_W", "name": "West Corridor Exit Portal", "x1": 0.0, "y1": 12.0, "x2": 0.0, "y2": 24.0, "cam_id": "CAM-W"},
-        {"id": "EXIT_E", "name": "East Retail Exit Portal", "x1": 36.0, "y1": 12.0, "x2": 36.0, "y2": 24.0, "cam_id": "CAM-E"}
+        {"id": "EXIT_S", "gateway_id": "GW-S", "name": "South Main Egress Gateway", "direction": "south", "x1": 12.0, "y1": 0.0, "x2": 24.0, "y2": 0.0, "cam_id": "CAM-S", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_N", "gateway_id": "GW-N", "name": "North Transit Egress Gateway", "direction": "north", "x1": 12.0, "y1": 36.0, "x2": 24.0, "y2": 36.0, "cam_id": "CAM-N", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_W", "gateway_id": "GW-W", "name": "West Corridor Egress Gateway", "direction": "west", "x1": 0.0, "y1": 12.0, "x2": 0.0, "y2": 24.0, "cam_id": "CAM-W", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_E", "gateway_id": "GW-E", "name": "East Retail Egress Gateway", "direction": "east", "x1": 36.0, "y1": 12.0, "x2": 36.0, "y2": 24.0, "cam_id": "CAM-E", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True}
     ]
 
     fountain = {
@@ -458,9 +458,11 @@ def build_design_1():
         "wall_segments": wall_segments,
         "corner_rooms": corner_rooms,
         "exits": exits,
+        "exit_gateways": exits,
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
+            "Architectural Exit Gateways: Automated multi-lane speed-gate portals (GW-S, GW-N, GW-W, GW-E) integrated with overhead CCTV camera mounts.",
             "Central Fountain & Pedestrian Roundabout: 5.6m diameter architectural water fountain acting as a traffic roundabout with 3.2m circulation lanes.",
             "Real-Life Wall Occlusion: 100% ray-casting stops dead at solid walls; zero coverage leaks into corner rooms.",
             "Inward-Opening Doors: Doors swing 90° into corner rooms, maintaining zero corridor obstruction.",
@@ -593,10 +595,10 @@ def build_design_2():
     ]
 
     exits = [
-        {"id": "EXIT_S", "name": "South Grand Portal", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S"},
-        {"id": "EXIT_N", "name": "North Galleria Portal", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N"},
-        {"id": "EXIT_W", "name": "West Boulevard Portal", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W"},
-        {"id": "EXIT_E", "name": "East Esplanade Portal", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E"}
+        {"id": "EXIT_S", "gateway_id": "GW-S", "name": "South Grand Egress Gateway", "direction": "south", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_N", "gateway_id": "GW-N", "name": "North Galleria Egress Gateway", "direction": "north", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_W", "gateway_id": "GW-W", "name": "West Boulevard Egress Gateway", "direction": "west", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True},
+        {"id": "EXIT_E", "gateway_id": "GW-E", "name": "East Esplanade Egress Gateway", "direction": "east", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E", "threshold_depth_m": 1.4, "num_lanes": 5, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.5, "throughput_ppm": 600, "emergency_breakout": True}
     ]
 
     fountain = {
@@ -634,6 +636,7 @@ def build_design_2():
         "wall_segments": wall_segments,
         "corner_rooms": corner_rooms,
         "exits": exits,
+        "exit_gateways": exits,
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
@@ -757,10 +760,10 @@ def build_design_3():
     ]
 
     exits = [
-        {"id": "EXIT_S", "name": "South Arcade Exit", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S"},
-        {"id": "EXIT_N", "name": "North Arcade Exit", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N"},
-        {"id": "EXIT_W", "name": "West Promenade Exit", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W"},
-        {"id": "EXIT_E", "name": "East Promenade Exit", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E"}
+        {"id": "EXIT_S", "gateway_id": "GW-S", "name": "South Arcade Egress Gateway", "direction": "south", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 1.8, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.2, "throughput_ppm": 480, "emergency_breakout": True},
+        {"id": "EXIT_N", "gateway_id": "GW-N", "name": "North Arcade Egress Gateway", "direction": "north", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 1.8, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.2, "throughput_ppm": 480, "emergency_breakout": True},
+        {"id": "EXIT_W", "gateway_id": "GW-W", "name": "West Promenade Egress Gateway", "direction": "west", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 1.8, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.2, "throughput_ppm": 480, "emergency_breakout": True},
+        {"id": "EXIT_E", "gateway_id": "GW-E", "name": "East Promenade Egress Gateway", "direction": "east", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 1.8, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.2, "throughput_ppm": 480, "emergency_breakout": True}
     ]
 
     fountain = {
@@ -798,6 +801,7 @@ def build_design_3():
         "wall_segments": wall_segments,
         "corner_rooms": corner_rooms,
         "exits": exits,
+        "exit_gateways": exits,
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
@@ -921,10 +925,10 @@ def build_design_4():
     ]
 
     exits = [
-        {"id": "EXIT_S", "name": "South Turnstile Portal", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S", "has_turnstiles": True},
-        {"id": "EXIT_N", "name": "North Turnstile Portal", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N", "has_turnstiles": True},
-        {"id": "EXIT_W", "name": "West Transit Portal", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W", "has_turnstiles": True},
-        {"id": "EXIT_E", "name": "East Transit Portal", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E", "has_turnstiles": True}
+        {"id": "EXIT_S", "gateway_id": "GW-S", "name": "South Turnstile Transit Gateway", "direction": "south", "x1": rw, "y1": 0.0, "x2": rw + cw, "y2": 0.0, "cam_id": "CAM-S", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.8, "throughput_ppm": 520, "emergency_breakout": True, "has_turnstiles": True},
+        {"id": "EXIT_N", "gateway_id": "GW-N", "name": "North Turnstile Transit Gateway", "direction": "north", "x1": rw, "y1": W, "x2": rw + cw, "y2": W, "cam_id": "CAM-N", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.8, "throughput_ppm": 520, "emergency_breakout": True, "has_turnstiles": True},
+        {"id": "EXIT_W", "gateway_id": "GW-W", "name": "West Transit Egress Gateway", "direction": "west", "x1": 0.0, "y1": rw, "x2": 0.0, "y2": rw + cw, "cam_id": "CAM-W", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.8, "throughput_ppm": 520, "emergency_breakout": True, "has_turnstiles": True},
+        {"id": "EXIT_E", "gateway_id": "GW-E", "name": "East Transit Egress Gateway", "direction": "east", "x1": W, "y1": rw, "x2": W, "y2": rw + cw, "cam_id": "CAM-E", "threshold_depth_m": 1.4, "num_lanes": 4, "lane_width_m": 2.0, "barrier_type": "optical_speed_gate_array", "canopy_height_m": 4.8, "throughput_ppm": 520, "emergency_breakout": True, "has_turnstiles": True}
     ]
 
     fountain = {
@@ -962,6 +966,7 @@ def build_design_4():
         "wall_segments": wall_segments,
         "corner_rooms": corner_rooms,
         "exits": exits,
+        "exit_gateways": exits,
         "cameras": cameras,
         "coverage_stats": stats,
         "highlights": [
@@ -1147,14 +1152,153 @@ def render_svg_cad(design):
         svg.append(f'<circle cx="{tx(hinge_x)}" cy="{ty(hinge_y)}" r="3.5" fill="#3fb950"/>')
         svg.append(f'<text x="{tx(hinge_x)}" y="{ty(hinge_y)-8}" fill="#3fb950" font-size="12" font-weight="bold" font-family="monospace">INWARD DOOR</text>')
 
-    # 6. Draw Exits / Portals
+    # 6. Draw Architectural Exit Gateways & Portals
     for ex in design["exits"]:
         x1, y1, x2, y2 = ex["x1"], ex["y1"], ex["x2"], ex["y2"]
-        svg.append(f'<line x1="{tx(x1)}" y1="{ty(y1)}" x2="{tx(x2)}" y2="{ty(y2)}" stroke="#238636" stroke-width="6" stroke-linecap="round"/>')
+        direction = ex.get("direction", "south")
+        gw_id = ex.get("gateway_id", "GW")
+        cam_id = ex.get("cam_id", "CAM")
+        td = ex.get("threshold_depth_m", 1.4)
+        num_lanes = ex.get("num_lanes", 5)
         mx = (x1 + x2) / 2.0
         my = (y1 + y2) / 2.0
-        svg.append(f'<rect x="{tx(mx)-48}" y="{ty(my)-13}" width="96" height="26" rx="5" fill="#238636" filter="url(#shadow)"/>')
-        svg.append(f'<text x="{tx(mx)}" y="{ty(my)+5}" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">EXIT PORTAL</text>')
+
+        svg.append(f'<!-- Exit Gateway: {gw_id} ({cam_id} Overhead) -->')
+        svg.append(f'<g class="exit-gateway" id="gateway-{gw_id}">')
+
+        if direction == "south":
+            span_w = x2 - x1
+            # 1. Floor Threshold Matting (Anti-slip / tactile tread)
+            svg.append(f'<rect x="{tx(x1)}" y="{ty(td)}" width="{span_w*scale}" height="{td*scale}" fill="#064e3b" fill-opacity="0.38" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(td*0.4)}" x2="{tx(x2)}" y2="{ty(td*0.4)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(td*0.7)}" x2="{tx(x2)}" y2="{ty(td*0.7)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+
+            # 2. Structural Terminal Jamb Pillars (0.6m x 0.6m)
+            svg.append(f'<rect x="{tx(x1)}" y="{ty(0.6)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+            svg.append(f'<rect x="{tx(x2-0.6)}" y="{ty(0.6)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+
+            # 3. Speed-Gate Stanchion Pedestals & Flapper Lanes
+            j_start = x1 + 0.6
+            j_end = x2 - 0.6
+            lane_w = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sx = j_start + k * lane_w
+                svg.append(f'<rect x="{tx(sx - 0.12)}" y="{ty(1.1)}" width="{0.24*scale}" height="{0.8*scale}" rx="2" fill="#30363d" stroke="#8b949e" stroke-width="1.2"/>')
+                svg.append(f'<circle cx="{tx(sx)}" cy="{ty(0.7)}" r="2.2" fill="#3fb950"/>')
+
+            # 4. Egress Circulation Direction Arrows
+            for k in range(num_lanes):
+                lx = j_start + (k + 0.5) * lane_w
+                svg.append(f'<path d="M {tx(lx)} {ty(1.0)} L {tx(lx)} {ty(0.4)} M {tx(lx)-4} {ty(0.55)} L {tx(lx)} {ty(0.4)} L {tx(lx)+4} {ty(0.55)}" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" fill="none"/>')
+
+            # 5. Overhead Portal Canopy Bulkhead Beam
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(0.0)}" x2="{tx(x2)}" y2="{ty(0.0)}" stroke="#238636" stroke-width="6" stroke-linecap="round"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(td)}" x2="{tx(x2)}" y2="{ty(td)}" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,4"/>')
+
+            # 6. Illuminated Gateway Identity Signage
+            svg.append(f'<rect x="{tx(mx)-85}" y="{ty(td+0.25)-12}" width="170" height="24" rx="5" fill="#161b22" stroke="#238636" stroke-width="1.5" filter="url(#shadow)"/>')
+            svg.append(f'<text x="{tx(mx)}" y="{ty(td+0.25)+4}" fill="#3fb950" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">GATEWAY [{gw_id}] • {cam_id}</text>')
+
+        elif direction == "north":
+            span_w = x2 - x1
+            # 1. Floor Threshold Matting
+            svg.append(f'<rect x="{tx(x1)}" y="{ty(D)}" width="{span_w*scale}" height="{td*scale}" fill="#064e3b" fill-opacity="0.38" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(D - td*0.4)}" x2="{tx(x2)}" y2="{ty(D - td*0.4)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(D - td*0.7)}" x2="{tx(x2)}" y2="{ty(D - td*0.7)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+
+            # 2. Structural Jamb Pillars
+            svg.append(f'<rect x="{tx(x1)}" y="{ty(D)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+            svg.append(f'<rect x="{tx(x2-0.6)}" y="{ty(D)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = x1 + 0.6
+            j_end = x2 - 0.6
+            lane_w = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sx = j_start + k * lane_w
+                svg.append(f'<rect x="{tx(sx - 0.12)}" y="{ty(D - 0.3)}" width="{0.24*scale}" height="{0.8*scale}" rx="2" fill="#30363d" stroke="#8b949e" stroke-width="1.2"/>')
+                svg.append(f'<circle cx="{tx(sx)}" cy="{ty(D - 0.7)}" r="2.2" fill="#3fb950"/>')
+
+            # 4. Egress Circulation Direction Arrows
+            for k in range(num_lanes):
+                lx = j_start + (k + 0.5) * lane_w
+                svg.append(f'<path d="M {tx(lx)} {ty(D - 1.0)} L {tx(lx)} {ty(D - 0.4)} M {tx(lx)-4} {ty(D - 0.55)} L {tx(lx)} {ty(D - 0.4)} L {tx(lx)+4} {ty(D - 0.55)}" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" fill="none"/>')
+
+            # 5. Overhead Canopy Beam
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(D)}" x2="{tx(x2)}" y2="{ty(D)}" stroke="#238636" stroke-width="6" stroke-linecap="round"/>')
+            svg.append(f'<line x1="{tx(x1)}" y1="{ty(D - td)}" x2="{tx(x2)}" y2="{ty(D - td)}" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,4"/>')
+
+            # 6. Illuminated Gateway Identity Signage
+            svg.append(f'<rect x="{tx(mx)-85}" y="{ty(D-td-0.25)-12}" width="170" height="24" rx="5" fill="#161b22" stroke="#238636" stroke-width="1.5" filter="url(#shadow)"/>')
+            svg.append(f'<text x="{tx(mx)}" y="{ty(D-td-0.25)+4}" fill="#3fb950" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">GATEWAY [{gw_id}] • {cam_id}</text>')
+
+        elif direction == "west":
+            span_h = y2 - y1
+            # 1. Floor Threshold Matting
+            svg.append(f'<rect x="{tx(0.0)}" y="{ty(y2)}" width="{td*scale}" height="{span_h*scale}" fill="#064e3b" fill-opacity="0.38" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4"/>')
+            svg.append(f'<line x1="{tx(td*0.4)}" y1="{ty(y1)}" x2="{tx(td*0.4)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+            svg.append(f'<line x1="{tx(td*0.7)}" y1="{ty(y1)}" x2="{tx(td*0.7)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+
+            # 2. Structural Jamb Pillars
+            svg.append(f'<rect x="{tx(0.0)}" y="{ty(y1+0.6)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+            svg.append(f'<rect x="{tx(0.0)}" y="{ty(y2)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = y1 + 0.6
+            j_end = y2 - 0.6
+            lane_h = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sy = j_start + k * lane_h
+                svg.append(f'<rect x="{tx(0.3)}" y="{ty(sy + 0.12)}" width="{0.8*scale}" height="{0.24*scale}" rx="2" fill="#30363d" stroke="#8b949e" stroke-width="1.2"/>')
+                svg.append(f'<circle cx="{tx(0.7)}" cy="{ty(sy)}" r="2.2" fill="#3fb950"/>')
+
+            # 4. Egress Circulation Direction Arrows
+            for k in range(num_lanes):
+                ly = j_start + (k + 0.5) * lane_h
+                svg.append(f'<path d="M {tx(1.0)} {ty(ly)} L {tx(0.4)} {ty(ly)} M {tx(0.55)} {ty(ly)-4} L {tx(0.4)} {ty(ly)} L {tx(0.55)} {ty(ly)+4}" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" fill="none"/>')
+
+            # 5. Overhead Canopy Beam
+            svg.append(f'<line x1="{tx(0.0)}" y1="{ty(y1)}" x2="{tx(0.0)}" y2="{ty(y2)}" stroke="#238636" stroke-width="6" stroke-linecap="round"/>')
+            svg.append(f'<line x1="{tx(td)}" y1="{ty(y1)}" x2="{tx(td)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,4"/>')
+
+            # 6. Illuminated Gateway Identity Signage
+            svg.append(f'<rect x="{tx(td+0.25)}" y="{ty(my)-12}" width="170" height="24" rx="5" fill="#161b22" stroke="#238636" stroke-width="1.5" filter="url(#shadow)"/>')
+            svg.append(f'<text x="{tx(td+0.25)+85}" y="{ty(my)+4}" fill="#3fb950" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">GATEWAY [{gw_id}] • {cam_id}</text>')
+
+        elif direction == "east":
+            span_h = y2 - y1
+            # 1. Floor Threshold Matting
+            svg.append(f'<rect x="{tx(W-td)}" y="{ty(y2)}" width="{td*scale}" height="{span_h*scale}" fill="#064e3b" fill-opacity="0.38" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4"/>')
+            svg.append(f'<line x1="{tx(W - td*0.4)}" y1="{ty(y1)}" x2="{tx(W - td*0.4)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+            svg.append(f'<line x1="{tx(W - td*0.7)}" y1="{ty(y1)}" x2="{tx(W - td*0.7)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>')
+
+            # 2. Structural Jamb Pillars
+            svg.append(f'<rect x="{tx(W-0.6)}" y="{ty(y1+0.6)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+            svg.append(f'<rect x="{tx(W-0.6)}" y="{ty(y2)}" width="{0.6*scale}" height="{0.6*scale}" fill="#21262d" stroke="#30363d" stroke-width="1.8"/>')
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = y1 + 0.6
+            j_end = y2 - 0.6
+            lane_h = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sy = j_start + k * lane_h
+                svg.append(f'<rect x="{tx(W - 1.1)}" y="{ty(sy + 0.12)}" width="{0.8*scale}" height="{0.24*scale}" rx="2" fill="#30363d" stroke="#8b949e" stroke-width="1.2"/>')
+                svg.append(f'<circle cx="{tx(W - 0.7)}" cy="{ty(sy)}" r="2.2" fill="#3fb950"/>')
+
+            # 4. Egress Circulation Direction Arrows
+            for k in range(num_lanes):
+                ly = j_start + (k + 0.5) * lane_h
+                svg.append(f'<path d="M {tx(W - 1.0)} {ty(ly)} L {tx(W - 0.4)} {ty(ly)} M {tx(W - 0.55)} {ty(ly)-4} L {tx(W - 0.4)} {ty(ly)} L {tx(W - 0.55)} {ty(ly)+4}" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" fill="none"/>')
+
+            # 5. Overhead Canopy Beam
+            svg.append(f'<line x1="{tx(W)}" y1="{ty(y1)}" x2="{tx(W)}" y2="{ty(y2)}" stroke="#238636" stroke-width="6" stroke-linecap="round"/>')
+            svg.append(f'<line x1="{tx(W - td)}" y1="{ty(y1)}" x2="{tx(W - td)}" y2="{ty(y2)}" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,4"/>')
+
+            # 6. Illuminated Gateway Identity Signage
+            svg.append(f'<rect x="{tx(W-td-0.25)-170}" y="{ty(my)-12}" width="170" height="24" rx="5" fill="#161b22" stroke="#238636" stroke-width="1.5" filter="url(#shadow)"/>')
+            svg.append(f'<text x="{tx(W-td-0.25)-85}" y="{ty(my)+4}" fill="#3fb950" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">GATEWAY [{gw_id}] • {cam_id}</text>')
+
+        svg.append('</g>')
 
     # 7. Draw Cameras Mounted Over Exits
     for cam in design["cameras"]:
@@ -1238,10 +1382,14 @@ def export_json_spec(design):
         fcx, fcy = fountain["center"]
         lane_r = fountain["radius"] + fountain["rotary_lane_width_m"] * 0.5
         nav_nodes = {
-            "EXIT_S": {"name": "South Exit Portal", "pos": [half_w, 1.0], "type": "entrance_exit"},
-            "EXIT_N": {"name": "North Exit Portal", "pos": [half_w, D - 1.0], "type": "entrance_exit"},
-            "EXIT_W": {"name": "West Exit Portal", "pos": [1.0, half_w], "type": "entrance_exit"},
-            "EXIT_E": {"name": "East Exit Portal", "pos": [W - 1.0, half_w], "type": "entrance_exit"},
+            "EXIT_S": {"name": "South Exit Portal", "pos": [half_w, 0.0], "type": "entrance_exit"},
+            "GW_S": {"name": "South Exit Gateway", "pos": [half_w, 0.7], "type": "exit_gateway", "cam_id": "CAM-S", "lanes": 5},
+            "EXIT_N": {"name": "North Exit Portal", "pos": [half_w, D], "type": "entrance_exit"},
+            "GW_N": {"name": "North Exit Gateway", "pos": [half_w, D - 0.7], "type": "exit_gateway", "cam_id": "CAM-N", "lanes": 5},
+            "EXIT_W": {"name": "West Exit Portal", "pos": [0.0, half_w], "type": "entrance_exit"},
+            "GW_W": {"name": "West Exit Gateway", "pos": [0.7, half_w], "type": "exit_gateway", "cam_id": "CAM-W", "lanes": 5},
+            "EXIT_E": {"name": "East Exit Portal", "pos": [W, half_w], "type": "entrance_exit"},
+            "GW_E": {"name": "East Exit Gateway", "pos": [W - 0.7, half_w], "type": "exit_gateway", "cam_id": "CAM-E", "lanes": 5},
             "WING_S": {"name": "South Walkway Wing", "pos": [half_w, half_w * 0.5], "type": "corridor"},
             "WING_N": {"name": "North Walkway Wing", "pos": [half_w, half_w * 1.5], "type": "corridor"},
             "WING_W": {"name": "West Walkway Wing", "pos": [half_w * 0.5, half_w], "type": "corridor"},
@@ -1253,10 +1401,14 @@ def export_json_spec(design):
         }
 
         edges = [
-            {"from": "EXIT_S", "to": "WING_S", "capacity": 150, "width_m": cw},
-            {"from": "EXIT_N", "to": "WING_N", "capacity": 150, "width_m": cw},
-            {"from": "EXIT_W", "to": "WING_W", "capacity": 150, "width_m": cw},
-            {"from": "EXIT_E", "to": "WING_E", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_S", "to": "GW_S", "capacity": 200, "width_m": cw},
+            {"from": "GW_S", "to": "WING_S", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_N", "to": "GW_N", "capacity": 200, "width_m": cw},
+            {"from": "GW_N", "to": "WING_N", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_W", "to": "GW_W", "capacity": 200, "width_m": cw},
+            {"from": "GW_W", "to": "WING_W", "capacity": 150, "width_m": cw},
+            {"from": "EXIT_E", "to": "GW_E", "capacity": 200, "width_m": cw},
+            {"from": "GW_E", "to": "WING_E", "capacity": 150, "width_m": cw},
             {"from": "WING_S", "to": "ROTARY_S", "capacity": 150, "width_m": cw},
             {"from": "WING_E", "to": "ROTARY_E", "capacity": 150, "width_m": cw},
             {"from": "WING_N", "to": "ROTARY_N", "capacity": 150, "width_m": cw},
@@ -1331,6 +1483,7 @@ def export_json_spec(design):
         "walls": walls_list,
         "zones": zones,
         "obstacles": obstacles,
+        "exit_gateways": design["exits"],
         "navigation_graph": {
             "nodes": nav_nodes,
             "edges": edges
@@ -1423,7 +1576,7 @@ def generate_showcase_html(designs):
     </div>
 
     <!-- Real-Life CCTV Principles Explainer -->
-    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-[#161b22] to-emerald-950/40 border border-[#30363d] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <div class="space-y-1.5">
         <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> 1. Reduced Power / Range
@@ -1464,6 +1617,14 @@ def generate_showcase_html(designs):
           A central architectural fountain functions as a <strong>pedestrian rotary roundabout</strong>. Crowds circulate smoothly around the perimeter lane without 4-way head-on collisions.
         </p>
       </div>
+      <div class="space-y-1.5">
+        <div class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> 6. Architectural Exit Gateways
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          All 4 exit portals feature <strong>multi-lane speed-gate arrays</strong> with structural jambs, high-traction threshold matting, and overhead CCTV dome camera integration.
+        </p>
+      </div>
     </div>
   </header>
 
@@ -1473,6 +1634,9 @@ def generate_showcase_html(designs):
       <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">CAD Display Layers:</span>
       <button onclick="toggleLayer('fov-cone')" id="btn-fov" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow">
         ✓ Ray-Cast Visibility Polygons
+      </button>
+      <button onclick="toggleLayer('exit-gateway')" id="btn-gateways" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors shadow">
+        ✓ Exit Gateways
       </button>
       <button onclick="toggleLayer('central-fountain')" id="btn-fountain" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-colors shadow">
         ✓ Fountain & Roundabout
@@ -1655,6 +1819,35 @@ def generate_showcase_html(designs):
             </div>
           </div>
 
+          <!-- Exit Gateways & Security Access -->
+          <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
+              Exit Gateways & Speed Gates
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Total Gateways:</span>
+                <span class="font-semibold text-emerald-400">4 Architectural Exit Portals (S, N, W, E)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Barrier Type:</span>
+                <span class="font-mono text-white font-bold">{d['exits'][0]['barrier_type'].replace('_', ' ').title()}</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Array Configuration:</span>
+                <span class="font-mono text-cyan-400 font-bold">{d['exits'][0]['num_lanes']} Lanes/Portal ({d['exits'][0]['lane_width_m']:.1f}m clear width)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Camera Integration:</span>
+                <span class="font-mono text-purple-400 font-bold">Mounted Overhead on Gantry Canopy ({d['cameras'][0]['position'][2]:.1f}m)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-[#21262d]">
+                <span class="text-slate-400">Emergency Egress:</span>
+                <span class="font-mono text-emerald-400 font-bold">Fail-Safe Auto Drop-Arm / {d['exits'][0]['throughput_ppm']*4} pers/min total</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Central Fountain & Roundabout Architecture -->
           <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5">
             <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 font-mono mb-3">
@@ -1726,6 +1919,10 @@ def generate_showcase_html(designs):
         const btn = document.getElementById('btn-cams');
         btn.textContent = isVisible ? '✓ Exit Mount Badges' : '✗ Exit Mount Badges';
         btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-purple-600 text-white hover:bg-purple-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
+      } else if (layerClass === 'exit-gateway') {
+        const btn = document.getElementById('btn-gateways');
+        btn.textContent = isVisible ? '✓ Exit Gateways' : '✗ Exit Gateways';
+        btn.className = isVisible ? 'px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors shadow' : 'px-3 py-1.5 text-xs font-medium rounded-lg bg-[#21262d] text-slate-400 hover:bg-[#30363d] transition-colors';
       }
     }
   </script>

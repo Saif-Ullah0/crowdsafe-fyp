@@ -209,8 +209,8 @@ def draw_cad_floor_plan(
     ax.set_facecolor('#FCFDFD')
 
     # Grid lines (1m subtle grid, 5m structural grid)
-    ax.set_xlim(-2.0, W + 2.0)
-    ax.set_ylim(-3.5, H + 3.5)
+    ax.set_xlim(-3.5, W + 3.5)
+    ax.set_ylim(-4.2, H + 3.8)
     ax.set_aspect('equal')
 
     # Subtle 5m major grid
@@ -464,6 +464,236 @@ def draw_cad_floor_plan(
             zorder=7
         )
 
+    # 4b. Draw Architectural Exit Gateways (at each camera / perimeter portal)
+    gateways = data.get("exit_gateways") or data.get("exits", [])
+    for gw in gateways:
+        x1, y1 = float(gw["x1"]), float(gw["y1"])
+        x2, y2 = float(gw["x2"]), float(gw["y2"])
+        direction = gw.get("direction")
+        if not direction:
+            if y1 == 0 and y2 == 0:
+                direction = "south"
+            elif y1 == H and y2 == H:
+                direction = "north"
+            elif x1 == 0 and x2 == 0:
+                direction = "west"
+            else:
+                direction = "east"
+        gw_id = gw.get("gateway_id", "GW")
+        cam_id = gw.get("cam_id", "CAM")
+        td = float(gw.get("threshold_depth_m", 1.4))
+        num_lanes = int(gw.get("num_lanes", 4))
+        mx = (x1 + x2) / 2.0
+        my = (y1 + y2) / 2.0
+
+        if direction == "south":
+            span_w = x2 - x1
+            # 1. Floor Threshold Matting
+            mat = patches.Rectangle(
+                (x1, 0.0), span_w, td,
+                facecolor='#064E3B',
+                edgecolor='#10B981',
+                linewidth=1.4,
+                linestyle='--',
+                alpha=0.35,
+                zorder=4
+            )
+            ax.add_patch(mat)
+
+            # 2. Structural Terminal Jamb Pillars (0.6m x 0.6m)
+            jamb_l = patches.Rectangle((x1, 0.0), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            jamb_r = patches.Rectangle((x2 - 0.6, 0.0), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            ax.add_patch(jamb_l)
+            ax.add_patch(jamb_r)
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = x1 + 0.6
+            j_end = x2 - 0.6
+            lane_w = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sx = j_start + k * lane_w
+                stan = patches.Rectangle(
+                    (sx - 0.12, 0.3), 0.24, 0.8,
+                    facecolor='#9CA3AF',
+                    edgecolor='#1F2937',
+                    linewidth=0.8,
+                    zorder=6
+                )
+                ax.add_patch(stan)
+
+            # 4. Overhead Canopy Beam
+            ax.plot([x1, x2], [0.0, 0.0], color='#059669', linewidth=4.0, zorder=8)
+
+            # 5. Gateway Interior Callout Badge
+            ax.text(
+                mx, td + 0.35,
+                f"GATEWAY [{gw_id}] • {cam_id} OVERHEAD",
+                fontsize=7.2,
+                fontweight='bold',
+                fontfamily='monospace',
+                color='#065F46',
+                ha='center',
+                va='bottom',
+                zorder=9,
+                bbox=dict(boxstyle="round,pad=0.22", facecolor='#ECFDF5', edgecolor='#059669', linewidth=1.0, alpha=0.95)
+            )
+
+        elif direction == "north":
+            span_w = x2 - x1
+            # 1. Floor Threshold Matting
+            mat = patches.Rectangle(
+                (x1, H - td), span_w, td,
+                facecolor='#064E3B',
+                edgecolor='#10B981',
+                linewidth=1.4,
+                linestyle='--',
+                alpha=0.35,
+                zorder=4
+            )
+            ax.add_patch(mat)
+
+            # 2. Structural Jamb Pillars
+            jamb_l = patches.Rectangle((x1, H - 0.6), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            jamb_r = patches.Rectangle((x2 - 0.6, H - 0.6), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            ax.add_patch(jamb_l)
+            ax.add_patch(jamb_r)
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = x1 + 0.6
+            j_end = x2 - 0.6
+            lane_w = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sx = j_start + k * lane_w
+                stan = patches.Rectangle(
+                    (sx - 0.12, H - 1.1), 0.24, 0.8,
+                    facecolor='#9CA3AF',
+                    edgecolor='#1F2937',
+                    linewidth=0.8,
+                    zorder=6
+                )
+                ax.add_patch(stan)
+
+            # 4. Overhead Canopy Beam
+            ax.plot([x1, x2], [H, H], color='#059669', linewidth=4.0, zorder=8)
+
+            # 5. Gateway Interior Callout Badge
+            ax.text(
+                mx, H - td - 0.35,
+                f"GATEWAY [{gw_id}] • {cam_id} OVERHEAD",
+                fontsize=7.2,
+                fontweight='bold',
+                fontfamily='monospace',
+                color='#065F46',
+                ha='center',
+                va='top',
+                zorder=9,
+                bbox=dict(boxstyle="round,pad=0.22", facecolor='#ECFDF5', edgecolor='#059669', linewidth=1.0, alpha=0.95)
+            )
+
+        elif direction == "west":
+            span_h = y2 - y1
+            # 1. Floor Threshold Matting
+            mat = patches.Rectangle(
+                (0.0, y1), td, span_h,
+                facecolor='#064E3B',
+                edgecolor='#10B981',
+                linewidth=1.4,
+                linestyle='--',
+                alpha=0.35,
+                zorder=4
+            )
+            ax.add_patch(mat)
+
+            # 2. Structural Jamb Pillars
+            jamb_b = patches.Rectangle((0.0, y1), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            jamb_t = patches.Rectangle((0.0, y2 - 0.6), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            ax.add_patch(jamb_b)
+            ax.add_patch(jamb_t)
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = y1 + 0.6
+            j_end = y2 - 0.6
+            lane_h = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sy = j_start + k * lane_h
+                stan = patches.Rectangle(
+                    (0.3, sy - 0.12), 0.8, 0.24,
+                    facecolor='#9CA3AF',
+                    edgecolor='#1F2937',
+                    linewidth=0.8,
+                    zorder=6
+                )
+                ax.add_patch(stan)
+
+            # 4. Overhead Canopy Beam
+            ax.plot([0.0, 0.0], [y1, y2], color='#059669', linewidth=4.0, zorder=8)
+
+            # 5. Gateway Interior Callout Badge
+            ax.text(
+                td + 0.35, my,
+                f"GATEWAY [{gw_id}] • {cam_id} OVERHEAD",
+                fontsize=7.2,
+                fontweight='bold',
+                fontfamily='monospace',
+                color='#065F46',
+                ha='left',
+                va='center',
+                zorder=9,
+                bbox=dict(boxstyle="round,pad=0.22", facecolor='#ECFDF5', edgecolor='#059669', linewidth=1.0, alpha=0.95)
+            )
+
+        elif direction == "east":
+            span_h = y2 - y1
+            # 1. Floor Threshold Matting
+            mat = patches.Rectangle(
+                (W - td, y1), td, span_h,
+                facecolor='#064E3B',
+                edgecolor='#10B981',
+                linewidth=1.4,
+                linestyle='--',
+                alpha=0.35,
+                zorder=4
+            )
+            ax.add_patch(mat)
+
+            # 2. Structural Jamb Pillars
+            jamb_b = patches.Rectangle((W - 0.6, y1), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            jamb_t = patches.Rectangle((W - 0.6, y2 - 0.6), 0.6, 0.6, facecolor='#374151', edgecolor='#111827', linewidth=1.2, zorder=7)
+            ax.add_patch(jamb_b)
+            ax.add_patch(jamb_t)
+
+            # 3. Speed-Gate Stanchion Pedestals
+            j_start = y1 + 0.6
+            j_end = y2 - 0.6
+            lane_h = (j_end - j_start) / num_lanes
+            for k in range(num_lanes + 1):
+                sy = j_start + k * lane_h
+                stan = patches.Rectangle(
+                    (W - 1.1, sy - 0.12), 0.8, 0.24,
+                    facecolor='#9CA3AF',
+                    edgecolor='#1F2937',
+                    linewidth=0.8,
+                    zorder=6
+                )
+                ax.add_patch(stan)
+
+            # 4. Overhead Canopy Beam
+            ax.plot([W, W], [y1, y2], color='#059669', linewidth=4.0, zorder=8)
+
+            # 5. Gateway Interior Callout Badge
+            ax.text(
+                W - td - 0.35, my,
+                f"GATEWAY [{gw_id}] • {cam_id} OVERHEAD",
+                fontsize=7.2,
+                fontweight='bold',
+                fontfamily='monospace',
+                color='#065F46',
+                ha='right',
+                va='center',
+                zorder=9,
+                bbox=dict(boxstyle="round,pad=0.22", facecolor='#ECFDF5', edgecolor='#059669', linewidth=1.0, alpha=0.95)
+            )
+
     # 5. Draw Cameras and Ray-Cast Wall-Occluded Line-of-Sight Visibility Polygons
     cam_colors = ['#E74C3C', '#2980B9', '#16A085', '#8E44AD', '#D35400', '#2C3E50']
     cameras = data.get("cameras", [])
@@ -537,9 +767,9 @@ def draw_cad_floor_plan(
         label_x = cpos[0] + 2.4 * math.cos(offset_dir)
         label_y = cpos[1] + 1.8 * math.sin(offset_dir)
 
-        # Keep label inside plot limits
-        label_x = max(1.5, min(W - 1.5, label_x))
-        label_y = max(1.0, min(H - 1.0, label_y))
+        # Position camera callout in exterior margin or clear zone
+        label_x = max(-2.4, min(W + 2.4, label_x))
+        label_y = max(-2.8, min(H + 2.8, label_y))
 
         ax.annotate(
             f"{cid}\n{cname}\nHFOV: {hfov_deg:.1f}° | Mount: {float(cpos[2]):.1f}m\nLOS Wall-Clipped",
