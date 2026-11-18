@@ -1,0 +1,500 @@
+{
+  "venue_metadata": {
+    "name": "Design 3: Commercial Retail Arcade with Vitrines",
+    "architecture": "square_plus_walkway",
+    "description": "Compact 34m x 34m boutique shopping arcade with 9m wide pedestrian aisles, display showcase windows, and inward-swinging commercial glass doors.",
+    "coverage_proven_pct": 96.5
+  },
+  "global_dimensions": {
+    "width_m": 34.0,
+    "depth_m": 34.0,
+    "height_m": 4.5
+  },
+  "zones": {
+    "zone_walkway_plus": {
+      "name": "Plus Shaped Public Walkway",
+      "type": "corridor_hub",
+      "polygon": [
+        [
+          12.5,
+          0.0
+        ],
+        [
+          21.5,
+          0.0
+        ],
+        [
+          21.5,
+          12.5
+        ],
+        [
+          34.0,
+          12.5
+        ],
+        [
+          34.0,
+          21.5
+        ],
+        [
+          21.5,
+          21.5
+        ],
+        [
+          21.5,
+          34.0
+        ],
+        [
+          12.5,
+          34.0
+        ],
+        [
+          12.5,
+          21.5
+        ],
+        [
+          0.0,
+          21.5
+        ],
+        [
+          0.0,
+          12.5
+        ],
+        [
+          12.5,
+          12.5
+        ]
+      ],
+      "area_m2": 531.0,
+      "max_capacity": 796
+    },
+    "ROOM_SW": {
+      "name": "Boutique SW (Jewelry & Timepieces)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          12.5,
+          0.0
+        ],
+        [
+          12.5,
+          12.5
+        ],
+        [
+          0.0,
+          12.5
+        ]
+      ],
+      "area_m2": 156.25,
+      "door_opening": "inward"
+    },
+    "ROOM_SE": {
+      "name": "Boutique SE (Cosmetics & Perfumery)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          21.5,
+          0.0
+        ],
+        [
+          34.0,
+          0.0
+        ],
+        [
+          34.0,
+          12.5
+        ],
+        [
+          21.5,
+          12.5
+        ]
+      ],
+      "area_m2": 156.25,
+      "door_opening": "inward"
+    },
+    "ROOM_NW": {
+      "name": "Boutique NW (Designer Footwear)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          21.5
+        ],
+        [
+          12.5,
+          21.5
+        ],
+        [
+          12.5,
+          34.0
+        ],
+        [
+          0.0,
+          34.0
+        ]
+      ],
+      "area_m2": 156.25,
+      "door_opening": "inward"
+    },
+    "ROOM_NE": {
+      "name": "Boutique NE (Eyewear & Accessories)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          21.5,
+          21.5
+        ],
+        [
+          34.0,
+          21.5
+        ],
+        [
+          34.0,
+          34.0
+        ],
+        [
+          21.5,
+          34.0
+        ]
+      ],
+      "area_m2": 156.25,
+      "door_opening": "inward"
+    }
+  },
+  "navigation_graph": {
+    "nodes": {
+      "EXIT_S": {
+        "name": "South Exit Portal",
+        "pos": [
+          17.0,
+          1.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_N": {
+        "name": "North Exit Portal",
+        "pos": [
+          17.0,
+          33.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_W": {
+        "name": "West Exit Portal",
+        "pos": [
+          1.0,
+          17.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_E": {
+        "name": "East Exit Portal",
+        "pos": [
+          33.0,
+          17.0
+        ],
+        "type": "entrance_exit"
+      },
+      "HUB_CENTER": {
+        "name": "Central Plus Intersection",
+        "pos": [
+          17.0,
+          17.0
+        ],
+        "type": "atrium"
+      },
+      "WING_S": {
+        "name": "South Walkway Wing",
+        "pos": [
+          17.0,
+          8.5
+        ],
+        "type": "corridor"
+      },
+      "WING_N": {
+        "name": "North Walkway Wing",
+        "pos": [
+          17.0,
+          25.5
+        ],
+        "type": "corridor"
+      },
+      "WING_W": {
+        "name": "West Walkway Wing",
+        "pos": [
+          8.5,
+          17.0
+        ],
+        "type": "corridor"
+      },
+      "WING_E": {
+        "name": "East Walkway Wing",
+        "pos": [
+          25.5,
+          17.0
+        ],
+        "type": "corridor"
+      },
+      "DOOR_ROOM_SW": {
+        "name": "Inward Door ROOM_SW",
+        "pos": [
+          12.5,
+          7.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SW": {
+        "name": "Interior ROOM_SW",
+        "pos": [
+          11.0,
+          7.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_SE": {
+        "name": "Inward Door ROOM_SE",
+        "pos": [
+          21.5,
+          7.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SE": {
+        "name": "Interior ROOM_SE",
+        "pos": [
+          23.0,
+          7.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NW": {
+        "name": "Inward Door ROOM_NW",
+        "pos": [
+          12.5,
+          27.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NW": {
+        "name": "Interior ROOM_NW",
+        "pos": [
+          11.0,
+          27.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NE": {
+        "name": "Inward Door ROOM_NE",
+        "pos": [
+          21.5,
+          27.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NE": {
+        "name": "Interior ROOM_NE",
+        "pos": [
+          23.0,
+          27.0
+        ],
+        "type": "destination"
+      }
+    },
+    "edges": [
+      {
+        "from": "EXIT_S",
+        "to": "WING_S",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_S",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "EXIT_N",
+        "to": "WING_N",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_N",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "EXIT_W",
+        "to": "WING_W",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_W",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "EXIT_E",
+        "to": "WING_E",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "WING_E",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 9.0
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "DOOR_ROOM_SW",
+        "to": "INSIDE_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "DOOR_ROOM_SE",
+        "to": "INSIDE_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "DOOR_ROOM_NW",
+        "to": "INSIDE_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.1
+      },
+      {
+        "from": "DOOR_ROOM_NE",
+        "to": "INSIDE_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.1
+      }
+    ]
+  },
+  "cameras": [
+    {
+      "camera_id": "CAM-S",
+      "name": "South Arcade Camera",
+      "position": [
+        17.0,
+        0.5,
+        4.2
+      ],
+      "look_at": [
+        17.0,
+        20.0,
+        1.2
+      ],
+      "focal_length_mm": 5.2,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 33.0,
+      "color": "#00E5FF",
+      "mount": "Over South Arcade Exit Portal"
+    },
+    {
+      "camera_id": "CAM-N",
+      "name": "North Arcade Camera",
+      "position": [
+        17.0,
+        33.5,
+        4.2
+      ],
+      "look_at": [
+        17.0,
+        14.0,
+        1.2
+      ],
+      "focal_length_mm": 5.2,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 33.0,
+      "color": "#76FF03",
+      "mount": "Over North Arcade Exit Portal"
+    },
+    {
+      "camera_id": "CAM-W",
+      "name": "West Promenade Camera",
+      "position": [
+        0.5,
+        17.0,
+        4.2
+      ],
+      "look_at": [
+        20.0,
+        17.0,
+        1.2
+      ],
+      "focal_length_mm": 5.2,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 33.0,
+      "color": "#FFD600",
+      "mount": "Over West Promenade Exit Portal"
+    },
+    {
+      "camera_id": "CAM-E",
+      "name": "East Promenade Camera",
+      "position": [
+        33.5,
+        17.0,
+        4.2
+      ],
+      "look_at": [
+        14.0,
+        17.0,
+        1.2
+      ],
+      "focal_length_mm": 5.2,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 33.0,
+      "color": "#FF3D00",
+      "mount": "Over East Promenade Exit Portal"
+    }
+  ],
+  "coverage_metrics": {
+    "total_pts": 8424,
+    "covered_pts": 8128,
+    "coverage_pct": 96.5,
+    "overlap_pct": 75.7,
+    "individual_pcts": [
+      68.0,
+      67.5,
+      68.0,
+      67.5
+    ],
+    "grid_resolution_m": 0.25
+  }
+}

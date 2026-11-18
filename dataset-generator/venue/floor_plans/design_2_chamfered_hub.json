@@ -1,0 +1,532 @@
+{
+  "venue_metadata": {
+    "name": "Design 2: Chamfered Octagonal Central Hub",
+    "architecture": "square_plus_walkway",
+    "description": "40m x 40m premium layout with 45\u00b0 chamfered corner rooms expanding into an octagonal central atrium. Inward double doors open into the corner suites.",
+    "coverage_proven_pct": 92.0
+  },
+  "global_dimensions": {
+    "width_m": 40.0,
+    "depth_m": 40.0,
+    "height_m": 4.5
+  },
+  "zones": {
+    "zone_walkway_plus": {
+      "name": "Plus Shaped Public Walkway",
+      "type": "corridor_hub",
+      "polygon": [
+        [
+          14.0,
+          0.0
+        ],
+        [
+          26.0,
+          0.0
+        ],
+        [
+          26.0,
+          10.5
+        ],
+        [
+          29.5,
+          14.0
+        ],
+        [
+          40.0,
+          14.0
+        ],
+        [
+          40.0,
+          26.0
+        ],
+        [
+          29.5,
+          26.0
+        ],
+        [
+          26.0,
+          29.5
+        ],
+        [
+          26.0,
+          40.0
+        ],
+        [
+          14.0,
+          40.0
+        ],
+        [
+          14.0,
+          29.5
+        ],
+        [
+          10.5,
+          26.0
+        ],
+        [
+          0.0,
+          26.0
+        ],
+        [
+          0.0,
+          14.0
+        ],
+        [
+          10.5,
+          14.0
+        ],
+        [
+          14.0,
+          10.5
+        ]
+      ],
+      "area_m2": 856.0,
+      "max_capacity": 1284
+    },
+    "ROOM_SW": {
+      "name": "Corner Room SW (Flagship Store)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          14.0,
+          0.0
+        ],
+        [
+          14.0,
+          10.5
+        ],
+        [
+          10.5,
+          14.0
+        ],
+        [
+          0.0,
+          14.0
+        ]
+      ],
+      "area_m2": 189.9,
+      "door_opening": "inward"
+    },
+    "ROOM_SE": {
+      "name": "Corner Room SE (Luxury Pavillion)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          26.0,
+          0.0
+        ],
+        [
+          40.0,
+          0.0
+        ],
+        [
+          40.0,
+          14.0
+        ],
+        [
+          29.5,
+          14.0
+        ],
+        [
+          26.0,
+          10.5
+        ]
+      ],
+      "area_m2": 189.9,
+      "door_opening": "inward"
+    },
+    "ROOM_NW": {
+      "name": "Corner Room NW (Art & Design Gallery)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          26.0
+        ],
+        [
+          10.5,
+          26.0
+        ],
+        [
+          14.0,
+          29.5
+        ],
+        [
+          14.0,
+          40.0
+        ],
+        [
+          0.0,
+          40.0
+        ]
+      ],
+      "area_m2": 189.9,
+      "door_opening": "inward"
+    },
+    "ROOM_NE": {
+      "name": "Corner Room NE (Culinary Experience)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          29.5,
+          26.0
+        ],
+        [
+          40.0,
+          26.0
+        ],
+        [
+          40.0,
+          40.0
+        ],
+        [
+          26.0,
+          40.0
+        ],
+        [
+          26.0,
+          29.5
+        ]
+      ],
+      "area_m2": 189.9,
+      "door_opening": "inward"
+    }
+  },
+  "navigation_graph": {
+    "nodes": {
+      "EXIT_S": {
+        "name": "South Exit Portal",
+        "pos": [
+          20.0,
+          1.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_N": {
+        "name": "North Exit Portal",
+        "pos": [
+          20.0,
+          39.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_W": {
+        "name": "West Exit Portal",
+        "pos": [
+          1.0,
+          20.0
+        ],
+        "type": "entrance_exit"
+      },
+      "EXIT_E": {
+        "name": "East Exit Portal",
+        "pos": [
+          39.0,
+          20.0
+        ],
+        "type": "entrance_exit"
+      },
+      "HUB_CENTER": {
+        "name": "Central Plus Intersection",
+        "pos": [
+          20.0,
+          20.0
+        ],
+        "type": "atrium"
+      },
+      "WING_S": {
+        "name": "South Walkway Wing",
+        "pos": [
+          20.0,
+          10.0
+        ],
+        "type": "corridor"
+      },
+      "WING_N": {
+        "name": "North Walkway Wing",
+        "pos": [
+          20.0,
+          30.0
+        ],
+        "type": "corridor"
+      },
+      "WING_W": {
+        "name": "West Walkway Wing",
+        "pos": [
+          10.0,
+          20.0
+        ],
+        "type": "corridor"
+      },
+      "WING_E": {
+        "name": "East Walkway Wing",
+        "pos": [
+          30.0,
+          20.0
+        ],
+        "type": "corridor"
+      },
+      "DOOR_ROOM_SW": {
+        "name": "Inward Door ROOM_SW",
+        "pos": [
+          12.25,
+          12.25
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SW": {
+        "name": "Interior ROOM_SW",
+        "pos": [
+          10.75,
+          12.25
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_SE": {
+        "name": "Inward Door ROOM_SE",
+        "pos": [
+          27.75,
+          12.25
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SE": {
+        "name": "Interior ROOM_SE",
+        "pos": [
+          29.25,
+          12.25
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NW": {
+        "name": "Inward Door ROOM_NW",
+        "pos": [
+          12.25,
+          27.75
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NW": {
+        "name": "Interior ROOM_NW",
+        "pos": [
+          10.75,
+          27.75
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NE": {
+        "name": "Inward Door ROOM_NE",
+        "pos": [
+          27.75,
+          27.75
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NE": {
+        "name": "Interior ROOM_NE",
+        "pos": [
+          29.25,
+          27.75
+        ],
+        "type": "destination"
+      }
+    },
+    "edges": [
+      {
+        "from": "EXIT_S",
+        "to": "WING_S",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "WING_S",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "EXIT_N",
+        "to": "WING_N",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "WING_N",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "EXIT_W",
+        "to": "WING_W",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "WING_W",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "EXIT_E",
+        "to": "WING_E",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "WING_E",
+        "to": "HUB_CENTER",
+        "capacity": 150,
+        "width_m": 12.0
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "DOOR_ROOM_SW",
+        "to": "INSIDE_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "DOOR_ROOM_SE",
+        "to": "INSIDE_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "DOOR_ROOM_NW",
+        "to": "INSIDE_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "HUB_CENTER",
+        "to": "DOOR_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.6
+      },
+      {
+        "from": "DOOR_ROOM_NE",
+        "to": "INSIDE_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.6
+      }
+    ]
+  },
+  "cameras": [
+    {
+      "camera_id": "CAM-S",
+      "name": "South Grand Portal Camera",
+      "position": [
+        20.0,
+        0.6,
+        4.8
+      ],
+      "look_at": [
+        20.0,
+        24.0,
+        1.2
+      ],
+      "focal_length_mm": 4.5,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 38.0,
+      "color": "#00E5FF",
+      "mount": "Over South Grand Entrance Header"
+    },
+    {
+      "camera_id": "CAM-N",
+      "name": "North Galleria Portal Camera",
+      "position": [
+        20.0,
+        39.4,
+        4.8
+      ],
+      "look_at": [
+        20.0,
+        16.0,
+        1.2
+      ],
+      "focal_length_mm": 4.5,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 38.0,
+      "color": "#76FF03",
+      "mount": "Over North Galleria Exit Header"
+    },
+    {
+      "camera_id": "CAM-W",
+      "name": "West Boulevard Portal Camera",
+      "position": [
+        0.6,
+        20.0,
+        4.8
+      ],
+      "look_at": [
+        24.0,
+        20.0,
+        1.2
+      ],
+      "focal_length_mm": 4.5,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 38.0,
+      "color": "#FFD600",
+      "mount": "Over West Boulevard Exit Header"
+    },
+    {
+      "camera_id": "CAM-E",
+      "name": "East Esplanade Portal Camera",
+      "position": [
+        39.4,
+        20.0,
+        4.8
+      ],
+      "look_at": [
+        16.0,
+        20.0,
+        1.2
+      ],
+      "focal_length_mm": 4.5,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 38.0,
+      "color": "#FF3D00",
+      "mount": "Over East Esplanade Exit Header"
+    }
+  ],
+  "coverage_metrics": {
+    "total_pts": 13352,
+    "covered_pts": 12288,
+    "coverage_pct": 92.0,
+    "overlap_pct": 82.1,
+    "individual_pcts": [
+      72.3,
+      71.8,
+      72.3,
+      71.8
+    ],
+    "grid_resolution_m": 0.25
+  }
+}
