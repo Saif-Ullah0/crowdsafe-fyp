@@ -28,6 +28,7 @@ Whenever a test run or benchmark is performed by Antigravity or the team, record
 | `RUN-001` | 2026-11-07 14:26 | FastSim Engine | Synthetic CCTV DVR (1 FPS) | 5 | N/A (Simulation) | 1.33 ms / 750 FPS | 0 (Safe flow) | Pipeline sanity test passed. Headless snapshots verified. |
 | `RUN-002` | 2026-11-07 14:26 | MCNN (PyTorch Fallback) | Synthetic CCTV DVR (1 FPS) | 3 | N/A (Simulation) | 1.63 ms / 613 FPS | 0 (Safe flow) | Plug-and-play architecture verified. |
 | `RUN-003` | 2026-11-07 14:26 | PyTest Suite (8 tests) | Synthetic & Mock Grid | N/A | 0 errors | 4.5s total | 2 (Hysteresis & Flash) | Unit tests passed: DVR, FastSim, MCNN, Spatial, Alerts, Visualizer |
+| `RUN-004` | 2026-11-07 21:34 | CSRNet & CLI Flags | Synthetic & CLI Verification | 15 | N/A (Simulation) | 0.85 ms / ~1100 FPS | 0 (Safe flow) | Added CSRNet architecture, --visualize, --weights CLI flags; 10/10 pytest passing. |
 
 ---
 

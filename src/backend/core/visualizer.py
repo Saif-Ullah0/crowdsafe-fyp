@@ -28,8 +28,12 @@ class Visualizer:
         self.is_paused = False
 
         if not self.headless:
-            cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-            cv2.resizeWindow(self.window_name, 1024, 768)
+            try:
+                cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+                cv2.resizeWindow(self.window_name, 1024, 768)
+            except Exception as e:
+                print(f"[Visualizer] Warning: Cannot open GUI display window ({e}). Running in headless mode.")
+                self.headless = True
 
     def render(
         self,
@@ -186,8 +190,13 @@ class Visualizer:
         if self.headless:
             return True
 
-        cv2.imshow(self.window_name, frame_annotated)
-        key = cv2.waitKey(wait_ms) & 0xFF
+        try:
+            cv2.imshow(self.window_name, frame_annotated)
+            key = cv2.waitKey(wait_ms) & 0xFF
+        except Exception as e:
+            print(f"[Visualizer] GUI rendering error ({e}). Switching to headless mode.")
+            self.headless = True
+            return True
 
         if key in [ord('q'), 27]:  # 'q' or ESC
             return False
@@ -224,5 +233,8 @@ class Visualizer:
     def close(self):
         """Closes all OpenCV display windows."""
         if not self.headless:
-            cv2.destroyAllWindows()
+            try:
+                cv2.destroyAllWindows()
+            except Exception:
+                pass
 

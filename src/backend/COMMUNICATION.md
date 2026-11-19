@@ -59,6 +59,6 @@ The user can guide Antigravity using standard natural language or slash commands
 
 ## 5. Artifacts and Results Tracking Rules
 
-- **Results Log:** All empirical numbers, frame latencies, and counting errors must be recorded in [RESULTS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/RESULTS.md).
-- **Execution Runbook:** Operational procedures must remain up to date in [INSTRUCTIONS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/INSTRUCTIONS.md).
+- **Results Log:** All empirical numbers, frame latencies, and counting errors must be recorded in [RESULTS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/RESULTS.md).
+- **Execution Runbook:** Operational procedures must remain up to date in [INSTRUCTIONS.md](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/INSTRUCTIONS.md).
 - **File References:** Always use absolute clickable file links (`file:///...`) for files and code symbols.

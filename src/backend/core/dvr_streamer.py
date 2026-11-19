@@ -218,13 +218,14 @@ class DVRStreamer:
         # Draw surge cluster when surge phase is active
         if surge_intensity > 0.4:
             surge_center_x, surge_center_y = int(w * 0.65), int(h * 0.5)
-            num_surge_pedestrians = int(surge_intensity * 40)
+            num_surge_pedestrians = int(surge_intensity * 85)
             for s_idx in range(num_surge_pedestrians):
-                offset_x = int(np.random.normal(0, 35))
-                offset_y = int(np.random.normal(0, 35))
+                offset_x = int(np.random.normal(0, 30))
+                offset_y = int(np.random.normal(0, 30))
                 scx = np.clip(surge_center_x + offset_x, 10, w - 10)
                 scy = np.clip(surge_center_y + offset_y, 10, h - 10)
-                cv2.circle(frame, (scx, scy), 8, (210, 215, 220), -1)
+                cv2.circle(frame, (scx, scy), 8, (220, 225, 230), -1)
+                cv2.circle(frame, (scx, scy), 3, (40, 40, 40), -1)
 
         # CCTV timestamp and camera watermark
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

@@ -47,7 +47,7 @@ python app.py --source /path/to/video.mp4 --device cpu
 ---
 
 ## 4. Key Documentation Links
-- **[Developer Blueprint & Execution Guide](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/INSTRUCTIONS.md)**
-- **[Results & Benchmark Log](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/RESULTS.md)**
-- **[Agent Communication Protocol](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/COMMUNICATION.md)**
-- **[Central Configuration](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/FYP/crowdsafe-fyp/mvp/config.py)**
+- **[Developer Blueprint & Execution Guide](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/INSTRUCTIONS.md)**
+- **[Results & Benchmark Log](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/RESULTS.md)**
+- **[Agent Communication Protocol](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/COMMUNICATION.md)**
+- **[Central Configuration](file:///run/media/mobeen/977e7ff6-efb4-4c0c-80f3-6ebc7ecfbbfb/crowdsafe-fyp/mvp/config.py)**
