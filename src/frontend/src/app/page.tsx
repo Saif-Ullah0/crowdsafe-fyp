@@ -227,7 +227,7 @@ export default function Dashboard() {
   const currentDensity = latestAlert?.density_per_m2 ?? 0;
   const isCritical = currentLevel === "CRITICAL";
 
-  // Crisp Grid-Cell MCNN Spatial Density Matrix (No radial orbs, no gradients)
+  // Crisp Grid-Cell MCNN Spatial Density Matrix aligned to actual crowd positions
   useEffect(() => {
     if (booting) return;
     const canvas = canvasRef.current;
@@ -242,72 +242,86 @@ export default function Dashboard() {
     const cellW = w / cols;
     const cellH = h / rows;
 
-    ctx.fillStyle = "#080A0E";
-    ctx.fillRect(0, 0, w, h);
+    ctx.clearRect(0, 0, w, h);
 
-    // Deterministic spatial distribution centered on corridor bottleneck
-    const centerX = 9.5;
-    const centerY = 5.0;
+    // Three hotspots matching the actual crowd locations in cctv-corridor.jpg
+    const hotspots = [
+      { cx: 6.0, cy: 6.2, rx: 2.8, ry: 2.4, weight: 0.95 },  // Left group
+      { cx: 13.2, cy: 6.2, rx: 2.8, ry: 2.4, weight: 0.95 }, // Right group
+      { cx: 10.0, cy: 3.4, rx: 3.0, ry: 1.5, weight: 1.05 }, // Dense back corridor
+    ];
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        const dx = (c - centerX) / 5.5;
-        const dy = (r - centerY) / 3.2;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const falloff = Math.max(0, 1 - dist * 0.62);
-        const cellDensity = Math.max(
-          0,
-          currentDensity * falloff + (Math.sin(c * 1.7 + r * 2.3) * 0.25)
-        );
+        let maxFalloff = 0;
+        for (const spot of hotspots) {
+          const dx = (c - spot.cx) / spot.rx;
+          const dy = (r - spot.cy) / spot.ry;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const f = Math.max(0, 1 - dist * 0.85) * spot.weight;
+          if (f > maxFalloff) maxFalloff = f;
+        }
 
-        // Flat institutional stepped color scale (no gradients, no neon)
-        let fill = "#0D1016";
-        if (cellDensity >= 4.5) fill = "#8C2626";
-        else if (cellDensity >= 3.2) fill = "#6E3B1A";
-        else if (cellDensity >= 2.2) fill = "#5C4718";
-        else if (cellDensity >= 1.2) fill = "#1A3D31";
-        else if (cellDensity >= 0.5) fill = "#122420";
+        const cellDensity =
+          maxFalloff > 0.15
+            ? Math.max(0, currentDensity * maxFalloff + Math.sin(c * 1.7 + r * 2.3) * 0.2)
+            : 0;
 
-        ctx.fillStyle = fill;
-        ctx.fillRect(c * cellW + 1, r * cellH + 1, cellW - 2, cellH - 2);
+        let fill = "rgba(0, 0, 0, 0)";
+        if (cellDensity >= 4.5) fill = "rgba(185, 38, 38, 0.48)";
+        else if (cellDensity >= 3.2) fill = "rgba(180, 95, 25, 0.40)";
+        else if (cellDensity >= 2.2) fill = "rgba(165, 130, 28, 0.32)";
+        else if (cellDensity >= 1.2) fill = "rgba(26, 115, 85, 0.24)";
 
-        // Print numeric density inside high-load cells
+        if (fill !== "rgba(0, 0, 0, 0)") {
+          ctx.fillStyle = fill;
+          ctx.fillRect(c * cellW + 1, r * cellH + 1, cellW - 2, cellH - 2);
+        }
+
         if (cellDensity >= 2.5) {
-          ctx.fillStyle = "#E6E8EB";
-          ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.fillStyle = "#F3F4F6";
+          ctx.font = "bold 10px ui-monospace, SFMono-Regular, Menlo, monospace";
           ctx.fillText(cellDensity.toFixed(1), c * cellW + 6, r * cellH + cellH / 2 + 3);
         }
       }
     }
 
-    // Crisp Zone Boundary Rectangle
-    ctx.strokeStyle = isCritical ? "#C93B3B" : currentLevel === "MODERATE" ? "#C88A2E" : "#2A8C6A";
+    // Outer Monitored Corridor Boundary
+    ctx.strokeStyle = isCritical ? "#E05252" : currentLevel === "MODERATE" ? "#D99B38" : "#38A17D";
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(cellW * 3, cellH * 1, cellW * 14, cellH * 8);
+    ctx.strokeRect(cellW * 1.5, cellH * 1.8, cellW * 17, cellH * 7.5);
 
-    // Cluster Bounding Box when density >= 2.5
+    // Cluster Bounding Boxes aligned to actual crowd pockets when density >= 2.5
     if (currentDensity >= 2.5) {
-      const bx = cellW * 6;
-      const by = cellH * 2;
-      const bw = cellW * 8;
-      const bh = cellH * 6;
+      const totalPax = latestAlert?.head_count || 0;
+      const boxes = [
+        { x: 3.5, y: 4.0, w: 5.0, h: 4.6, label: "CLUSTER-L", share: 0.32 },
+        { x: 10.8, y: 4.0, w: 5.2, h: 4.6, label: "CLUSTER-R", share: 0.33 },
+        { x: 7.2, y: 2.0, w: 5.6, h: 2.6, label: "BOTTLENECK", share: 0.35 },
+      ];
 
-      ctx.strokeStyle = isCritical ? "#E05252" : "#D99B38";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(bx, by, bw, bh);
+      boxes.forEach((b) => {
+        const bx = cellW * b.x;
+        const by = cellH * b.y;
+        const bw = cellW * b.w;
+        const bh = cellH * b.h;
 
-      ctx.fillStyle = isCritical ? "#8C2626" : "#6E4E16";
-      ctx.fillRect(bx, by - 16, 152, 16);
-      ctx.fillStyle = "#F3F4F6";
-      ctx.font = "bold 10px ui-monospace, SFMono-Regular, Menlo, monospace";
-      ctx.fillText(
-        `CLUSTER-01 | ~${Math.round((latestAlert?.head_count || 0) * 0.65)} PAX`,
-        bx + 6,
-        by - 4
-      );
+        ctx.strokeStyle = isCritical ? "#E05252" : "#D99B38";
+        ctx.lineWidth = 1.75;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        ctx.fillStyle = isCritical ? "#8C2626" : "#6E4E16";
+        ctx.fillRect(bx, by - 15, 134, 15);
+        ctx.fillStyle = "#F3F4F6";
+        ctx.font = "bold 10px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText(
+          `${b.label} | ~${Math.round(totalPax * b.share)} PAX`,
+          bx + 5,
+          by - 4
+        );
+      });
     }
   }, [booting, currentDensity, currentLevel, isCritical, latestAlert?.head_count]);
-
   const rateOfChange = useMemo(() => {
     if (densityHistory.length < 2) return "0.0";
     const curr = densityHistory[densityHistory.length - 1];
@@ -505,12 +519,19 @@ export default function Dashboard() {
               {booting ? (
                 <div className="w-full h-full bg-[#141820]" />
               ) : (
-                <canvas
-                  ref={canvasRef}
-                  width={760}
-                  height={340}
-                  className="w-full h-full object-contain border border-[#1F242D]"
-                />
+                <div className="relative w-full h-full border border-[#1F242D] overflow-hidden bg-[#080A0E]">
+                  <img
+                    src="/cctv-corridor.jpg"
+                    alt="B-Block Main Corridor CCTV Feed"
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                  <canvas
+                    ref={canvasRef}
+                    width={760}
+                    height={340}
+                    className="absolute inset-0 w-full h-full"
+                  />
+                </div>
               )}
             </div>
           </div>
