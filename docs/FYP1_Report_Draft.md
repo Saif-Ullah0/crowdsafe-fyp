@@ -124,8 +124,8 @@ The frontend (`src/frontend/src/app/page.tsx`) is built with Next.js 15 and Tail
 - **Dual-Mode Engine:** Supports `LIVE WEBHOOK` polling from the local Python backend as well as standalone `SIMULATION` mode (`NORMAL`, `BUILDUP`, `SURGE`) for cloud evaluation on Vercel.
 - **Governance:** Includes built-in Terms of Service and Privacy Policy disclosures in the operational footer.
 
-> **[INSERT SCREENSHOT 1: Live Vercel SOC Dashboard — NORMAL State]**  
-> **[INSERT SCREENSHOT 2: Live Vercel SOC Dashboard — CRITICAL SURGE State with Active Incident Queue]**
+> **![alt text](image.png)**  
+> **![alt text](image-1.png)**
 
 ---
 
