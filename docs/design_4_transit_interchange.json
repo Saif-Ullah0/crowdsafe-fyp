@@ -1,0 +1,1048 @@
+{
+  "venue_metadata": {
+    "name": "Design 4: Controlled Transit & Security Interchange",
+    "architecture": "square_plus_walkway",
+    "description": "38m x 38m secure transit interchange featuring access turnstiles at all 4 exit gates, 4 specialized corner operational rooms, and a 5.0m central clock tower fountain roundabout.",
+    "coverage_proven_pct": 83.8,
+    "raycast_wall_occlusion": true
+  },
+  "global_dimensions": {
+    "width_m": 38.0,
+    "depth_m": 38.0,
+    "height_m": 4.5
+  },
+  "walls": [
+    {
+      "name": "wall_000",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_001",
+      "start": [
+        24.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        0.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_002",
+      "start": [
+        0.0,
+        38.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_003",
+      "start": [
+        24.0,
+        38.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_004",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_005",
+      "start": [
+        0.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        0.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_006",
+      "start": [
+        38.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_007",
+      "start": [
+        38.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_008",
+      "start": [
+        14.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_009",
+      "start": [
+        0.0,
+        14.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_010",
+      "start": [
+        24.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        24.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_011",
+      "start": [
+        24.0,
+        14.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        14.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_012",
+      "start": [
+        0.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        24.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_013",
+      "start": [
+        14.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        14.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_014",
+      "start": [
+        24.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        38.0,
+        24.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    },
+    {
+      "name": "wall_015",
+      "start": [
+        24.0,
+        24.0,
+        0.0
+      ],
+      "end": [
+        24.0,
+        38.0,
+        0.0
+      ],
+      "thickness": 0.25,
+      "height": 4.5
+    }
+  ],
+  "zones": {
+    "zone_walkway_plus": {
+      "name": "Plus Shaped Public Walkway",
+      "type": "corridor_hub",
+      "polygon": [
+        [
+          14.0,
+          0.0
+        ],
+        [
+          24.0,
+          0.0
+        ],
+        [
+          24.0,
+          14.0
+        ],
+        [
+          38.0,
+          14.0
+        ],
+        [
+          38.0,
+          24.0
+        ],
+        [
+          24.0,
+          24.0
+        ],
+        [
+          24.0,
+          38.0
+        ],
+        [
+          14.0,
+          38.0
+        ],
+        [
+          14.0,
+          24.0
+        ],
+        [
+          0.0,
+          24.0
+        ],
+        [
+          0.0,
+          14.0
+        ],
+        [
+          14.0,
+          14.0
+        ]
+      ],
+      "area_m2": 660.0,
+      "max_capacity": 990
+    },
+    "ROOM_SW": {
+      "name": "Room SW (Security Operations Center & Dispatch)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          14.0,
+          0.0
+        ],
+        [
+          14.0,
+          14.0
+        ],
+        [
+          0.0,
+          14.0
+        ]
+      ],
+      "area_m2": 196.0,
+      "door_opening": "inward"
+    },
+    "ROOM_SE": {
+      "name": "Room SE (Passenger Lounge & Rest Area)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          24.0,
+          0.0
+        ],
+        [
+          38.0,
+          0.0
+        ],
+        [
+          38.0,
+          14.0
+        ],
+        [
+          24.0,
+          14.0
+        ]
+      ],
+      "area_m2": 196.0,
+      "door_opening": "inward"
+    },
+    "ROOM_NW": {
+      "name": "Room NW (Ticketing & Customer Service)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          0.0,
+          24.0
+        ],
+        [
+          14.0,
+          24.0
+        ],
+        [
+          14.0,
+          38.0
+        ],
+        [
+          0.0,
+          38.0
+        ]
+      ],
+      "area_m2": 196.0,
+      "door_opening": "inward"
+    },
+    "ROOM_NE": {
+      "name": "Room NE (Facility Infrastructure & Restrooms)",
+      "type": "corner_room",
+      "polygon": [
+        [
+          24.0,
+          24.0
+        ],
+        [
+          38.0,
+          24.0
+        ],
+        [
+          38.0,
+          38.0
+        ],
+        [
+          24.0,
+          38.0
+        ]
+      ],
+      "area_m2": 196.0,
+      "door_opening": "inward"
+    }
+  },
+  "obstacles": [
+    {
+      "id": "CENTRAL_FOUNTAIN_ROUNDABOUT",
+      "name": "Rotary Clock Tower Fountain & Transit Circulation Roundabout",
+      "type": "fountain_roundabout",
+      "shape": "circle",
+      "position": [
+        19.0,
+        19.0,
+        0.0
+      ],
+      "radius": 2.5,
+      "height": 1.3,
+      "rotary_lane_width_m": 2.5,
+      "is_walkable": false,
+      "description": "Iconic central transit clock tower pillar surrounded by a stepped water cascade basin and dedicated rotary concourse lane."
+    }
+  ],
+  "exit_gateways": [
+    {
+      "id": "EXIT_S",
+      "gateway_id": "GW-S",
+      "name": "South Turnstile Transit Gateway",
+      "direction": "south",
+      "x1": 14.0,
+      "y1": 0.0,
+      "x2": 24.0,
+      "y2": 0.0,
+      "cam_id": "CAM-S",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 2.0,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.8,
+      "throughput_ppm": 520,
+      "emergency_breakout": true,
+      "has_turnstiles": true
+    },
+    {
+      "id": "EXIT_N",
+      "gateway_id": "GW-N",
+      "name": "North Turnstile Transit Gateway",
+      "direction": "north",
+      "x1": 14.0,
+      "y1": 38.0,
+      "x2": 24.0,
+      "y2": 38.0,
+      "cam_id": "CAM-N",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 2.0,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.8,
+      "throughput_ppm": 520,
+      "emergency_breakout": true,
+      "has_turnstiles": true
+    },
+    {
+      "id": "EXIT_W",
+      "gateway_id": "GW-W",
+      "name": "West Transit Egress Gateway",
+      "direction": "west",
+      "x1": 0.0,
+      "y1": 14.0,
+      "x2": 0.0,
+      "y2": 24.0,
+      "cam_id": "CAM-W",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 2.0,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.8,
+      "throughput_ppm": 520,
+      "emergency_breakout": true,
+      "has_turnstiles": true
+    },
+    {
+      "id": "EXIT_E",
+      "gateway_id": "GW-E",
+      "name": "East Transit Egress Gateway",
+      "direction": "east",
+      "x1": 38.0,
+      "y1": 14.0,
+      "x2": 38.0,
+      "y2": 24.0,
+      "cam_id": "CAM-E",
+      "threshold_depth_m": 1.4,
+      "num_lanes": 4,
+      "lane_width_m": 2.0,
+      "barrier_type": "optical_speed_gate_array",
+      "canopy_height_m": 4.8,
+      "throughput_ppm": 520,
+      "emergency_breakout": true,
+      "has_turnstiles": true
+    }
+  ],
+  "navigation_graph": {
+    "nodes": {
+      "EXIT_S": {
+        "name": "South Exit Portal",
+        "pos": [
+          19.0,
+          0.0
+        ],
+        "type": "entrance_exit"
+      },
+      "GW_S": {
+        "name": "South Exit Gateway",
+        "pos": [
+          19.0,
+          0.7
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-S",
+        "lanes": 5
+      },
+      "EXIT_N": {
+        "name": "North Exit Portal",
+        "pos": [
+          19.0,
+          38.0
+        ],
+        "type": "entrance_exit"
+      },
+      "GW_N": {
+        "name": "North Exit Gateway",
+        "pos": [
+          19.0,
+          37.3
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-N",
+        "lanes": 5
+      },
+      "EXIT_W": {
+        "name": "West Exit Portal",
+        "pos": [
+          0.0,
+          19.0
+        ],
+        "type": "entrance_exit"
+      },
+      "GW_W": {
+        "name": "West Exit Gateway",
+        "pos": [
+          0.7,
+          19.0
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-W",
+        "lanes": 5
+      },
+      "EXIT_E": {
+        "name": "East Exit Portal",
+        "pos": [
+          38.0,
+          19.0
+        ],
+        "type": "entrance_exit"
+      },
+      "GW_E": {
+        "name": "East Exit Gateway",
+        "pos": [
+          37.3,
+          19.0
+        ],
+        "type": "exit_gateway",
+        "cam_id": "CAM-E",
+        "lanes": 5
+      },
+      "WING_S": {
+        "name": "South Walkway Wing",
+        "pos": [
+          19.0,
+          9.5
+        ],
+        "type": "corridor"
+      },
+      "WING_N": {
+        "name": "North Walkway Wing",
+        "pos": [
+          19.0,
+          28.5
+        ],
+        "type": "corridor"
+      },
+      "WING_W": {
+        "name": "West Walkway Wing",
+        "pos": [
+          9.5,
+          19.0
+        ],
+        "type": "corridor"
+      },
+      "WING_E": {
+        "name": "East Walkway Wing",
+        "pos": [
+          28.5,
+          19.0
+        ],
+        "type": "corridor"
+      },
+      "ROTARY_S": {
+        "name": "South Roundabout Rotary Node",
+        "pos": [
+          19.0,
+          15.25
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_E": {
+        "name": "East Roundabout Rotary Node",
+        "pos": [
+          22.75,
+          19.0
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_N": {
+        "name": "North Roundabout Rotary Node",
+        "pos": [
+          19.0,
+          22.75
+        ],
+        "type": "roundabout_lane"
+      },
+      "ROTARY_W": {
+        "name": "West Roundabout Rotary Node",
+        "pos": [
+          15.25,
+          19.0
+        ],
+        "type": "roundabout_lane"
+      },
+      "DOOR_ROOM_SW": {
+        "name": "Inward Door ROOM_SW",
+        "pos": [
+          14.0,
+          7.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SW": {
+        "name": "Interior ROOM_SW",
+        "pos": [
+          12.5,
+          7.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_SE": {
+        "name": "Inward Door ROOM_SE",
+        "pos": [
+          24.0,
+          7.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_SE": {
+        "name": "Interior ROOM_SE",
+        "pos": [
+          25.5,
+          7.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NW": {
+        "name": "Inward Door ROOM_NW",
+        "pos": [
+          14.0,
+          31.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NW": {
+        "name": "Interior ROOM_NW",
+        "pos": [
+          12.5,
+          31.0
+        ],
+        "type": "destination"
+      },
+      "DOOR_ROOM_NE": {
+        "name": "Inward Door ROOM_NE",
+        "pos": [
+          24.0,
+          31.0
+        ],
+        "type": "door_portal"
+      },
+      "INSIDE_ROOM_NE": {
+        "name": "Interior ROOM_NE",
+        "pos": [
+          25.5,
+          31.0
+        ],
+        "type": "destination"
+      }
+    },
+    "edges": [
+      {
+        "from": "EXIT_S",
+        "to": "GW_S",
+        "capacity": 200,
+        "width_m": 10.0
+      },
+      {
+        "from": "GW_S",
+        "to": "WING_S",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "EXIT_N",
+        "to": "GW_N",
+        "capacity": 200,
+        "width_m": 10.0
+      },
+      {
+        "from": "GW_N",
+        "to": "WING_N",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "EXIT_W",
+        "to": "GW_W",
+        "capacity": 200,
+        "width_m": 10.0
+      },
+      {
+        "from": "GW_W",
+        "to": "WING_W",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "EXIT_E",
+        "to": "GW_E",
+        "capacity": 200,
+        "width_m": 10.0
+      },
+      {
+        "from": "GW_E",
+        "to": "WING_E",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "WING_S",
+        "to": "ROTARY_S",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "WING_E",
+        "to": "ROTARY_E",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "WING_N",
+        "to": "ROTARY_N",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "WING_W",
+        "to": "ROTARY_W",
+        "capacity": 150,
+        "width_m": 10.0
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "ROTARY_E",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_E",
+        "to": "ROTARY_N",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "ROTARY_W",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_W",
+        "to": "ROTARY_S",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_E",
+        "to": "ROTARY_S",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "ROTARY_E",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_W",
+        "to": "ROTARY_N",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "ROTARY_W",
+        "capacity": 120,
+        "width_m": 2.5
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "DOOR_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "DOOR_ROOM_SW",
+        "to": "INSIDE_ROOM_SW",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "ROTARY_S",
+        "to": "DOOR_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "DOOR_ROOM_SE",
+        "to": "INSIDE_ROOM_SE",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "DOOR_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "DOOR_ROOM_NW",
+        "to": "INSIDE_ROOM_NW",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "ROTARY_N",
+        "to": "DOOR_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.2
+      },
+      {
+        "from": "DOOR_ROOM_NE",
+        "to": "INSIDE_ROOM_NE",
+        "capacity": 60,
+        "width_m": 1.2
+      }
+    ]
+  },
+  "cameras": [
+    {
+      "camera_id": "CAM-S",
+      "name": "South Turnstile Gate Camera",
+      "position": [
+        19.0,
+        0.6,
+        4.6
+      ],
+      "look_at": [
+        19.0,
+        5.1,
+        1.2
+      ],
+      "focal_length_mm": 2.4,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 20.5,
+      "perp_axis": "y",
+      "perp_dir": "+",
+      "perp_val": 20.5,
+      "color": "#00E5FF",
+      "mount": "Over South Turnstile Gate Header"
+    },
+    {
+      "camera_id": "CAM-N",
+      "name": "North Turnstile Gate Camera",
+      "position": [
+        19.0,
+        37.4,
+        4.6
+      ],
+      "look_at": [
+        19.0,
+        32.9,
+        1.2
+      ],
+      "focal_length_mm": 2.4,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 20.5,
+      "perp_axis": "y",
+      "perp_dir": "-",
+      "perp_val": 17.5,
+      "color": "#76FF03",
+      "mount": "Over North Turnstile Gate Header"
+    },
+    {
+      "camera_id": "CAM-W",
+      "name": "West Transit Gate Camera",
+      "position": [
+        0.6,
+        19.0,
+        4.6
+      ],
+      "look_at": [
+        5.1,
+        19.0,
+        1.2
+      ],
+      "focal_length_mm": 2.4,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 20.5,
+      "perp_axis": "x",
+      "perp_dir": "+",
+      "perp_val": 20.5,
+      "color": "#FFD600",
+      "mount": "Over West Transit Gate Header"
+    },
+    {
+      "camera_id": "CAM-E",
+      "name": "East Transit Gate Camera",
+      "position": [
+        37.4,
+        19.0,
+        4.6
+      ],
+      "look_at": [
+        32.9,
+        19.0,
+        1.2
+      ],
+      "focal_length_mm": 2.4,
+      "sensor_width_mm": 6.17,
+      "sensor_height_mm": 4.55,
+      "max_range_m": 20.5,
+      "perp_axis": "x",
+      "perp_dir": "-",
+      "perp_val": 17.5,
+      "color": "#FF3D00",
+      "mount": "Over East Transit Gate Header"
+    }
+  ],
+  "coverage_metrics": {
+    "total_pts": 10244,
+    "covered_pts": 8588,
+    "coverage_pct": 83.8,
+    "overlap_pct": 18.8,
+    "individual_pcts": [
+      27.6,
+      27.6,
+      27.6,
+      27.6
+    ],
+    "optics": [
+      {
+        "cx": 19.0,
+        "cy": 0.6,
+        "cz": 4.6,
+        "heading": 1.5707963267948966,
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "+",
+        "perp_val": 20.5
+      },
+      {
+        "cx": 19.0,
+        "cy": 37.4,
+        "cz": 4.6,
+        "heading": -1.5707963267948966,
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "y",
+        "perp_dir": "-",
+        "perp_val": 17.5
+      },
+      {
+        "cx": 0.6,
+        "cy": 19.0,
+        "cz": 4.6,
+        "heading": 0.0,
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "+",
+        "perp_val": 20.5
+      },
+      {
+        "cx": 37.4,
+        "cy": 19.0,
+        "cz": 4.6,
+        "heading": 3.141592653589793,
+        "half_hfov": 0.9096409622754333,
+        "d_min": 0.7663541242016582,
+        "max_range": 20.5,
+        "tilt_deg": 37.0730733173104,
+        "hfov_deg": 104.23717602120253,
+        "vfov_deg": 86.93678441597797,
+        "perp_axis": "x",
+        "perp_dir": "-",
+        "perp_val": 17.5
+      }
+    ]
+  }
+}

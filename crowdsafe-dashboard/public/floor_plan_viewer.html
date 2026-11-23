@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrowdSafe — Transit Interchange 2D Floor Plan Viewer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px; }
+    .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    header { background: var(--card); padding: 20px 24px; border-radius: 12px; border: 1px solid var(--border); }
+    h1 { font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+    p.subtitle { color: var(--text-muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .viewer-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .viewer-card img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #475569; }
+    .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .stat-box { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+    .stat-value { font-size: 20px; font-weight: 700; color: #38bdf8; margin-top: 4px; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #0284c7; color: #fff; }
+    ul { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    li { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
+    li span:first-child { color: var(--text-muted); }
+    li span:last-child { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CrowdSafe — Controlled Transit Interchange (Design 4)</h1>
+      <p class="subtitle">Finalized 2D Architectural CAD Floor Plan, Exit Gateways, and Calibrated CCTV Coverage</p>
+    </header>
+
+    <div class="grid">
+      <div class="viewer-card">
+        <img src="design_4_transit_interchange.png" alt="Transit Interchange 2D Floor Plan">
+      </div>
+
+      <div class="info-card">
+        <div class="stat-box">
+          <div class="stat-label">Concourse Surveillance Coverage</div>
+          <div class="stat-value">83.8% <span class="badge">Target &ge; 80% Passed</span></div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-label">Walkable Area vs Central Roundabout</div>
+          <div class="stat-value">640.4 m² / &empty; 5.0m</div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 8px; color: #e2e8f0;">Key Specifications</h3>
+          <ul>
+            <li><span>Overall Footprint</span><span>38.0m &times; 38.0m (1,444 m²)</span></li>
+            <li><span>Corridor Span</span><span>10.0m Plus Walkway</span></li>
+            <li><span>Corner Rooms</span><span>4 &times; (14m &times; 14m, 196 m²)</span></li>
+            <li><span>Inward Doors</span><span>4 Units (100% Inward, 0% obstruction)</span></li>
+            <li><span>Central Roundabout</span><span>&empty; 5.0m Fountain (2.5m clear lane)</span></li>
+            <li><span>Exit Gateways</span><span>4 Gates (4 lanes each, 2,080 p/min)</span></li>
+            <li><span>Camera Mount Height</span><span>4.6m Overhead Canopy Gantry</span></li>
+            <li><span>Camera Range (DORI)</span><span>20.5m Realistic Falloff</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
