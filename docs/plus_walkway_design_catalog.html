@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plus Walkway Design Catalog — Design 4: Transit Interchange</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #151d30;
+      --border: #243049;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --success: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 32px 16px; line-height: 1.6; }
+    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+    
+    header { background: var(--card); padding: 24px 32px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--accent); }
+    h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin-bottom: 12px; }
+    h3 { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px; }
+    p.subtitle { color: var(--text-muted); font-size: 15px; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    
+    .image-container { text-align: center; background: #070a12; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; }
+    .image-container img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .caption { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
+
+    .badge-pass { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: rgba(52, 211, 153, 0.15); color: var(--success); border: 1px solid var(--success); }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 16px 0; }
+    .stat-box { background: #0e1526; border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+    .stat-value { font-size: 22px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    th { background: #0e1526; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); font-weight: 600; }
+    td { padding: 10px 14px; border: 1px solid var(--border); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    pre { background: #070a12; border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: "Fira Code", monospace; font-size: 13px; color: #38bdf8; margin: 14px 0; }
+    code { font-family: "Fira Code", monospace; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+    .file-path { background: #0e1526; padding: 12px 16px; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-size: 13px; color: #a5f3fc; word-break: break-all; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Plus Walkway Design Catalog — Design 4</h1>
+      <p class="subtitle">Controlled Transit Interchange &bull; Architectural Blueprint &bull; CCTV Coverage Specification</p>
+    </header>
+
+    <!-- Floor Plan Visual Card -->
+    <div class="card">
+      <h2>1. Finalized 2D Architectural CAD Floor Plan</h2>
+      <p>High-resolution CAD map displaying the 10.0m plus walkway, corner rooms with inward-opening doors, central clock-tower fountain roundabout, speed-gate exit portals, and ray-cast camera viewing cones:</p>
+      
+      <div class="image-container">
+        <img src="design_4_transit_interchange.png" alt="Design 4: Controlled Transit Interchange 2D Floor Plan">
+        <div class="caption">Figure 1: Full venue blueprint with ray-cast FOVs occluded by opaque walls (83.8% net walkable coverage).</div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="card">
+      <h2>2. Key Quantitative Metrics</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Concourse Optical Coverage</div>
+          <div class="stat-value">83.8% <span class="badge-pass">PASS &ge; 80%</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Concourse Walkable Area</div>
+          <div class="stat-value">640.4 m²</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Central Roundabout</div>
+          <div class="stat-value">&empty; 5.0m Fountain</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Emergency Gate Throughput</div>
+          <div class="stat-value">2,080 pers/min</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Details -->
+    <div class="card">
+      <h2>3. Architectural Geometry & Layout</h2>
+      <pre>
+                                NORTH EXIT (Y = 38m)
+                     +-----------------------------------+
+                     |         GATEWAY [GW-N]            |
+                     |  CAM-N Mount (4.6m, Tilt 34°)     |
+                     |  [====] [====] [====] [====]      |
+                     +-----------------------------------+
+                     |             WING_N                |
++--------------------+                                   +--------------------+
+|                    |                                   |                    |
+|      ROOM NW       |                                   |      ROOM NE       |
+|    (Ticketing &    |                                   |  (Infrastructure & |
+|  Customer Service) |                                   |     Restrooms)     |
+|   14m x 14m        |                                   |   14m x 14m        |
+|   (196.0 m²)       |                                   |   (196.0 m²)       |
+|                    |             ROTARY_N              |                    |
+|       Inward Door  [               (.)                 ]  Inward Door       |
++--------\-----------+                                   +-----------/--------+
+|   GATEWAY [GW-W]   |         +---------------+         |   GATEWAY [GW-E]   |
+|  CAM-W (4.6m)      |  ROT_W  | CLOCK FOUNTAIN|  ROT_E  |  CAM-E (4.6m)      |
+|  [||] [||] [||]    |   (.)   |  ROUNDABOUT   |   (.)   |    [||] [||] [||]  |
+|  WEST EXIT (X=0m)  |         | r=2.5m (19.6m²)|        |  EAST EXIT (X=38m) |
++--------/-----------+         +---------------+         +-----------\--------+
+|       Inward Door  [               (.)                 ]  Inward Door       |
+|                    |             ROTARY_S              |                    |
+|      ROOM SW       |                                   |      ROOM SE       |
+|  (Security Ops &   |                                   |    (Passenger      |
+|   Dispatch Hub)    |                                   |  Lounge & Rest)    |
+|   14m x 14m        |                                   |   14m x 14m        |
+|   (196.0 m²)       |                                   |   (196.0 m²)       |
+|                    |             WING_S                |                    |
++--------------------+                                   +--------------------+
+                     |         GATEWAY [GW-S]            |
+                     |  CAM-S Mount (4.6m, Tilt 34°)     |
+                     |  [====] [====] [====] [====]      |
+                     +-----------------------------------+
+                                SOUTH EXIT (Y = 0m)
+      </pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zone / Element</th>
+            <th>Dimensions / Coordinates</th>
+            <th>Design Role & Safety Compliance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Overall Footprint</strong></td>
+            <td>38.0m &times; 38.0m (1,444 m²)</td>
+            <td>Square envelope perimeter</td>
+          </tr>
+          <tr>
+            <td><strong>Plus Walkway Corridor</strong></td>
+            <td>10.0m Clear Width (640.4 m² net)</td>
+            <td>Central thoroughfare connecting 4 gateways</td>
+          </tr>
+          <tr>
+            <td><strong>4 Corner Rooms</strong></td>
+            <td>14.0m &times; 14.0m each (196.0 m²)</td>
+            <td>Room NW (Ticketing), NE (Restrooms), SW (Security Ops), SE (Lounge)</td>
+          </tr>
+          <tr>
+            <td><strong>Corner Room Doors</strong></td>
+            <td>1.2m Commercial Magnetic</td>
+            <td>100% Inward swinging into room chambers (0% corridor obstruction)</td>
+          </tr>
+          <tr>
+            <td><strong>Central Roundabout</strong></td>
+            <td>&empty; 5.0m Fountain (r = 2.5m)</td>
+            <td>2.5m counter-clockwise clear pedestrian rotary circulation lane</td>
+          </tr>
+          <tr>
+            <td><strong>4 Exit Gateways</strong></td>
+            <td>4 Lanes per portal (2.0m width)</td>
+            <td>Speed gates with drop-arm emergency breakout (520 pers/min/gate)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Camera Array -->
+    <div class="card">
+      <h2>4. Calibrated CCTV Camera Array</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Camera ID</th>
+            <th>Mount Location</th>
+            <th>Coordinates (X, Y, Z)</th>
+            <th>Heading / Tilt</th>
+            <th>Range</th>
+            <th>FOV Walkable Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CAM-S</code></td>
+            <td>Over Gateway GW-S</td>
+            <td>(19.0m, 0.5m, 4.6m)</td>
+            <td>90.0° (N) / 34.0° down</td>
+            <td>20.5m</td>
+            <td>45.2% concourse</td>
+          </tr>
+          <tr>
+            <td><code>CAM-N</code></td>
+            <td>Over Gateway GW-N</td>
+            <td>(19.0m, 37.5m, 4.6m)</td>
+            <td>270.0° (S) / 34.0° down</td>
+            <td>20.5m</td>
+            <td>45.2% concourse</td>
+          </tr>
+          <tr>
+            <td><code>CAM-W</code></td>
+            <td>Over Gateway GW-W</td>
+            <td>(0.5m, 19.0m, 4.6m)</td>
+            <td>0.0° (E) / 34.0° down</td>
+            <td>20.5m</td>
+            <td>45.2% concourse</td>
+          </tr>
+          <tr>
+            <td><code>CAM-E</code></td>
+            <td>Over Gateway GW-E</td>
+            <td>(37.5m, 19.0m, 4.6m)</td>
+            <td>180.0° (W) / 34.0° down</td>
+            <td>20.5m</td>
+            <td>45.2% concourse</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Direct File Links -->
+    <div class="card">
+      <h2>5. Direct File Paths on Disk</h2>
+      <p>Direct absolute paths to open, edit, or copy into your application:</p>
+      
+      <h3 style="margin-top: 14px;">1. Root Catalog Files</h3>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/plus_walkway_design_catalog.md</div>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/plus_walkway_design_catalog.html</div>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/design_4_transit_interchange.png</div>
+
+      <h3 style="margin-top: 14px;">2. Web Dashboard Assets (Next.js)</h3>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/crowdsafe-dashboard/public/design_4_transit_interchange.png</div>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/crowdsafe-dashboard/public/floor_plans/design_4_transit_interchange.json</div>
+
+      <h3 style="margin-top: 14px;">3. Python MVP Assets</h3>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/mvp/assets/design_4_transit_interchange.png</div>
+      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/mvp/assets/design_4_transit_interchange.json</div>
+    </div>
+  </div>
+</body>
+</html>
