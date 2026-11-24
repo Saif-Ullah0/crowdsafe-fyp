@@ -361,5 +361,86 @@ def test_universal_target_resolution_and_custom_folders():
         assert targets_custom[idx_custom].image_path == (tmp_cam / "cam_frame.png")
 
 
+def test_floor_plan_theme_assets_and_config():
+    """Verify Light CAD and Dark Tactical floor plan assets exist and match architectural scale."""
+    from config import FLOOR_PLAN_LIGHT, FLOOR_PLAN_DARK
+    import cv2
+
+    assert Path(FLOOR_PLAN_LIGHT).is_file(), f"Light floor plan missing: {FLOOR_PLAN_LIGHT}"
+    assert Path(FLOOR_PLAN_DARK).is_file(), f"Dark floor plan missing: {FLOOR_PLAN_DARK}"
+
+    img_light = cv2.imread(str(FLOOR_PLAN_LIGHT))
+    img_dark = cv2.imread(str(FLOOR_PLAN_DARK))
+
+    assert img_light is not None, "Failed to decode FLOOR_PLAN_LIGHT"
+    assert img_dark is not None, "Failed to decode FLOOR_PLAN_DARK"
+    assert img_light.shape == img_dark.shape, f"Theme dimension mismatch: {img_light.shape} vs {img_dark.shape}"
+    assert img_light.shape[:2] == (4170, 3912), f"Unexpected dimensions: {img_light.shape}"
+
+
+def test_projector_dual_canvas_pre_scaling_and_toggle():
+    """Verify ProjectorApp pre-scales dual canvases and handles instant runtime theme switching."""
+    from projector_app import ProjectorApp
+    import cv2
+
+    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    if not series_40.exists():
+        pytest.skip("DataSet/40 not present for integration test")
+
+    app = ProjectorApp(source_dir=series_40, headless=True, theme="dark")
+    assert app.theme == "dark"
+    assert app.floor_dark_disp.shape == (680, 680, 3)
+    assert app.floor_light_disp.shape == (680, 680, 3)
+
+    # Active canvas should point to floor_dark_disp
+    assert np.array_equal(app.floor_img_disp, app.floor_dark_disp)
+
+    # Toggle to Light CAD theme
+    app.toggle_theme()
+    assert app.theme == "light"
+    assert np.array_equal(app.floor_img_disp, app.floor_light_disp)
+
+    # Toggle back to Dark Tactical theme
+    app.toggle_theme()
+    assert app.theme == "dark"
+    assert np.array_equal(app.floor_img_disp, app.floor_dark_disp)
+
+    # Simulate mouse click on the theme button in HUD
+    bx1, by1, bx2, by2 = app.theme_btn_rect
+    click_x = (bx1 + bx2) // 2
+    click_y = (by1 + by2) // 2
+    app._on_floor_mouse_event(cv2.EVENT_LBUTTONDOWN, click_x, click_y, 0, None)
+    assert app.theme == "light"
+
+    # Render Window 2 (Projection + Dots) under Light theme
+    frame = cv2.imread(app.image_files[0])
+    canvas_light = app.render_floor_projection_with_dots(frame, [], 1)
+    assert canvas_light.shape == (680, 680, 3)
+
+    # Switch to Dark and render again
+    app.toggle_theme()
+    canvas_dark = app.render_floor_projection_with_dots(frame, [], 1)
+    assert canvas_dark.shape == (680, 680, 3)
+
+
+def test_projector_gui_window_initialization():
+    """Verify ProjectorApp GUI window names and attributes are properly initialized."""
+    from projector_app import ProjectorApp
+    import cv2
+
+    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    if not series_40.exists():
+        pytest.skip("DataSet/40 not present for integration test")
+
+    app = ProjectorApp(source_dir=series_40, headless=False, theme="dark")
+    assert app.headless is False
+    assert hasattr(app, "win_floor_proj")
+    assert hasattr(app, "win_floor_dots")
+    assert hasattr(app, "win_cam_video")
+    cv2.destroyAllWindows()
+
+
+
+
 
 

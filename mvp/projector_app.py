@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from config import DEFAULT_FLOOR_PLAN
+from config import DEFAULT_FLOOR_PLAN, FLOOR_PLAN_LIGHT, FLOOR_PLAN_DARK
 from core.projection import PlanarProjector
 from core.detection_source import (
     BaseDetectionSource,
@@ -48,7 +48,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="CrowdSafe Triple-Window Floor Plan Projector")
     parser.add_argument("--series", type=str, default=None, help="Camera series number (e.g. 40, 70) in DataSet/")
     parser.add_argument("--source", type=str, default="DataSet/40", help="Camera series directory or video path")
-    parser.add_argument("--floor-plan", type=str, default=str(DEFAULT_FLOOR_PLAN), help="Path to 2D floor plan image")
+    parser.add_argument("--floor-plan", type=str, default=None, help="Path to custom 2D floor plan image")
+    parser.add_argument("--theme", type=str, default="dark", choices=["dark", "light"], help="Active floor plan theme (dark: Tactical Game Map, light: Clean CAD Base)")
     parser.add_argument("--calibration", type=str, default=None, help="Path to calibration.json (defaults to <source>/calibration.json)")
     parser.add_argument("--fps", type=float, default=10.0, help="Playback speed in FPS (e.g. 10.0, 15.0, 30.0, 60.0)")
     parser.add_argument("--alpha", type=float, default=0.45, help="Camera projection transparency alpha on floor plan (default: 0.45)")
@@ -65,15 +66,15 @@ class ProjectorApp:
     def __init__(
         self,
         source_dir: Path,
-        floor_plan_path: Path,
+        floor_plan_path: Optional[Path] = None,
         calibration_path: Optional[Path] = None,
         target_fps: float = 10.0,
         alpha: float = 0.45,
         mode: str = "annotation",
-        headless: bool = False
+        headless: bool = False,
+        theme: str = "dark"
     ):
         self.source_dir = Path(source_dir).resolve()
-        self.floor_plan_path = Path(floor_plan_path).resolve()
         self.custom_calib_path = Path(calibration_path).resolve() if calibration_path else None
         self.target_fps = max(float(target_fps), 0.1)
         self.interval = 1.0 / self.target_fps
@@ -83,37 +84,65 @@ class ProjectorApp:
         self.is_paused = False
         self.show_hud = True
         self.win1_show_dots = False  # Toggleable with 'd' key
+        self.theme = theme.lower() if theme in ["dark", "light"] else "dark"
 
         # Discover all available series in DataSet/
         self.series_list: List[Path] = self._discover_series()
         self.active_series_idx = self._find_active_series_idx()
-
-        # Load 2D Floor Plan (design_4_transit_interchange.png)
-        if not self.floor_plan_path.is_file():
-            self.floor_plan_path = DEFAULT_FLOOR_PLAN
-        if not self.floor_plan_path.is_file():
-            raise FileNotFoundError(f"Floor plan image not found: {self.floor_plan_path}")
-
-        self.floor_img_orig = cv2.imread(str(self.floor_plan_path))
-        if self.floor_img_orig is None:
-            raise ValueError(f"Failed to decode floor plan: {self.floor_plan_path}")
-        self.floor_h, self.floor_w = self.floor_img_orig.shape[:2]
-
-        # 3 Distinct Window Names
-        self.win_floor_proj = "1. Floor Plan (No Camera Projection)"
-        self.win_floor_dots = "2. Floor Plan + Projection + Human Dots"
-        self.win_cam_video = f"3. Camera Video Feed [{self.source_dir.name}]"
 
         # Display window default dimensions
         self.disp_cam_size = (720, 480)
         self.disp_floor_size = (680, 680)
         self.disp_floor_w, self.disp_floor_h = self.disp_floor_size
 
-        # Pre-scale floor plan canvas for ultra-low latency rendering (0.5ms vs 30ms)
+        # Theme clickable button area on Window 2 HUD: (x1, y1, x2, y2)
+        self.theme_btn_rect = (self.disp_floor_w - 180, 8, self.disp_floor_w - 15, 36)
+
+        # ---------------------------------------------------------
+        # Dual Floor Plan Themes (Light CAD & Dark Tactical)
+        # ---------------------------------------------------------
+        self.floor_light_path = Path(FLOOR_PLAN_LIGHT).resolve()
+        self.floor_dark_path = Path(FLOOR_PLAN_DARK).resolve()
+
+        if floor_plan_path:
+            fpath = Path(floor_plan_path).resolve()
+            if fpath.is_file():
+                if self.theme == "light":
+                    self.floor_light_path = fpath
+                else:
+                    self.floor_dark_path = fpath
+
+        # Load Light CAD Theme (design_4_clean_base.png)
+        self.floor_light_orig = cv2.imread(str(self.floor_light_path)) if self.floor_light_path.is_file() else None
+        # Load Dark Tactical Theme (design_4_tactical_gamemap.png)
+        self.floor_dark_orig = cv2.imread(str(self.floor_dark_path)) if self.floor_dark_path.is_file() else None
+
+        # Robust fallbacks if any image is missing
+        if self.floor_light_orig is None and self.floor_dark_orig is not None:
+            self.floor_light_orig = self.floor_dark_orig.copy()
+        elif self.floor_dark_orig is None and self.floor_light_orig is not None:
+            self.floor_dark_orig = self.floor_light_orig.copy()
+        elif self.floor_light_orig is None and self.floor_dark_orig is None:
+            fallback = Path(DEFAULT_FLOOR_PLAN).resolve()
+            loaded = cv2.imread(str(fallback))
+            if loaded is None:
+                raise FileNotFoundError("Floor plan images could not be loaded!")
+            self.floor_light_orig = loaded
+            self.floor_dark_orig = loaded.copy()
+
+        # Active floor image orig defaults to active theme
+        self.floor_img_orig = self.floor_dark_orig if self.theme == "dark" else self.floor_light_orig
+        self.floor_h, self.floor_w = self.floor_img_orig.shape[:2]
+        self.floor_plan_path = self.floor_dark_path if self.theme == "dark" else self.floor_light_path
+
+        # Pre-scale BOTH floor plan canvases for ultra-low latency rendering (0.5ms vs 30ms)
         self.scale_x = float(self.disp_floor_w) / float(self.floor_w)
         self.scale_y = float(self.disp_floor_h) / float(self.floor_h)
-        self.floor_img_disp = cv2.resize(
-            self.floor_img_orig, (self.disp_floor_w, self.disp_floor_h), interpolation=cv2.INTER_AREA
+        self.floor_light_disp = cv2.resize(
+            self.floor_light_orig, (self.disp_floor_w, self.disp_floor_h), interpolation=cv2.INTER_AREA
+        )
+        self.floor_dark_disp = cv2.resize(
+            self.floor_dark_orig, (self.disp_floor_w, self.disp_floor_h), interpolation=cv2.INTER_AREA
         )
 
         # Display Homography & Quad Cache
@@ -127,6 +156,11 @@ class ProjectorApp:
         self.has_unsaved_projection: bool = False
         self.status_toast: str = ""
         self.toast_time: float = 0.0
+
+        # 3 Distinct Window Names
+        self.win_floor_proj = "1. Floor Plan (No Camera Projection)"
+        self.win_floor_dots = "2. Floor Plan + Projection + Human Dots"
+        self.win_cam_video = f"3. Camera Video Feed [{self.source_dir.name}]"
 
         # Initialize current camera feed & display homography
         self._load_current_camera_feed()
@@ -153,6 +187,20 @@ class ProjectorApp:
                 print(f"[Projector] Warning: GUI window creation failed ({e}). Running in headless mode.")
                 self.headless = True
 
+    @property
+    def floor_img_disp(self) -> np.ndarray:
+        """Returns the pre-scaled display canvas for the active theme."""
+        return self.floor_dark_disp if self.theme == "dark" else self.floor_light_disp
+
+    def toggle_theme(self):
+        """Toggles active theme between 'dark' (Tactical Game Map) and 'light' (Clean CAD Base)."""
+        self.theme = "light" if self.theme == "dark" else "dark"
+        self.floor_img_orig = self.floor_dark_orig if self.theme == "dark" else self.floor_light_orig
+        self.floor_plan_path = self.floor_dark_path if self.theme == "dark" else self.floor_light_path
+        label = "Tactical Dark" if self.theme == "dark" else "Clean Light CAD"
+        self.set_toast(f"Theme: {label}")
+        print(f"🎨 [Projector] Floor Plan Theme: {label}")
+
     def _discover_series(self) -> List[Path]:
         """Scans folder or dataset for all camera targets using universal resolution."""
         try:
@@ -165,11 +213,16 @@ class ProjectorApp:
         for i, s in enumerate(self.series_list):
             if s.resolve() == self.source_dir.resolve():
                 return i
-        return 0
+            return 0
 
     def _update_disp_homography(self):
         """Computes direct display-scale homography H_disp mapping camera frame directly to display canvas."""
         if self.projector.is_calibrated and self.projector.dst_points:
+            calib_fw = float(self.projector.floor_shape[1]) if self.projector.floor_shape else float(self.floor_w)
+            calib_fh = float(self.projector.floor_shape[0]) if self.projector.floor_shape else float(self.floor_h)
+            sx = float(self.disp_floor_w) / max(calib_fw, 1.0)
+            sy = float(self.disp_floor_h) / max(calib_fh, 1.0)
+
             cam_corners = np.array([
                 [0.0, 0.0],
                 [float(self.projector.camera_shape[1]), 0.0],
@@ -177,7 +230,7 @@ class ProjectorApp:
                 [0.0, float(self.projector.camera_shape[0])]
             ], dtype=np.float32)
             disp_corners = np.array([
-                [p[0] * self.scale_x, p[1] * self.scale_y] for p in self.projector.dst_points
+                [p[0] * sx, p[1] * sy] for p in self.projector.dst_points
             ], dtype=np.float32)
             self.H_disp, _ = cv2.findHomography(cam_corners, disp_corners)
             self.disp_quad = disp_corners.astype(np.int32)
@@ -293,24 +346,35 @@ class ProjectorApp:
 
     def _on_floor_mouse_event(self, event, x, y, flags, param):
         """Allows dragging the camera projection freely across the floor plan in Window 1 or 2."""
-        if not self.projector.is_calibrated or not self.projector.dst_points:
-            return
-
         if event == cv2.EVENT_LBUTTONDOWN:
+            # Check for Theme Button click in Window HUD [ Light | Dark ]
+            bx1, by1, bx2, by2 = self.theme_btn_rect
+            if bx1 <= x <= bx2 and by1 <= y <= by2:
+                self.toggle_theme()
+                return
+
+            if not self.projector.is_calibrated or not self.projector.dst_points:
+                return
+
             self.is_dragging_feed = True
             self.drag_start_screen = (x, y)
             self.drag_start_dst_pts = [tuple(p) for p in self.projector.dst_points]
 
         elif event == cv2.EVENT_MOUSEMOVE and self.is_dragging_feed:
+            calib_fw = float(self.projector.floor_shape[1]) if self.projector.floor_shape else float(self.floor_w)
+            calib_fh = float(self.projector.floor_shape[0]) if self.projector.floor_shape else float(self.floor_h)
+            sx = float(self.disp_floor_w) / max(calib_fw, 1.0)
+            sy = float(self.disp_floor_h) / max(calib_fh, 1.0)
+
             dx_screen = x - self.drag_start_screen[0]
             dy_screen = y - self.drag_start_screen[1]
-            dx_floor = dx_screen / max(self.scale_x, 1e-6)
-            dy_floor = dy_screen / max(self.scale_y, 1e-6)
+            dx_floor = dx_screen / max(sx, 1e-6)
+            dy_floor = dy_screen / max(sy, 1e-6)
 
             new_dst = []
             for (px, py) in self.drag_start_dst_pts:
-                nx = np.clip(px + dx_floor, 0, self.floor_w)
-                ny = np.clip(py + dy_floor, 0, self.floor_h)
+                nx = np.clip(px + dx_floor, 0, calib_fw)
+                ny = np.clip(py + dy_floor, 0, calib_fh)
                 new_dst.append((float(nx), float(ny)))
 
             self.projector.compute_from_points(self.projector.src_points, new_dst)
@@ -363,15 +427,21 @@ class ProjectorApp:
 
         # Optional dots on Window 1 if user toggles 'd'
         if self.win1_show_dots and detections and self.projector.is_calibrated:
+            calib_fw = float(self.projector.floor_shape[1]) if self.projector.floor_shape else float(self.floor_w)
+            calib_fh = float(self.projector.floor_shape[0]) if self.projector.floor_shape else float(self.floor_h)
+            sx = float(self.disp_floor_w) / max(calib_fw, 1.0)
+            sy = float(self.disp_floor_h) / max(calib_fh, 1.0)
+
             feet_points = [det.feet_point for det in detections]
             mapped = self.projector.project_points(feet_points)
             for (Xf, Yf) in mapped:
-                dx = int(Xf * self.scale_x)
-                dy = int(Yf * self.scale_y)
+                dx = int(Xf * sx)
+                dy = int(Yf * sy)
                 if 0 <= dx < self.disp_floor_w and 0 <= dy < self.disp_floor_h:
-                    cv2.circle(canvas, (dx, dy), 8, (0, 140, 255), 2, cv2.LINE_AA)
-                    cv2.circle(canvas, (dx, dy), 6, (255, 255, 255), 1, cv2.LINE_AA)
-                    cv2.circle(canvas, (dx, dy), 4, (0, 0, 255), -1, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 9, (0, 0, 0), 2, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 7, (0, 140, 255), 2, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 5, (255, 255, 255), 1, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 3, (0, 0, 255), -1, cv2.LINE_AA)
 
         # Top HUD Banner
         if self.show_hud:
@@ -382,11 +452,26 @@ class ProjectorApp:
 
             title = f"1. FLOOR PLAN (NO PROJECTION) | [{self.source_dir.name}]"
             dots_status = "ON" if self.win1_show_dots else "OFF"
-            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | 'c': Calibrate | 's': Save"
+            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | Theme: {'Dark' if self.theme == 'dark' else 'Light'} ('t')"
             if self.has_unsaved_projection:
                 sub += " | [UNSAVED]"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
             cv2.putText(canvas, sub, (14, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 220, 255), 1, cv2.LINE_AA)
+
+            # Draw interactive Theme Toggle Button [ Light | Dark ]
+            bx1, by1, bx2, by2 = self.theme_btn_rect
+            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (40, 40, 40), -1)
+            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (90, 90, 90), 1, cv2.LINE_AA)
+            mid_x = (bx1 + bx2) // 2
+
+            if self.theme == "light":
+                cv2.rectangle(canvas, (bx1 + 1, by1 + 1), (mid_x, by2 - 1), (230, 230, 230), -1)
+                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
+                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
+            else:
+                cv2.rectangle(canvas, (mid_x, by1 + 1), (bx2 - 1, by2 - 1), (0, 165, 255), -1)
+                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
+                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
 
         # Floating toast notification
         if self.status_toast and (time.time() - self.toast_time < 2.5):
@@ -403,6 +488,7 @@ class ProjectorApp:
         """
         WINDOW 2: 2D Floor Plan WITH camera projection AND human location dots.
         Renders the floor plan with the warped camera view inside FOV quad, plus live human dots.
+        Supports instant Light CAD (design_4_clean_base) and Dark Tactical (design_4_tactical_gamemap) themes.
         Runs at display resolution (~1.0ms per frame).
         """
         canvas = self.floor_img_disp.copy()
@@ -431,32 +517,58 @@ class ProjectorApp:
         # 2. Project and render person ground-contact points
         projected_count = 0
         if detections and self.projector.is_calibrated:
+            calib_fw = float(self.projector.floor_shape[1]) if self.projector.floor_shape else float(self.floor_w)
+            calib_fh = float(self.projector.floor_shape[0]) if self.projector.floor_shape else float(self.floor_h)
+            sx = float(self.disp_floor_w) / max(calib_fw, 1.0)
+            sy = float(self.disp_floor_h) / max(calib_fh, 1.0)
+
             feet_points = [det.feet_point for det in detections]
             mapped = self.projector.project_points(feet_points)
 
             for (Xf, Yf) in mapped:
-                dx = int(Xf * self.scale_x)
-                dy = int(Yf * self.scale_y)
+                dx = int(Xf * sx)
+                dy = int(Yf * sy)
                 if 0 <= dx < self.disp_floor_w and 0 <= dy < self.disp_floor_h:
-                    # Outer subtle orange halo
-                    cv2.circle(canvas, (dx, dy), 8, (0, 140, 255), 2, cv2.LINE_AA)
-                    # White border ring
-                    cv2.circle(canvas, (dx, dy), 6, (255, 255, 255), 1, cv2.LINE_AA)
-                    # Solid bright red core dot
-                    cv2.circle(canvas, (dx, dy), 4, (0, 0, 255), -1, cv2.LINE_AA)
+                    # Multi-tier high contrast dot (visible on white CAD and dark tactical)
+                    cv2.circle(canvas, (dx, dy), 9, (0, 0, 0), 2, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 7, (0, 140, 255), 2, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 5, (255, 255, 255), 1, cv2.LINE_AA)
+                    cv2.circle(canvas, (dx, dy), 3, (0, 0, 255), -1, cv2.LINE_AA)
                     projected_count += 1
 
-        # Top HUD Banner
+        # Top HUD Banner with Theme Toggle Button
         if self.show_hud:
             hud_h = 44
             hud_bar = canvas[:hud_h, :].copy()
             cv2.rectangle(hud_bar, (0, 0), (self.disp_floor_w, hud_h), (20, 20, 20), -1)
             canvas[:hud_h, :] = cv2.addWeighted(canvas[:hud_h, :], 0.25, hud_bar, 0.75, 0)
 
+            theme_name = "Tactical Dark" if self.theme == "dark" else "Light CAD"
             title = f"2. PROJECTION + DOTS | [{self.source_dir.name}]"
-            sub = f"Frame: {frame_idx:03d} | Persons: {projected_count} | Alpha: {self.alpha:.2f} (+/-) | 'c': Calibrate"
+            sub = f"Frame: {frame_idx:03d} | Persons: {projected_count} | Theme: {theme_name} ('t') | Alpha: {self.alpha:.2f}"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
             cv2.putText(canvas, sub, (14, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 255, 120), 1, cv2.LINE_AA)
+
+            # Draw interactive Theme Toggle Button [ Light | Dark ]
+            bx1, by1, bx2, by2 = self.theme_btn_rect
+            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (40, 40, 40), -1)
+            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (90, 90, 90), 1, cv2.LINE_AA)
+            mid_x = (bx1 + bx2) // 2
+
+            if self.theme == "light":
+                # Active: Light
+                cv2.rectangle(canvas, (bx1 + 1, by1 + 1), (mid_x, by2 - 1), (230, 230, 230), -1)
+                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
+                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
+            else:
+                # Active: Dark
+                cv2.rectangle(canvas, (mid_x, by1 + 1), (bx2 - 1, by2 - 1), (0, 165, 255), -1)
+                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
+                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
+
+        # Floating toast notification
+        if self.status_toast and (time.time() - self.toast_time < 2.5):
+            cv2.putText(canvas, self.status_toast, (16, self.disp_floor_h - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 120), 1, cv2.LINE_AA)
 
         return canvas
 
@@ -510,6 +622,7 @@ class ProjectorApp:
         print("   Window 2 : 2D Floor Plan with Camera Projection + Human Dots")
         print("   Window 3 : Camera Video Feed with Detections")
         print(" Controls:")
+        print("   't'       : Toggle Floor Plan Theme (Light CAD vs Tactical Dark)")
         print("   'c'       : Open Free Move & Perspective Calibration GUI")
         print("   'd'       : Toggle Human Dots on Window 1")
         print("   🖱️ Drag    : Click and drag on Window 1/2 to nudge projection live")
@@ -607,6 +720,8 @@ class ProjectorApp:
                     elif key == ord('d'):
                         self.win1_show_dots = not self.win1_show_dots
                         self.set_toast(f"Window 1 Dots: {'ON' if self.win1_show_dots else 'OFF'}")
+                    elif key == ord('t'):
+                        self.toggle_theme()
                     elif key == ord('s'):
                         self.save_active_calibration()
                     elif key in [ord('n'), ord(']')]:
@@ -660,7 +775,7 @@ def main():
 
     target = args.series or args.source
     source_dir = resolve_series_path(target)
-    floor_plan = Path(args.floor_plan)
+    floor_plan = Path(args.floor_plan) if args.floor_plan else None
     calib = Path(args.calibration) if args.calibration else None
 
     app = ProjectorApp(
@@ -670,7 +785,8 @@ def main():
         target_fps=args.fps,
         alpha=args.alpha,
         mode=args.mode,
-        headless=args.headless
+        headless=args.headless,
+        theme=args.theme
     )
     app.run(max_frames=args.max_frames)
 

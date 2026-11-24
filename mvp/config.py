@@ -12,9 +12,24 @@ OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------
-# Default Floor Plan Path (Finalized Design 4 Transit Interchange)
+# Floor Plan Themes (Design 4 Variants)
 # ---------------------------------------------------------
-DEFAULT_FLOOR_PLAN = BASE_DIR.parent / "design_4_transit_interchange.png"
+# Light CAD Theme (Clean Architectural Line Drawing)
+FLOOR_PLAN_LIGHT = BASE_DIR.parent / "design_4_clean_base.png"
+if not FLOOR_PLAN_LIGHT.exists():
+    _asset_light = BASE_DIR / "assets" / "design_4_clean_base.png"
+    if _asset_light.exists():
+        FLOOR_PLAN_LIGHT = _asset_light
+
+# Dark Tactical Theme (Tactical Game Map Style)
+FLOOR_PLAN_DARK = BASE_DIR.parent / "design_4_tactical_gamemap.png"
+if not FLOOR_PLAN_DARK.exists():
+    _asset_dark = BASE_DIR / "assets" / "design_4_tactical_gamemap.png"
+    if _asset_dark.exists():
+        FLOOR_PLAN_DARK = _asset_dark
+
+# Default Floor Plan Path
+DEFAULT_FLOOR_PLAN = FLOOR_PLAN_DARK if FLOOR_PLAN_DARK.exists() else (BASE_DIR.parent / "design_4_transit_interchange.png")
 if not DEFAULT_FLOOR_PLAN.exists():
     _asset_plan = BASE_DIR / "assets" / "design_4_transit_interchange.png"
     if _asset_plan.exists():
