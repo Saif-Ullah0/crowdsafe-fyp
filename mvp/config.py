@@ -14,12 +14,15 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # ---------------------------------------------------------
 # Default Floor Plan Path (Finalized Design 4 Transit Interchange)
 # ---------------------------------------------------------
-DEFAULT_FLOOR_PLAN = BASE_DIR / "assets" / "design_4_transit_interchange.png"
+DEFAULT_FLOOR_PLAN = BASE_DIR.parent / "design_4_transit_interchange.png"
 if not DEFAULT_FLOOR_PLAN.exists():
-    # Fallback to dataset-generator 2D floor plans directory if available
-    _alt_plan = BASE_DIR.parent / "dataset-generator" / "output" / "floor_plans_2d" / "design_4_transit_interchange.png"
-    if _alt_plan.exists():
-        DEFAULT_FLOOR_PLAN = _alt_plan
+    _asset_plan = BASE_DIR / "assets" / "design_4_transit_interchange.png"
+    if _asset_plan.exists():
+        DEFAULT_FLOOR_PLAN = _asset_plan
+    else:
+        _alt_plan = BASE_DIR.parent / "dataset-generator" / "output" / "floor_plans_2d" / "design_4_transit_interchange.png"
+        if _alt_plan.exists():
+            DEFAULT_FLOOR_PLAN = _alt_plan
 
 # ---------------------------------------------------------
 # Safety & Density Thresholds (People per m²)
