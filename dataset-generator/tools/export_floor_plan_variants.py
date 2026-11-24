@@ -490,8 +490,13 @@ def draw_human_locations_plan(output_png: str, output_svg: str, dpi: int = 300):
 # 3. TACTICAL GAME MAP / DASHBOARD REALISTIC FLOOR PLAN
 # =============================================================
 def draw_tactical_gamemap_plan(output_png: str, output_svg: str, dpi: int = 300):
+    """
+    Tactical Game Map / Dashboard View with Clean Architecture:
+    Matches the exact clean layout, room text, inward doors, and fountain of design_4_clean_base,
+    rendered with a premium dark-mode / game-map tactical command center aesthetic
+    WITHOUT bulky camera FOV projection cones obscuring the walkway.
+    """
     fig, ax = plt.subplots(figsize=(14, 14), dpi=dpi)
-    # Deep tactical dark command center background
     bg_color = '#070B14'
     fig.patch.set_facecolor(bg_color)
     ax.set_facecolor(bg_color)
@@ -500,19 +505,19 @@ def draw_tactical_gamemap_plan(output_png: str, output_svg: str, dpi: int = 300)
     ax.set_ylim(-4.0, 42.0)
     ax.set_aspect('equal')
 
-    # Tactical Blueprint Coordinate Grid Crosshairs
+    # 1. Tactical Blueprint Coordinate Grid (Subtle dark cyan grid)
     for x in range(0, 40, 2):
-        ax.plot([x, x], [-2, 40], color='#131F37', linewidth=0.6, linestyle='-', zorder=0)
+        ax.plot([x, x], [-2, 40], color='#111A2E', linewidth=0.6, linestyle='-', zorder=0)
     for y in range(0, 40, 2):
-        ax.plot([-2, 40], [y, y], color='#131F37', linewidth=0.6, linestyle='-', zorder=0)
+        ax.plot([-2, 40], [y, y], color='#111A2E', linewidth=0.6, linestyle='-', zorder=0)
 
     # Major 10m grid lines
     for x in [0, 14, 24, 38]:
-        ax.plot([x, x], [-2, 40], color='#1E293B', linewidth=1.2, linestyle='--', alpha=0.6, zorder=1)
+        ax.plot([x, x], [-2, 40], color='#1E293B', linewidth=1.2, linestyle='--', alpha=0.7, zorder=1)
     for y in [0, 14, 24, 38]:
-        ax.plot([-2, 40], [y, y], color='#1E293B', linewidth=1.2, linestyle='--', alpha=0.6, zorder=1)
+        ax.plot([-2, 40], [y, y], color='#1E293B', linewidth=1.2, linestyle='--', alpha=0.7, zorder=1)
 
-    # Concourse Floor (Glowing deep slate with polished tile effect)
+    # 2. Concourse Walkway Surface (Plus Shape - Dark Polished Slate with Glowing Cyan Edge)
     plus_poly = [
         (14.0, 0.0), (24.0, 0.0),
         (24.0, 14.0), (38.0, 14.0),
@@ -521,222 +526,194 @@ def draw_tactical_gamemap_plan(output_png: str, output_svg: str, dpi: int = 300)
         (14.0, 24.0), (0.0, 24.0),
         (0.0, 14.0), (14.0, 14.0)
     ]
-    concourse_patch = patches.Polygon(plus_poly, closed=True, facecolor='#0D1527', edgecolor='#00F0FF', linewidth=1.8, alpha=0.9, zorder=2)
-    concourse_patch
+    concourse_patch = patches.Polygon(
+        plus_poly, closed=True,
+        facecolor='#0D1527', edgecolor='#00F0FF',
+        linewidth=2.0, zorder=2
+    )
     ax.add_patch(concourse_patch)
 
-    # Subtle Walkway Inner Glow Lines
-    for d_off in [0.5, 1.0]:
-        inner_poly = [
-            (14.0 + d_off, 0.0 + d_off), (24.0 - d_off, 0.0 + d_off),
-            (24.0 - d_off, 14.0 + d_off), (38.0 - d_off, 14.0 + d_off),
-            (38.0 - d_off, 24.0 - d_off), (24.0 - d_off, 24.0 - d_off),
-            (24.0 - d_off, 38.0 - d_off), (14.0 + d_off, 38.0 - d_off),
-            (14.0 + d_off, 24.0 - d_off), (0.0 + d_off, 24.0 - d_off),
-            (0.0 + d_off, 14.0 + d_off), (14.0 + d_off, 14.0 + d_off)
-        ]
-        ax.add_patch(patches.Polygon(inner_poly, closed=True, facecolor='none', edgecolor='#38BDF8', linewidth=0.7, linestyle=':', alpha=0.4, zorder=2))
+    # Walkway subtle tile lines (every 2m - matching clean base)
+    for x in range(16, 24, 2):
+        ax.plot([x, x], [0, 38], color='#1E2B45', linewidth=1.0, linestyle='-', zorder=3)
+    for y in range(16, 24, 2):
+        ax.plot([0, 38], [y, y], color='#1E2B45', linewidth=1.0, linestyle='-', zorder=3)
 
-    # Tactical Rooms (Dark matte stealth compartments with neon corner accents)
+    # 3. 4 Corner Rooms (Matching exact clean architecture and typography of clean_base)
     for r in rooms_data:
         rx, ry, rw_dim, rh_dim = r["rect"]
-        room_bg = patches.Rectangle((rx, ry), rw_dim, rh_dim, facecolor='#0A0F1D', edgecolor='#1E293B', linewidth=1.5, zorder=3)
+        room_bg = patches.Rectangle(
+            (rx, ry), rw_dim, rh_dim,
+            facecolor='#0A0F1D', edgecolor='#334155',
+            linewidth=1.8, zorder=3
+        )
         ax.add_patch(room_bg)
 
-        # Tactical Room ID Box (Corner Accent)
+        # Subtle dark hatch for room structural depth
+        hatch_bg = patches.Rectangle(
+            (rx, ry), rw_dim, rh_dim,
+            facecolor='none', edgecolor='#1E293B',
+            hatch='...', linewidth=0, alpha=0.5, zorder=3
+        )
+        ax.add_patch(hatch_bg)
+
+        # Tactical corner accent bracket
         accent_color = '#38BDF8' if 'NW' in r['id'] else ('#818CF8' if 'NE' in r['id'] else ('#F59E0B' if 'SW' in r['id'] else '#34D399'))
-        ax.plot([rx + 0.6, rx + 2.5], [ry + rh_dim - 0.6, ry + rh_dim - 0.6], color=accent_color, lw=2.5, zorder=5)
-        ax.plot([rx + 0.6, rx + 0.6], [ry + rh_dim - 0.6, ry + rh_dim - 2.5], color=accent_color, lw=2.5, zorder=5)
+        ax.plot([rx + 0.6, rx + 2.5], [ry + rh_dim - 0.6, ry + rh_dim - 0.6], color=accent_color, lw=2.2, zorder=5)
+        ax.plot([rx + 0.6, rx + 0.6], [ry + rh_dim - 0.6, ry + rh_dim - 2.5], color=accent_color, lw=2.2, zorder=5)
 
-        # Tactical Room Labels
-        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 + 1.2, f"[{r['id']}]", ha='center', va='center', fontsize=10.0, fontweight='heavy', color=accent_color, zorder=5)
-        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 - 0.2, r["name"], ha='center', va='center', fontsize=8.0, fontweight='bold', color='#E2E8F0', zorder=5)
-        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 - 1.5, "STATUS: SECURE // AREA: 196 m²", ha='center', va='center', fontsize=6.8, family='monospace', color='#64748B', zorder=5)
+        # Clean Room Labels (Identical to clean base)
+        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 + 1.2, r["name"], ha='center', va='center', fontsize=9.5, fontweight='bold', color='#F1F5F9', zorder=5)
+        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 - 0.4, r["sub"], ha='center', va='center', fontsize=7.5, color='#94A3B8', style='italic', zorder=5)
+        ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 - 1.8, r["code"], ha='center', va='center', fontsize=8.0, fontweight='semibold', color=accent_color, zorder=5)
 
-        # Inward Door (Glowing cyber cyan slider / swing)
+    # 4. Inward Doors & Swing Arcs (Crisp 90° inward swing into room chamber)
+    for r in rooms_data:
         dx, dy, dw, wall, swing = r["door"]
         ax.plot([dx, dx], [dy - dw/2, dy + dw/2] if wall in ["east", "west"] else [dx - dw/2, dx + dw/2], [dy, dy], color='#00F0FF', linewidth=3.5, zorder=8)
-        if wall == "east":
+        
+        if wall == "east" and swing == "inward_left":
+            arc = patches.Arc((dx, dy - dw/2), dw*2, dw*2, angle=0, theta1=90, theta2=180, color='#00F0FF', linestyle='--', linewidth=1.5, zorder=7)
+            ax.add_patch(arc)
             ax.plot([dx, dx - dw], [dy - dw/2, dy - dw/2], color='#00F0FF', linewidth=2.0, zorder=8)
-            ax.add_patch(patches.Arc((dx, dy - dw/2), dw*2, dw*2, angle=0, theta1=90, theta2=180, color='#00F0FF', linestyle='--', linewidth=1.2, zorder=7))
-            ax.text(dx - 0.3, dy + 1.1, "DOOR // INWARD", ha='right', va='center', fontsize=6.0, family='monospace', color='#00F0FF', zorder=8)
-        elif wall == "west":
+            ax.text(dx - 0.4, dy + 1.2, "INWARD DOOR (1.2m)", ha='right', va='center', fontsize=6.5, fontweight='bold', family='monospace', color='#00F0FF', zorder=8)
+        elif wall == "west" and swing == "inward_right":
+            arc = patches.Arc((dx, dy - dw/2), dw*2, dw*2, angle=0, theta1=0, theta2=90, color='#00F0FF', linestyle='--', linewidth=1.5, zorder=7)
+            ax.add_patch(arc)
             ax.plot([dx, dx + dw], [dy - dw/2, dy - dw/2], color='#00F0FF', linewidth=2.0, zorder=8)
-            ax.add_patch(patches.Arc((dx, dy - dw/2), dw*2, dw*2, angle=0, theta1=0, theta2=90, color='#00F0FF', linestyle='--', linewidth=1.2, zorder=7))
-            ax.text(dx + 0.3, dy + 1.1, "DOOR // INWARD", ha='left', va='center', fontsize=6.0, family='monospace', color='#00F0FF', zorder=8)
+            ax.text(dx + 0.4, dy + 1.2, "INWARD DOOR (1.2m)", ha='left', va='center', fontsize=6.5, fontweight='bold', family='monospace', color='#00F0FF', zorder=8)
 
-    # Central Roundabout (Futuristic Holographic Core & Stepped Basin)
-    rot_glow = patches.Circle(center, r_rotary, facecolor='#022C22', edgecolor='#10B981', linestyle='--', linewidth=1.5, alpha=0.5, zorder=3)
-    ax.add_patch(rot_glow)
+    # 5. Central Roundabout & Clock Tower Fountain (Clean Architecture + Tactical Glow)
+    rotary_zone = patches.Circle(center, r_rotary, facecolor='#022C22', edgecolor='#10B981', linestyle='--', linewidth=1.5, alpha=0.6, zorder=4)
+    ax.add_patch(rotary_zone)
 
-    # Rotary glowing flow chevrons
+    # Rotary Pedestrian Flow Direction Arrows (4 Clean Emerald Chevrons)
     for ang in [45, 135, 225, 315]:
         rad = math.radians(ang)
         ar_x = center[0] + 3.75 * math.cos(rad)
         ar_y = center[1] + 3.75 * math.sin(rad)
-        dx_ar = -math.sin(rad) * 1.5
-        dy_ar = math.cos(rad) * 1.5
+        dx_ar = -math.sin(rad) * 1.6
+        dy_ar = math.cos(rad) * 1.6
         ax.annotate('', xy=(ar_x + dx_ar, ar_y + dy_ar), xytext=(ar_x, ar_y),
                     arrowprops=dict(arrowstyle="-|>", color='#10B981', lw=2.0, mutation_scale=14), zorder=6)
 
-    # Futuristic Water Basin (Deep blue with glowing ripples)
-    fountain_base = patches.Circle(center, r_fountain, facecolor='#082F49', edgecolor='#00F0FF', linewidth=2.5, zorder=6)
-    fountain_base
-    ax.add_patch(fountain_base)
+    # Outer Fountain Basin (Glowing deep blue-cyan)
+    fountain_basin = patches.Circle(center, r_fountain, facecolor='#082F49', edgecolor='#00F0FF', linewidth=2.2, zorder=6)
+    ax.add_patch(fountain_basin)
 
-    for r_rip in [1.9, 1.2]:
-        rip = patches.Circle(center, r_rip, facecolor='none', edgecolor='#38BDF8', linestyle='-', linewidth=1.5, alpha=0.7, zorder=7)
+    # Water ripple concentric rings
+    for r_rip in [1.8, 1.1]:
+        rip = patches.Circle(center, r_rip, facecolor='none', edgecolor='#38BDF8', linestyle=':', linewidth=1.3, alpha=0.8, zorder=7)
         ax.add_patch(rip)
 
-    # Central Holographic Clock Tower Pillar
-    core_circ = patches.Circle(center, 0.65, facecolor='#0284C7', edgecolor='#FFFFFF', linewidth=2.0, zorder=8)
-    ax.add_patch(core_circ)
-    ax.text(center[0], center[1], "CORE", ha='center', va='center', fontsize=7, fontweight='heavy', color='#FFFFFF', zorder=9)
-    ax.text(center[0], center[1] - 3.4, "ROTARY CLOCK FOUNTAIN", ha='center', va='top', fontsize=8.5, fontweight='heavy', color='#00F0FF', zorder=8)
-    ax.text(center[0], center[1] - 4.3, "[ CENTRAL PEDESTRIAN ROTARY // Ø 5.0m ]", ha='center', va='top', fontsize=6.8, family='monospace', color='#94A3B8', zorder=8)
+    # Center Clock Tower Core Column
+    clock_core = patches.Circle(center, 0.6, facecolor='#0284C7', edgecolor='#FFFFFF', linewidth=2.0, zorder=8)
+    ax.add_patch(clock_core)
+    ax.text(center[0], center[1], "TIME", ha='center', va='center', fontsize=8, fontweight='heavy', family='monospace', color='#FFFFFF', zorder=9)
+    ax.text(center[0], center[1] - 3.2, "ROTARY CLOCK FOUNTAIN ROUNDABOUT", ha='center', va='top', fontsize=8.0, fontweight='heavy', family='monospace', color='#00F0FF', zorder=8)
+    ax.text(center[0], center[1] - 4.1, "Ø 5.0m Central Basin + 2.5m Rotary Lane", ha='center', va='top', fontsize=7.0, family='monospace', color='#94A3B8', zorder=8)
 
-    # Exit Gateways (Tactical Speed Gate arrays with green LED pass indicators)
+    # 6. 4 Exit Gateways & Speed Gates (Clean Frames + Green LED Pass Bars)
     for gw in gateways_data:
         gx, gy = gw["pos"]
         gdir = gw["dir"]
-        if gdir in ["S", "N"]:
-            # Frame
-            ax.add_patch(patches.Rectangle((14.0, gy - 0.7), 10.0, 1.4, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=2.0, zorder=7))
-            # Green LED pass indicators
-            for st_x in np.linspace(15.2, 22.8, 5):
-                ax.plot([st_x, st_x], [gy - 0.5, gy + 0.5], color='#22C55E', linewidth=3.5, zorder=9)
-                ax.plot(st_x, gy, marker='o', markersize=3.0, color='#FFFFFF', zorder=10)
-            ax.text(19.0, -1.8 if gdir == "S" else 39.6, f"GATEWAY [{gw['id']}] // 4-LANE SPEED GATES // [STATUS: ONLINE]",
-                    ha='center', va='center', fontsize=8.0, fontweight='heavy', family='monospace', color='#22C55E', zorder=12)
-        else:
-            ax.add_patch(patches.Rectangle((gx - 0.7, 14.0), 1.4, 10.0, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=2.0, zorder=7))
-            for st_y in np.linspace(15.2, 22.8, 5):
-                ax.plot([gx - 0.5, gx + 0.5], [st_y, st_y], color='#22C55E', linewidth=3.5, zorder=9)
-                ax.plot(gx, st_y, marker='o', markersize=3.0, color='#FFFFFF', zorder=10)
-            ax.text(-2.2 if gdir == "W" else 40.2, 19.0, f"GATEWAY [{gw['id']}] [ONLINE]",
-                    ha='center', va='center', fontsize=7.5, fontweight='heavy', family='monospace', color='#22C55E', rotation=90 if gdir == "W" else -90, zorder=12)
-
-    # 4 Tactical Camera Stations & Holographic Surveillance Beams
-    cctv_cams = [
-        {"id": "CAM-01", "gw": "GW-S", "pos": (19.0, 0.6), "heading": 90, "color": "#00F0FF"},
-        {"id": "CAM-02", "gw": "GW-N", "pos": (19.0, 37.4), "heading": 270, "color": "#00F0FF"},
-        {"id": "CAM-03", "gw": "GW-W", "pos": (0.6, 19.0), "heading": 0, "color": "#00F0FF"},
-        {"id": "CAM-04", "gw": "GW-E", "pos": (37.4, 19.0), "heading": 180, "color": "#00F0FF"}
-    ]
-
-    for cam in cctv_cams:
-        cpos = cam["pos"]
-        ang = cam["heading"]
-        cid = cam["id"]
-        c_col = cam["color"]
-
-        # Holographic translucent radar scan frustum (Game Map effect)
-        fov_half = 42.0  # degrees
-        r_cone = 18.5
-        t_start = math.radians(ang - fov_half)
-        t_end = math.radians(ang + fov_half)
         
-        # Sector arc
-        arc_pts = [(cpos[0], cpos[1])]
-        for a_deg in np.linspace(ang - fov_half, ang + fov_half, 30):
-            ar_r = math.radians(a_deg)
-            arc_pts.append((cpos[0] + r_cone * math.cos(ar_r), cpos[1] + r_cone * math.sin(ar_r)))
-        arc_pts.append((cpos[0], cpos[1]))
+        if gdir in ["S", "N"]:
+            # Portal frame
+            gate_box = patches.Rectangle((14.0, gy - 0.7 if gdir == "S" else gy - 0.7), 10.0, 1.4, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=2.0, zorder=8)
+            ax.add_patch(gate_box)
+            # Threshold matting
+            mat = patches.Rectangle((14.0, 0.0 if gdir == "S" else 36.6), 10.0, 1.4, facecolor='#1E293B', edgecolor='none', zorder=2)
+            ax.add_patch(mat)
+            # Turnstile flippers with LED green indicator bars
+            for st_x in np.linspace(15.2, 22.8, 5):
+                ax.plot([st_x, st_x], [gy - 0.5 if gdir == "S" else gy - 0.9, gy + 0.5 if gdir == "S" else gy + 0.1], color='#22C55E', linewidth=3.5, zorder=9)
+                ax.plot(st_x, gy, marker='o', markersize=3.0, color='#FFFFFF', zorder=10)
+            # Clean Gateway Tag
+            ax.text(19.0, -1.6 if gdir == "S" else 39.4, f"[{gw['id']}] {gw['name']} (4-LANE SPEED GATES)", ha='center', va='center', fontsize=8.5, fontweight='heavy', family='monospace', color='#22C55E', zorder=10)
+        else:
+            # Vertical portal
+            gate_box = patches.Rectangle((gx - 0.7 if gdir == "W" else gx - 0.7, 14.0), 1.4, 10.0, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=2.0, zorder=8)
+            ax.add_patch(gate_box)
+            # Threshold matting
+            mat = patches.Rectangle((0.0 if gdir == "W" else 36.6, 14.0), 1.4, 10.0, facecolor='#1E293B', edgecolor='none', zorder=2)
+            ax.add_patch(mat)
+            # Turnstile flippers with LED green indicator bars
+            for st_y in np.linspace(15.2, 22.8, 5):
+                ax.plot([gx - 0.5 if gdir == "W" else gx - 0.9, gx + 0.5 if gdir == "W" else gx + 0.1], [st_y, st_y], color='#22C55E', linewidth=3.5, zorder=9)
+                ax.plot(gx, st_y, marker='o', markersize=3.0, color='#FFFFFF', zorder=10)
+            # Clean Gateway Tag
+            ax.text(-2.0 if gdir == "W" else 40.0, 19.0, f"[{gw['id']}] " + gw['name'], ha='center', va='center', fontsize=7.5, fontweight='heavy', family='monospace', color='#22C55E', rotation=90 if gdir == "W" else -90, zorder=10)
 
-        # Soft glowing scan beam
-        beam_poly = patches.Polygon(arc_pts, closed=True, facecolor=c_col, edgecolor=c_col, linewidth=1.2, alpha=0.12, zorder=5)
-        ax.add_patch(beam_poly)
+    # 7. CCTV Mount Icons (CLEAN ARCHITECTURE: Sleek Turret Mount Icons ONLY - NO FOV Projections)
+    for gw in gateways_data:
+        cx, cy = gw["cam_pos"]
+        cid = gw["id"].replace("GW-", "CAM-")
+        
+        # Sleek tactical camera turret marker
+        ax.plot(cx, cy, marker='o', markersize=9, color='#0284C7', markeredgecolor='#00F0FF', markeredgewidth=1.8, zorder=12)
+        ax.plot(cx, cy, marker='.', markersize=4, color='#FFFFFF', zorder=13)
+        
+        # Clean camera mount tag (matching clean base style, styled for dark theme)
+        offset_y = 1.3 if gw["dir"] == "S" else (-1.3 if gw["dir"] == "N" else 0.0)
+        offset_x = 1.6 if gw["dir"] == "W" else (-1.6 if gw["dir"] == "E" else 0.0)
+        ax.text(cx + offset_x, cy + offset_y, f"{cid}\n(4.6m Mount)",
+                ha='center', va='center', fontsize=7.0, fontweight='bold', family='monospace', color='#00F0FF',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='#0B132B', edgecolor='#00F0FF', lw=1.2), zorder=14)
 
-        # Radar sweep perimeter arc line
-        arc_patch = patches.Arc(cpos, r_cone*2, r_cone*2, angle=0, theta1=ang - fov_half, theta2=ang + fov_half, color=c_col, linestyle='--', linewidth=1.5, alpha=0.7, zorder=6)
-        ax.add_patch(arc_patch)
-
-        # Radial scanning lines
-        for offset_deg in [-fov_half, 0, fov_half]:
-            rad_a = math.radians(ang + offset_deg)
-            ax.plot([cpos[0], cpos[0] + r_cone * math.cos(rad_a)],
-                    [cpos[1], cpos[1] + r_cone * math.sin(rad_a)],
-                    color=c_col, linestyle=':' if offset_deg != 0 else '-', linewidth=1.0 if offset_deg != 0 else 1.5, alpha=0.5, zorder=6)
-
-        # Tactical Camera Turret Symbol
-        turret = patches.Circle(cpos, 0.7, facecolor='#0F172A', edgecolor=c_col, linewidth=2.0, zorder=14)
-        turret
-        ax.add_patch(turret)
-        ax.plot(cpos[0], cpos[1], marker='o', markersize=4.0, color='#FFFFFF', zorder=15)
-
-        # Camera Status HUD Tag
-        tag_off_y = 1.6 if ang == 90 else (-1.6 if ang == 270 else 0.0)
-        tag_off_x = 1.9 if ang == 0 else (-1.9 if ang == 180 else 0.0)
-        ax.text(cpos[0] + tag_off_x, cpos[1] + tag_off_y,
-                f"[{cid}]\n1080p | 30FPS\nLIVE REC",
-                ha='center', va='center', fontsize=6.2, family='monospace', fontweight='bold', color='#FFFFFF',
-                bbox=dict(boxstyle='square,pad=0.25', facecolor='#0284C7', edgecolor='#00F0FF', lw=1.2, alpha=0.9), zorder=16)
-
-    # Thick Cyber-Illuminated Structural Walls
+    # 8. Solid Structural Walls (Dark body with cyber cyan illuminated edge)
     for (p1, p2) in wall_segments:
-        # Dark wall body
         ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color='#1E293B', linewidth=5.5, solid_capstyle='projecting', zorder=10)
-        # Neon cyan top illumination line
         ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color='#38BDF8', linewidth=1.8, solid_capstyle='projecting', zorder=11)
 
-    # Outer Facility Perimeter Line
-    ax.plot([0, W, W, 0, 0], [0, 0, H, H, 0], color='#475569', linewidth=2.0, linestyle='-', zorder=9)
+    # Outer Facility Perimeter
+    ax.plot([0, W, W, 0, 0], [0, 0, H, H, 0], color='#475569', linewidth=1.5, linestyle='-', zorder=9)
 
-    # Corner Crosshair Brackets (Game Minimap Styling)
-    bracket_len = 3.0
+    # Corner Crosshair Brackets (Subtle tactical minimap styling)
+    bracket_len = 2.5
     for cx_b, cy_b in [(0, 0), (W, 0), (0, H), (W, H)]:
         bx_dir = 1 if cx_b == 0 else -1
         by_dir = 1 if cy_b == 0 else -1
-        ax.plot([cx_b, cx_b + bx_dir * bracket_len], [cy_b, cy_b], color='#00F0FF', lw=2.5, zorder=12)
-        ax.plot([cx_b, cx_b], [cy_b, cy_b + by_dir * bracket_len], color='#00F0FF', lw=2.5, zorder=12)
+        ax.plot([cx_b, cx_b + bx_dir * bracket_len], [cy_b, cy_b], color='#00F0FF', lw=2.0, zorder=12)
+        ax.plot([cx_b, cx_b], [cy_b, cy_b + by_dir * bracket_len], color='#00F0FF', lw=2.0, zorder=12)
 
-    # Top Command Header HUD
-    header_box = patches.Rectangle((-2.5, H + 1.2), W + 5.0, 2.2, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=1.5, zorder=18)
-    header_box
-    ax.add_patch(header_box)
-    ax.text(W/2.0, H + 2.3,
-            "CROWDSAFE SENTINEL // TACTICAL CCTV DASHBOARD MAP // LEVEL 01 CONCOURSE",
-            ha='center', va='center', fontsize=9.5, fontweight='heavy', family='monospace', color='#00F0FF', zorder=19)
-    ax.text(W/2.0, H + 1.5,
-            "DIMENSIONS: 38.0m x 38.0m  |  CCTV SURVEILLANCE: 4/4 CHANNELS ACTIVE  |  COVERAGE: 83.8% CONCOURSE  |  STATUS: NOMINAL",
-            ha='center', va='center', fontsize=7.0, family='monospace', color='#94A3B8', zorder=19)
-
-    # Scale Bar (Cyan Cyberpunk)
-    sb_x, sb_y = 2.0, -2.6
+    # 9. Architectural Scale Bar (10m in Cyan)
+    sb_x, sb_y = 3.0, -2.6
     ax.plot([sb_x, sb_x + 10.0], [sb_y, sb_y], color='#00F0FF', linewidth=3.0, zorder=15)
-    ax.plot([sb_x, sb_x], [sb_y - 0.4, sb_y + 0.4], color='#00F0FF', linewidth=2.0, zorder=15)
-    ax.plot([sb_x + 5.0, sb_x + 5.0], [sb_y - 0.25, sb_y + 0.25], color='#00F0FF', linewidth=1.5, zorder=15)
-    ax.plot([sb_x + 10.0, sb_x + 10.0], [sb_y - 0.4, sb_y + 0.4], color='#00F0FF', linewidth=2.0, zorder=15)
-    ax.text(sb_x + 5.0, sb_y - 0.8, "SCALE: 10 METERS // TACTICAL GRID", ha='center', va='top', fontsize=7.5, family='monospace', fontweight='bold', color='#00F0FF')
+    ax.plot([sb_x, sb_x], [sb_y - 0.3, sb_y + 0.3], color='#00F0FF', linewidth=2.0, zorder=15)
+    ax.plot([sb_x + 5.0, sb_x + 5.0], [sb_y - 0.2, sb_y + 0.2], color='#00F0FF', linewidth=1.5, zorder=15)
+    ax.plot([sb_x + 10.0, sb_x + 10.0], [sb_y - 0.3, sb_y + 0.3], color='#00F0FF', linewidth=2.0, zorder=15)
+    ax.text(sb_x + 5.0, sb_y - 0.7, "SCALE: 10 METERS // TACTICAL GRID (1:100 CAD)", ha='center', va='top', fontsize=8.0, family='monospace', fontweight='bold', color='#00F0FF')
 
-    # Tactical Compass Rose (Top Right)
-    cr_x, cr_y = W - 2.5, H - 2.0
-    ax.plot([cr_x, cr_x], [cr_y - 1.2, cr_y + 1.2], color='#00F0FF', lw=1.5, zorder=16)
-    ax.plot([cr_x - 1.2, cr_x + 1.2], [cr_y, cr_y], color='#00F0FF', lw=1.5, zorder=16)
-    ax.text(cr_x, cr_y + 1.5, "N", ha='center', va='bottom', fontsize=10, fontweight='heavy', family='monospace', color='#00F0FF', zorder=16)
+    # 10. Tactical North Arrow
+    ax.annotate('N', xy=(W - 2.5, H + 2.4), xytext=(W - 2.5, H + 1.2),
+                ha='center', va='bottom', fontsize=12, fontweight='heavy', family='monospace', color='#00F0FF',
+                arrowprops=dict(facecolor='#00F0FF', edgecolor='#00F0FF', width=2.5, headwidth=8.0, headlength=10.0), zorder=15)
 
-    # Title Block / System Telemetry
-    tb_w, tb_h = 18.0, 2.6
-    tb_x, tb_y = W - tb_w + 1.0, -3.7
-    ax.add_patch(patches.Rectangle((tb_x, tb_y), tb_w, tb_h, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=1.5, zorder=14))
+    # 11. Tactical Title Block (Clean Monospace)
+    tb_w, tb_h = 17.5, 2.6
+    tb_x, tb_y = W - tb_w, -3.7
+    tb_rect = patches.Rectangle((tb_x, tb_y), tb_w, tb_h, facecolor='#0F172A', edgecolor='#00F0FF', linewidth=1.5, zorder=14)
+    ax.add_patch(tb_rect)
     ax.text(tb_x + 0.4, tb_y + tb_h/2.0,
-            "SYSTEM: CROWDSAFE REAL-TIME SURVEILLANCE ENGINE\n"
-            "VIEWPORT: TACTICAL VIDEO GAME / SOC DASHBOARD OVERVIEW\n"
-            "OPTICS: 4x DOME SENSORS @ 4.6m ELEVATION // 34° TILT\n"
-            "TELEMETRY: ALL SECTORS OPTICALLY MONITORED (83.8% NET)",
-            ha='left', va='center', fontsize=6.8, family='monospace', color='#E2E8F0', zorder=15)
+            "CROWDSAFE SENTINEL — TACTICAL ARCHITECTURAL 2D PLAN\n"
+            "DRAWING: LEVEL 01 TACTICAL CONCOURSE (CLEAN ARCHITECTURE)\n"
+            f"VENUE: CONTROLLED TRANSIT INTERCHANGE ({W:.0f}m x {H:.0f}m)\n"
+            "STYLING: DARK-MODE COMMAND CENTER // NO CAM CONE CLUTTER",
+            ha='left', va='center', fontsize=7.0, fontweight='bold', family='monospace', color='#E2E8F0', zorder=15)
 
-    ax.set_title("CROWDSAFE — TACTICAL SECURITY DASHBOARD GAME MAP\n[HIGH-CONTRAST REAL-TIME COMMAND OVERVIEW]",
-                 fontsize=13, fontweight='heavy', family='monospace', pad=28, color='#00F0FF')
-    ax.set_xlabel("X Dimension (Meters)", fontsize=9.0, family='monospace', fontweight='bold', color='#64748B')
-    ax.set_ylabel("Y Dimension (Meters)", fontsize=9.0, family='monospace', fontweight='bold', color='#64748B')
+    # Title
+    ax.set_title("CROWDSAFE — TRANSIT INTERCHANGE TACTICAL GAME MAP\n[CLEAN ARCHITECTURE // DARK COMMAND CENTER BASE]",
+                 fontsize=13, fontweight='heavy', family='monospace', pad=18, color='#00F0FF')
+    ax.set_xlabel("X Dimension (Meters)", fontsize=9.5, family='monospace', fontweight='bold', color='#64748B')
+    ax.set_ylabel("Y Dimension (Meters)", fontsize=9.5, family='monospace', fontweight='bold', color='#64748B')
 
     plt.tight_layout()
     fig.savefig(output_png, dpi=dpi, bbox_inches='tight', facecolor=fig.get_facecolor())
     if output_svg:
         fig.savefig(output_svg, bbox_inches='tight')
     plt.close(fig)
-    print(f"[✓] Generated Tactical Game Map Floor Plan: {output_png}")
+    print(f"[✓] Generated Clean Tactical Game Map Floor Plan: {output_png}")
 
 
 def main():
