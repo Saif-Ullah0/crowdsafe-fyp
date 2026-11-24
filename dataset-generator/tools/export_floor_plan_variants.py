@@ -170,20 +170,7 @@ def draw_clean_base_plan(output_png: str, output_svg: str, dpi: int = 300):
             ax.plot([dx, dx + dw], [dy - dw/2, dy - dw/2], color='#0284C7', linewidth=2.0, zorder=8)
             ax.text(dx + 0.4, dy + 1.2, "INWARD DOOR (1.2m)", ha='left', va='center', fontsize=6.5, fontweight='bold', color='#0284C7', zorder=8)
 
-    # Central Roundabout & Clock Tower Fountain
-    rotary_zone = patches.Circle(center, r_rotary, facecolor='#F0FDF4', edgecolor='#86EFAC', linestyle='--', linewidth=1.5, zorder=4)
-    ax.add_patch(rotary_zone)
-
-    # Rotary Pedestrian Flow Direction Arrows
-    for ang in [45, 135, 225, 315]:
-        rad = math.radians(ang)
-        ar_x = center[0] + 3.75 * math.cos(rad)
-        ar_y = center[1] + 3.75 * math.sin(rad)
-        dx_ar = -math.sin(rad) * 1.6
-        dy_ar = math.cos(rad) * 1.6
-        ax.annotate('', xy=(ar_x + dx_ar, ar_y + dy_ar), xytext=(ar_x, ar_y),
-                    arrowprops=dict(arrowstyle="->", color='#16A34A', lw=1.8, mutation_scale=12), zorder=6)
-
+    # Central Roundabout & Clock Tower Fountain (Green rotary path removed)
     # Fountain Base (Outer Basin)
     fountain_basin = patches.Circle(center, r_fountain, facecolor='#E0F2FE', edgecolor='#0284C7', linewidth=2.0, zorder=6)
     ax.add_patch(fountain_basin)
@@ -198,7 +185,7 @@ def draw_clean_base_plan(output_png: str, output_svg: str, dpi: int = 300):
     ax.add_patch(clock_core)
     ax.text(center[0], center[1], "TIME", ha='center', va='center', fontsize=8, fontweight='heavy', color='#FFFFFF', zorder=9)
     ax.text(center[0], center[1] - 3.2, "ROTARY CLOCK FOUNTAIN ROUNDABOUT", ha='center', va='top', fontsize=8.0, fontweight='bold', color='#0369A1', zorder=8)
-    ax.text(center[0], center[1] - 4.1, "Ø 5.0m Central Basin + 2.5m Rotary Lane", ha='center', va='top', fontsize=7.0, color='#64748B', zorder=8)
+    ax.text(center[0], center[1] - 4.1, "Ø 5.0m Central Fountain Basin", ha='center', va='top', fontsize=7.0, color='#64748B', zorder=8)
 
     # 4 Exit Gateways & Speed Gates
     for gw in gateways_data:
@@ -324,9 +311,7 @@ def draw_human_locations_plan(output_png: str, output_svg: str, dpi: int = 300):
         ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 + 0.5, r["name"], ha='center', va='center', fontsize=9.0, fontweight='bold', color='#334155', zorder=5)
         ax.text(rx + rw_dim/2.0, ry + rh_dim/2.0 - 1.2, r["code"], ha='center', va='center', fontsize=7.5, color='#64748B', zorder=5)
 
-    # Central Roundabout
-    rotary_zone = patches.Circle(center, r_rotary, facecolor='#F0FDF4', edgecolor='#86EFAC', linestyle='--', linewidth=1.5, zorder=4)
-    ax.add_patch(rotary_zone)
+    # Central Roundabout (Green rotary path removed)
     ax.add_patch(patches.Circle(center, r_fountain, facecolor='#E0F2FE', edgecolor='#0284C7', linewidth=2.0, zorder=5))
     ax.add_patch(patches.Circle(center, 0.6, facecolor='#0369A1', edgecolor='#082F49', linewidth=2.0, zorder=6))
     ax.text(center[0], center[1], "TIME", ha='center', va='center', fontsize=8, fontweight='heavy', color='#FFFFFF', zorder=7)
@@ -583,20 +568,7 @@ def draw_tactical_gamemap_plan(output_png: str, output_svg: str, dpi: int = 300)
             ax.plot([dx, dx + dw], [dy - dw/2, dy - dw/2], color='#00F0FF', linewidth=2.0, zorder=8)
             ax.text(dx + 0.4, dy + 1.2, "INWARD DOOR (1.2m)", ha='left', va='center', fontsize=6.5, fontweight='bold', family='monospace', color='#00F0FF', zorder=8)
 
-    # 5. Central Roundabout & Clock Tower Fountain (Clean Architecture + Tactical Glow)
-    rotary_zone = patches.Circle(center, r_rotary, facecolor='#022C22', edgecolor='#10B981', linestyle='--', linewidth=1.5, alpha=0.6, zorder=4)
-    ax.add_patch(rotary_zone)
-
-    # Rotary Pedestrian Flow Direction Arrows (4 Clean Emerald Chevrons)
-    for ang in [45, 135, 225, 315]:
-        rad = math.radians(ang)
-        ar_x = center[0] + 3.75 * math.cos(rad)
-        ar_y = center[1] + 3.75 * math.sin(rad)
-        dx_ar = -math.sin(rad) * 1.6
-        dy_ar = math.cos(rad) * 1.6
-        ax.annotate('', xy=(ar_x + dx_ar, ar_y + dy_ar), xytext=(ar_x, ar_y),
-                    arrowprops=dict(arrowstyle="-|>", color='#10B981', lw=2.0, mutation_scale=14), zorder=6)
-
+    # 5. Central Roundabout & Clock Tower Fountain (Clean Architecture + Tactical Glow - Green rotary path removed)
     # Outer Fountain Basin (Glowing deep blue-cyan)
     fountain_basin = patches.Circle(center, r_fountain, facecolor='#082F49', edgecolor='#00F0FF', linewidth=2.2, zorder=6)
     ax.add_patch(fountain_basin)
@@ -611,7 +583,7 @@ def draw_tactical_gamemap_plan(output_png: str, output_svg: str, dpi: int = 300)
     ax.add_patch(clock_core)
     ax.text(center[0], center[1], "TIME", ha='center', va='center', fontsize=8, fontweight='heavy', family='monospace', color='#FFFFFF', zorder=9)
     ax.text(center[0], center[1] - 3.2, "ROTARY CLOCK FOUNTAIN ROUNDABOUT", ha='center', va='top', fontsize=8.0, fontweight='heavy', family='monospace', color='#00F0FF', zorder=8)
-    ax.text(center[0], center[1] - 4.1, "Ø 5.0m Central Basin + 2.5m Rotary Lane", ha='center', va='top', fontsize=7.0, family='monospace', color='#94A3B8', zorder=8)
+    ax.text(center[0], center[1] - 4.1, "Ø 5.0m Central Fountain Basin", ha='center', va='top', fontsize=7.0, family='monospace', color='#94A3B8', zorder=8)
 
     # 6. 4 Exit Gateways & Speed Gates (Clean Frames + Green LED Pass Bars)
     for gw in gateways_data:
