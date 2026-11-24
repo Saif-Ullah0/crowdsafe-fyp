@@ -451,6 +451,41 @@ def test_projector_gui_window_initialization():
     cv2.destroyAllWindows()
 
 
+def test_projector_boundary_overlay_toggle_and_clear():
+    """Verify camera boundary outline and sightline arrow overlay is clear by default and toggleable."""
+    from projector_app import ProjectorApp
+
+    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    if not series_40.exists():
+        pytest.skip("DataSet/40 not present for integration test")
+
+    app = ProjectorApp(source_dir=series_40, headless=True)
+    # Default is clean / clear screen without outline and arrow
+    assert app.show_overlay is False
+
+    # Render clean floor view (without outline/arrow)
+    canvas_clear = app.render_floor_no_projection(1)
+
+    # Toggle overlay ON
+    app.toggle_overlay()
+    assert app.show_overlay is True
+
+    # Render with overlay ON
+    canvas_with_overlay = app.render_floor_no_projection(1)
+
+    # The canvas with overlay must differ from the clear canvas
+    assert not np.array_equal(canvas_clear, canvas_with_overlay)
+
+    # Toggle back to Clear / OFF
+    app.toggle_overlay()
+    assert app.show_overlay is False
+    # Clear temporary toast text so floor map pixels match identically
+    app.status_toast = ""
+    canvas_clear_again = app.render_floor_no_projection(1)
+    assert np.array_equal(canvas_clear, canvas_clear_again)
+
+
+
 
 
 

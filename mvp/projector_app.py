@@ -50,6 +50,7 @@ def parse_args():
     parser.add_argument("--source", type=str, default="DataSet/40", help="Camera series directory or video path")
     parser.add_argument("--floor-plan", type=str, default=None, help="Path to custom 2D floor plan image")
     parser.add_argument("--theme", type=str, default="dark", choices=["dark", "light"], help="Active floor plan theme (dark: Tactical Game Map, light: Clean CAD Base)")
+    parser.add_argument("--overlay", action="store_true", default=False, help="Show camera boundary outline and sightline arrow overlay (default: False/Clear)")
     parser.add_argument("--calibration", type=str, default=None, help="Path to calibration.json (defaults to <source>/calibration.json)")
     parser.add_argument("--fps", type=float, default=10.0, help="Playback speed in FPS (e.g. 10.0, 15.0, 30.0, 60.0)")
     parser.add_argument("--alpha", type=float, default=0.45, help="Camera projection transparency alpha on floor plan (default: 0.45)")
@@ -72,7 +73,8 @@ class ProjectorApp:
         alpha: float = 0.45,
         mode: str = "annotation",
         headless: bool = False,
-        theme: str = "dark"
+        theme: str = "dark",
+        overlay: bool = False
     ):
         self.source_dir = Path(source_dir).resolve()
         self.custom_calib_path = Path(calibration_path).resolve() if calibration_path else None
@@ -85,6 +87,7 @@ class ProjectorApp:
         self.show_hud = True
         self.win1_show_dots = False  # Toggleable with 'd' key
         self.theme = theme.lower() if theme in ["dark", "light"] else "dark"
+        self.show_overlay = bool(overlay)  # Toggleable with 'o' key (default: False/Clear)
 
         # Discover all available series in DataSet/
         self.series_list: List[Path] = self._discover_series()
@@ -205,6 +208,13 @@ class ProjectorApp:
         label = "Tactical Dark" if self.theme == "dark" else "Clean Light CAD"
         self.set_toast(f"Theme: {label}")
         print(f"🎨 [Projector] Floor Plan Theme: {label}")
+
+    def toggle_overlay(self):
+        """Toggles camera FOV boundary outline and sightline arrow overlay ON/OFF."""
+        self.show_overlay = not self.show_overlay
+        status = "ON" if self.show_overlay else "Clear (Hidden)"
+        self.set_toast(f"Overlay: {status}")
+        print(f"📐 [Projector] Boundary Outline & Arrow: {status}")
 
     def _discover_series(self) -> List[Path]:
         """Scans folder or dataset for all camera targets using universal resolution."""
@@ -403,8 +413,8 @@ class ProjectorApp:
         """
         canvas = self.win1_floor_disp.copy()
 
-        # Draw camera coverage boundary quad & sightline (NO warped camera pixels)
-        if self.disp_quad is not None:
+        # Draw camera coverage boundary quad & sightline only when show_overlay is enabled
+        if self.show_overlay and self.disp_quad is not None:
             try:
                 quad_pts = self.disp_quad.reshape(-1, 1, 2)
 
@@ -413,21 +423,17 @@ class ProjectorApp:
                 cv2.fillConvexPoly(fov_overlay, quad_pts, (255, 230, 0))
                 cv2.addWeighted(fov_overlay, 0.08, canvas, 0.92, 0, canvas)
 
-                # Crisp camera coverage boundary quad
-                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=3, lineType=cv2.LINE_AA)
+                # Crisp dual-stroke camera coverage boundary quad (black border + bright cyan)
+                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 0, 0), thickness=4, lineType=cv2.LINE_AA)
+                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=2, lineType=cv2.LINE_AA)
 
-                # Directional camera sightline arrow (Camera Lens to Horizon)
+                # Directional camera sightline arrow (Camera Lens to Horizon) with drop shadow
                 m_bottom = (self.disp_quad[2] + self.disp_quad[3]) / 2.0
                 m_top = (self.disp_quad[0] + self.disp_quad[1]) / 2.0
-                cv2.arrowedLine(
-                    canvas,
-                    (int(m_bottom[0]), int(m_bottom[1])),
-                    (int(m_top[0]), int(m_top[1])),
-                    (0, 255, 120),
-                    2,
-                    line_type=cv2.LINE_AA,
-                    tipLength=0.18
-                )
+                p_from = (int(m_bottom[0]), int(m_bottom[1]))
+                p_to = (int(m_top[0]), int(m_top[1]))
+                cv2.arrowedLine(canvas, p_from, p_to, (0, 0, 0), 4, line_type=cv2.LINE_AA, tipLength=0.18)
+                cv2.arrowedLine(canvas, p_from, p_to, (0, 255, 120), 2, line_type=cv2.LINE_AA, tipLength=0.18)
             except Exception:
                 pass
 
@@ -458,7 +464,8 @@ class ProjectorApp:
 
             title = f"1. FLOOR PLAN (NO PROJECTION) | [{self.source_dir.name}]"
             dots_status = "ON" if self.win1_show_dots else "OFF"
-            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | 'c': Calibrate | 's': Save"
+            overlay_status = "ON" if self.show_overlay else "Clear"
+            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | Overlay: {overlay_status} ('o') | 'c': Calibrate | 's': Save"
             if self.has_unsaved_projection:
                 sub += " | [UNSAVED]"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
@@ -500,8 +507,10 @@ class ProjectorApp:
                     canvas, 1.0 - self.alpha, warped_cam, self.alpha, 0
                 )[mask_bool]
 
-                # Draw camera coverage boundary quad
-                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=3, lineType=cv2.LINE_AA)
+                # Draw camera coverage boundary quad only when show_overlay is enabled
+                if self.show_overlay:
+                    cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 0, 0), thickness=4, lineType=cv2.LINE_AA)
+                    cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=2, lineType=cv2.LINE_AA)
             except Exception:
                 pass
 
@@ -614,6 +623,7 @@ class ProjectorApp:
         print("   Window 3 : Camera Video Feed with Detections")
         print(" Controls:")
         print("   't'       : Toggle Floor Plan Theme (Light CAD vs Tactical Dark)")
+        print("   'o'       : Toggle Camera Boundary Outline & Arrow (Clean / Clear view)")
         print("   'c'       : Open Free Move & Perspective Calibration GUI")
         print("   'd'       : Toggle Human Dots on Window 1")
         print("   🖱️ Drag    : Click and drag on Window 1/2 to nudge projection live")
@@ -713,6 +723,8 @@ class ProjectorApp:
                         self.set_toast(f"Window 1 Dots: {'ON' if self.win1_show_dots else 'OFF'}")
                     elif key == ord('t'):
                         self.toggle_theme()
+                    elif key == ord('o'):
+                        self.toggle_overlay()
                     elif key == ord('s'):
                         self.save_active_calibration()
                     elif key in [ord('n'), ord(']')]:
@@ -777,7 +789,8 @@ def main():
         alpha=args.alpha,
         mode=args.mode,
         headless=args.headless,
-        theme=args.theme
+        theme=args.theme,
+        overlay=args.overlay
     )
     app.run(max_frames=args.max_frames)
 
