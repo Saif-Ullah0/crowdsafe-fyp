@@ -51,6 +51,7 @@ def parse_args():
     parser.add_argument("--floor-plan", type=str, default=None, help="Path to custom 2D floor plan image")
     parser.add_argument("--theme", type=str, default="dark", choices=["dark", "light"], help="Active floor plan theme (dark: Tactical Game Map, light: Clean CAD Base)")
     parser.add_argument("--overlay", action="store_true", default=False, help="Show camera boundary outline and sightline arrow overlay (default: False/Clear)")
+    parser.add_argument("--show-video", action="store_true", default=False, help="Blend warped camera video feed over Window 2 floor plan (default: False - clean floor plan with dots only)")
     parser.add_argument("--calibration", type=str, default=None, help="Path to calibration.json (defaults to <source>/calibration.json)")
     parser.add_argument("--fps", type=float, default=10.0, help="Playback speed in FPS (e.g. 10.0, 15.0, 30.0, 60.0)")
     parser.add_argument("--alpha", type=float, default=0.45, help="Camera projection transparency alpha on floor plan (default: 0.45)")
@@ -74,7 +75,8 @@ class ProjectorApp:
         mode: str = "annotation",
         headless: bool = False,
         theme: str = "dark",
-        overlay: bool = False
+        overlay: bool = False,
+        show_video: bool = False
     ):
         self.source_dir = Path(source_dir).resolve()
         self.custom_calib_path = Path(calibration_path).resolve() if calibration_path else None
@@ -88,6 +90,7 @@ class ProjectorApp:
         self.win1_show_dots = False  # Toggleable with 'd' key
         self.theme = theme.lower() if theme in ["dark", "light"] else "dark"
         self.show_overlay = bool(overlay)  # Toggleable with 'o' key (default: False/Clear)
+        self.show_video = bool(show_video)  # Toggleable with 'v' key (default: False/Clean Map + Dots)
 
         # Discover all available series in DataSet/
         self.series_list: List[Path] = self._discover_series()
@@ -157,11 +160,7 @@ class ProjectorApp:
         self.H_disp: Optional[np.ndarray] = None
         self.disp_quad: Optional[np.ndarray] = None
 
-        # Interactive Dragging on Floor Windows
-        self.is_dragging_feed: bool = False
-        self.drag_start_screen: Tuple[int, int] = (0, 0)
-        self.drag_start_dst_pts: List[Tuple[float, float]] = []
-        self.has_unsaved_projection: bool = False
+        # Notifications & Status Toast
         self.status_toast: str = ""
         self.toast_time: float = 0.0
 
@@ -215,6 +214,13 @@ class ProjectorApp:
         status = "ON" if self.show_overlay else "Clear (Hidden)"
         self.set_toast(f"Overlay: {status}")
         print(f"📐 [Projector] Boundary Outline & Arrow: {status}")
+
+    def toggle_video_overlay(self):
+        """Toggles warped camera video projection over Window 2 floor plan ON/OFF."""
+        self.show_video = not self.show_video
+        status = "ON (Warped Feed)" if self.show_video else "OFF (Clean Map + Dots)"
+        self.set_toast(f"Video Overlay: {status}")
+        print(f"📹 [Projector] Window 2 Video Overlay: {status}")
 
     def _discover_series(self) -> List[Path]:
         """Scans folder or dataset for all camera targets using universal resolution."""
@@ -360,7 +366,11 @@ class ProjectorApp:
         self.toast_time = time.time()
 
     def _on_floor_mouse_event(self, event, x, y, flags, param):
-        """Allows dragging the camera projection freely across the floor plan in Window 1 or 2."""
+        """
+        Handles interactive mouse events on Floor Plan windows.
+        Calibration is strictly locked in application mode (managed via calibrate.py).
+        Only UI button interactions (e.g. Theme Toggle Button in Window 2) are processed.
+        """
         if event == cv2.EVENT_LBUTTONDOWN:
             # Check for Theme Button click ONLY on Window 2 HUD [ Light | Dark ]
             if param == "win2":
@@ -368,37 +378,6 @@ class ProjectorApp:
                 if bx1 <= x <= bx2 and by1 <= y <= by2:
                     self.toggle_theme()
                     return
-
-            if not self.projector.is_calibrated or not self.projector.dst_points:
-                return
-
-            self.is_dragging_feed = True
-            self.drag_start_screen = (x, y)
-            self.drag_start_dst_pts = [tuple(p) for p in self.projector.dst_points]
-
-        elif event == cv2.EVENT_MOUSEMOVE and self.is_dragging_feed:
-            calib_fw = float(self.projector.floor_shape[1]) if self.projector.floor_shape else float(self.floor_w)
-            calib_fh = float(self.projector.floor_shape[0]) if self.projector.floor_shape else float(self.floor_h)
-            sx = float(self.disp_floor_w) / max(calib_fw, 1.0)
-            sy = float(self.disp_floor_h) / max(calib_fh, 1.0)
-
-            dx_screen = x - self.drag_start_screen[0]
-            dy_screen = y - self.drag_start_screen[1]
-            dx_floor = dx_screen / max(sx, 1e-6)
-            dy_floor = dy_screen / max(sy, 1e-6)
-
-            new_dst = []
-            for (px, py) in self.drag_start_dst_pts:
-                nx = np.clip(px + dx_floor, 0, calib_fw)
-                ny = np.clip(py + dy_floor, 0, calib_fh)
-                new_dst.append((float(nx), float(ny)))
-
-            self.projector.compute_from_points(self.projector.src_points, new_dst)
-            self._update_disp_homography()
-            self.has_unsaved_projection = True
-
-        elif event == cv2.EVENT_LBUTTONUP:
-            self.is_dragging_feed = False
 
     def render_floor_no_projection(
         self,
@@ -465,9 +444,7 @@ class ProjectorApp:
             title = f"1. FLOOR PLAN (NO PROJECTION) | [{self.source_dir.name}]"
             dots_status = "ON" if self.win1_show_dots else "OFF"
             overlay_status = "ON" if self.show_overlay else "Clear"
-            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | Overlay: {overlay_status} ('o') | 'c': Calibrate | 's': Save"
-            if self.has_unsaved_projection:
-                sub += " | [UNSAVED]"
+            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | Overlay: {overlay_status} ('o') | 'c': Calibrate"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
             cv2.putText(canvas, sub, (14, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 220, 255), 1, cv2.LINE_AA)
 
@@ -484,15 +461,15 @@ class ProjectorApp:
         frame_idx: int
     ) -> np.ndarray:
         """
-        WINDOW 2: 2D Floor Plan WITH camera projection AND human location dots.
-        Renders the floor plan with the warped camera view inside FOV quad, plus live human dots.
-        Supports instant Light CAD (design_4_clean_base) and Dark Tactical (design_4_tactical_gamemap) themes.
-        Runs at display resolution (~1.0ms per frame).
+        WINDOW 2: 2D Floor Plan WITH human location dots, and OPTIONALLY warped camera projection.
+        By default, renders a clean architectural floor plan with live human dots.
+        Warped camera video is blended ONLY when show_video is explicitly enabled via --show-video or 'v'.
+        Runs at display resolution (~0.3ms to ~1.0ms per frame).
         """
         canvas = self.floor_img_disp.copy()
 
-        # 1. Warp and blend camera view onto display floor canvas
-        if self.H_disp is not None and self.disp_quad is not None:
+        # 1. Warp and blend camera view onto display floor canvas ONLY when show_video is True
+        if self.show_video and self.H_disp is not None and self.disp_quad is not None:
             try:
                 warped_cam = cv2.warpPerspective(
                     frame_bgr, self.H_disp, (self.disp_floor_w, self.disp_floor_h), flags=cv2.INTER_LINEAR
@@ -506,11 +483,15 @@ class ProjectorApp:
                 canvas[mask_bool] = cv2.addWeighted(
                     canvas, 1.0 - self.alpha, warped_cam, self.alpha, 0
                 )[mask_bool]
+            except Exception:
+                pass
 
-                # Draw camera coverage boundary quad only when show_overlay is enabled
-                if self.show_overlay:
-                    cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 0, 0), thickness=4, lineType=cv2.LINE_AA)
-                    cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=2, lineType=cv2.LINE_AA)
+        # Draw camera coverage boundary quad only when show_overlay is enabled
+        if self.show_overlay and self.disp_quad is not None:
+            try:
+                quad_pts = self.disp_quad.reshape(-1, 1, 2)
+                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 0, 0), thickness=4, lineType=cv2.LINE_AA)
+                cv2.polylines(canvas, [quad_pts], isClosed=True, color=(0, 220, 255), thickness=2, lineType=cv2.LINE_AA)
             except Exception:
                 pass
 
@@ -545,7 +526,8 @@ class ProjectorApp:
 
             theme_name = "Tactical Dark" if self.theme == "dark" else "Light CAD"
             title = f"2. PROJECTION + DOTS | [{self.source_dir.name}]"
-            sub = f"Frame: {frame_idx:03d} | Persons: {projected_count} | Theme: {theme_name} ('t') | Alpha: {self.alpha:.2f}"
+            vid_str = "ON" if self.show_video else "OFF"
+            sub = f"Frame: {frame_idx:03d} | Persons: {projected_count} | Theme: {theme_name} ('t') | Video: {vid_str} ('v')"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
             cv2.putText(canvas, sub, (14, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 255, 120), 1, cv2.LINE_AA)
 
@@ -622,15 +604,14 @@ class ProjectorApp:
         print("   Window 2 : 2D Floor Plan with Camera Projection + Human Dots")
         print("   Window 3 : Camera Video Feed with Detections")
         print(" Controls:")
-        print("   't'       : Toggle Floor Plan Theme (Light CAD vs Tactical Dark)")
+        print("   't'       : Toggle Window 2 Theme (Light CAD vs Tactical Dark)")
+        print("   'v'       : Toggle Window 2 Video Overlay (Warped Camera Feed ON/OFF)")
         print("   'o'       : Toggle Camera Boundary Outline & Arrow (Clean / Clear view)")
         print("   'c'       : Open Free Move & Perspective Calibration GUI")
         print("   'd'       : Toggle Human Dots on Window 1")
-        print("   🖱️ Drag    : Click and drag on Window 1/2 to nudge projection live")
-        print("   's'       : Save current projection position to calibration.json")
         print("   'n' / ']' : Switch to Next camera feed")
         print("   'p' / '[' : Switch to Previous camera feed")
-        print("   '+' / '-' : Increase / Decrease camera projection opacity")
+        print("   '+' / '-' : Increase / Decrease camera projection opacity (when Video is ON)")
         print("   'z'       : Toggle HUD banner on 2D floor plan")
         print("   'Space'   : Pause / Resume playback")
         print("   'q' / Esc : Exit all windows")
@@ -723,6 +704,8 @@ class ProjectorApp:
                         self.set_toast(f"Window 1 Dots: {'ON' if self.win1_show_dots else 'OFF'}")
                     elif key == ord('t'):
                         self.toggle_theme()
+                    elif key == ord('v'):
+                        self.toggle_video_overlay()
                     elif key == ord('o'):
                         self.toggle_overlay()
                     elif key == ord('s'):
@@ -790,7 +773,8 @@ def main():
         mode=args.mode,
         headless=args.headless,
         theme=args.theme,
-        overlay=args.overlay
+        overlay=args.overlay,
+        show_video=args.show_video
     )
     app.run(max_frames=args.max_frames)
 

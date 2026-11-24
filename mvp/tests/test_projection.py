@@ -485,6 +485,61 @@ def test_projector_boundary_overlay_toggle_and_clear():
     assert np.array_equal(canvas_clear, canvas_clear_again)
 
 
+def test_projector_locked_calibration_no_drag():
+    """Verify application mode strictly locks calibration coordinates against mouse drag events."""
+    from projector_app import ProjectorApp
+    import cv2
+
+    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    if not series_40.exists():
+        pytest.skip("DataSet/40 not present for integration test")
+
+    app = ProjectorApp(source_dir=series_40, headless=True)
+    initial_dst_pts = [tuple(p) for p in app.projector.dst_points]
+    initial_H = app.H_disp.copy()
+
+    # Simulate mouse drag attempt across floor window
+    app._on_floor_mouse_event(cv2.EVENT_LBUTTONDOWN, 200, 200, 0, "win2")
+    app._on_floor_mouse_event(cv2.EVENT_MOUSEMOVE, 450, 450, 0, "win2")
+    app._on_floor_mouse_event(cv2.EVENT_LBUTTONUP, 450, 450, 0, "win2")
+
+    # Calibration points and homography must remain strictly identical
+    assert [tuple(p) for p in app.projector.dst_points] == initial_dst_pts
+    assert np.array_equal(app.H_disp, initial_H)
+
+
+def test_projector_show_video_cli_and_toggle():
+    """Verify transparent video projection on Window 2 is OFF by default and toggleable via --show-video / 'v'."""
+    from projector_app import ProjectorApp
+    import cv2
+
+    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    if not series_40.exists():
+        pytest.skip("DataSet/40 not present for integration test")
+
+    frame = cv2.imread(str(series_40 / "001.jpg"))
+
+    # 1. Default: show_video is False
+    app_default = ProjectorApp(source_dir=series_40, headless=True)
+    assert app_default.show_video is False
+
+    # Render clean floor view (dots only, no warped video)
+    canvas_clean = app_default.render_floor_projection_with_dots(frame, [], 1)
+
+    # 2. Toggle video overlay ON via 'v'
+    app_default.toggle_video_overlay()
+    assert app_default.show_video is True
+    canvas_with_video = app_default.render_floor_projection_with_dots(frame, [], 1)
+
+    # Canvas with warped video must differ from clean floor canvas
+    assert not np.array_equal(canvas_clean, canvas_with_video)
+
+    # 3. Explicit CLI flag: show_video=True
+    app_video_cli = ProjectorApp(source_dir=series_40, headless=True, show_video=True)
+    assert app_video_cli.show_video is True
+
+
+
 
 
 
