@@ -99,18 +99,27 @@ class ProjectorApp:
         self.theme_btn_rect = (self.disp_floor_w - 180, 8, self.disp_floor_w - 15, 36)
 
         # ---------------------------------------------------------
-        # Dual Floor Plan Themes (Light CAD & Dark Tactical)
+        # Window 1 Floor Plan (Architectural Blueprint - Permanent)
+        # ---------------------------------------------------------
+        self.win1_floor_path = Path(floor_plan_path).resolve() if floor_plan_path else Path(DEFAULT_FLOOR_PLAN).resolve()
+        if not self.win1_floor_path.is_file():
+            self.win1_floor_path = Path(DEFAULT_FLOOR_PLAN).resolve()
+
+        self.win1_floor_orig = cv2.imread(str(self.win1_floor_path))
+        if self.win1_floor_orig is None:
+            fallback = Path(FLOOR_PLAN_DARK).resolve()
+            self.win1_floor_orig = cv2.imread(str(fallback))
+            self.win1_floor_path = fallback
+
+        self.win1_floor_disp = cv2.resize(
+            self.win1_floor_orig, (self.disp_floor_w, self.disp_floor_h), interpolation=cv2.INTER_AREA
+        )
+
+        # ---------------------------------------------------------
+        # Window 2 Floor Plan Themes (Dynamic Toggle: Light CAD vs Dark Tactical)
         # ---------------------------------------------------------
         self.floor_light_path = Path(FLOOR_PLAN_LIGHT).resolve()
         self.floor_dark_path = Path(FLOOR_PLAN_DARK).resolve()
-
-        if floor_plan_path:
-            fpath = Path(floor_plan_path).resolve()
-            if fpath.is_file():
-                if self.theme == "light":
-                    self.floor_light_path = fpath
-                else:
-                    self.floor_dark_path = fpath
 
         # Load Light CAD Theme (design_4_clean_base.png)
         self.floor_light_orig = cv2.imread(str(self.floor_light_path)) if self.floor_light_path.is_file() else None
@@ -123,12 +132,8 @@ class ProjectorApp:
         elif self.floor_dark_orig is None and self.floor_light_orig is not None:
             self.floor_dark_orig = self.floor_light_orig.copy()
         elif self.floor_light_orig is None and self.floor_dark_orig is None:
-            fallback = Path(DEFAULT_FLOOR_PLAN).resolve()
-            loaded = cv2.imread(str(fallback))
-            if loaded is None:
-                raise FileNotFoundError("Floor plan images could not be loaded!")
-            self.floor_light_orig = loaded
-            self.floor_dark_orig = loaded.copy()
+            self.floor_light_orig = self.win1_floor_orig.copy()
+            self.floor_dark_orig = self.win1_floor_orig.copy()
 
         # Active floor image orig defaults to active theme
         self.floor_img_orig = self.floor_dark_orig if self.theme == "dark" else self.floor_light_orig
@@ -347,11 +352,12 @@ class ProjectorApp:
     def _on_floor_mouse_event(self, event, x, y, flags, param):
         """Allows dragging the camera projection freely across the floor plan in Window 1 or 2."""
         if event == cv2.EVENT_LBUTTONDOWN:
-            # Check for Theme Button click in Window HUD [ Light | Dark ]
-            bx1, by1, bx2, by2 = self.theme_btn_rect
-            if bx1 <= x <= bx2 and by1 <= y <= by2:
-                self.toggle_theme()
-                return
+            # Check for Theme Button click ONLY on Window 2 HUD [ Light | Dark ]
+            if param == "win2":
+                bx1, by1, bx2, by2 = self.theme_btn_rect
+                if bx1 <= x <= bx2 and by1 <= y <= by2:
+                    self.toggle_theme()
+                    return
 
             if not self.projector.is_calibrated or not self.projector.dst_points:
                 return
@@ -391,11 +397,11 @@ class ProjectorApp:
     ) -> np.ndarray:
         """
         WINDOW 1: 2D Floor Plan WITHOUT camera projection.
-        Renders the floor plan with the camera FOV coverage boundary quad and sightline arrow.
-        Optionally renders human dots if win1_show_dots is toggled with 'd'.
+        Renders the permanent base floor plan with FOV coverage boundary quad and sightline arrow.
+        Does NOT change when Window 2 theme is toggled.
         Runs at display resolution (~0.5ms per frame).
         """
-        canvas = self.floor_img_disp.copy()
+        canvas = self.win1_floor_disp.copy()
 
         # Draw camera coverage boundary quad & sightline (NO warped camera pixels)
         if self.disp_quad is not None:
@@ -443,7 +449,7 @@ class ProjectorApp:
                     cv2.circle(canvas, (dx, dy), 5, (255, 255, 255), 1, cv2.LINE_AA)
                     cv2.circle(canvas, (dx, dy), 3, (0, 0, 255), -1, cv2.LINE_AA)
 
-        # Top HUD Banner
+        # Top HUD Banner (No theme button in Window 1 - theme toggle is exclusively in Window 2)
         if self.show_hud:
             hud_h = 44
             hud_bar = canvas[:hud_h, :].copy()
@@ -452,26 +458,11 @@ class ProjectorApp:
 
             title = f"1. FLOOR PLAN (NO PROJECTION) | [{self.source_dir.name}]"
             dots_status = "ON" if self.win1_show_dots else "OFF"
-            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | Theme: {'Dark' if self.theme == 'dark' else 'Light'} ('t')"
+            sub = f"Frame: {frame_idx:03d} | Dots: {dots_status} ('d') | 'c': Calibrate | 's': Save"
             if self.has_unsaved_projection:
                 sub += " | [UNSAVED]"
             cv2.putText(canvas, title, (14, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (255, 255, 255), 1, cv2.LINE_AA)
             cv2.putText(canvas, sub, (14, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 220, 255), 1, cv2.LINE_AA)
-
-            # Draw interactive Theme Toggle Button [ Light | Dark ]
-            bx1, by1, bx2, by2 = self.theme_btn_rect
-            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (40, 40, 40), -1)
-            cv2.rectangle(canvas, (bx1, by1), (bx2, by2), (90, 90, 90), 1, cv2.LINE_AA)
-            mid_x = (bx1 + bx2) // 2
-
-            if self.theme == "light":
-                cv2.rectangle(canvas, (bx1 + 1, by1 + 1), (mid_x, by2 - 1), (230, 230, 230), -1)
-                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
-                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
-            else:
-                cv2.rectangle(canvas, (mid_x, by1 + 1), (bx2 - 1, by2 - 1), (0, 165, 255), -1)
-                cv2.putText(canvas, "Light", (bx1 + 12, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (160, 160, 160), 1, cv2.LINE_AA)
-                cv2.putText(canvas, "Dark", (mid_x + 14, by1 + 19), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (15, 15, 15), 1, cv2.LINE_AA)
 
         # Floating toast notification
         if self.status_toast and (time.time() - self.toast_time < 2.5):
@@ -685,8 +676,8 @@ class ProjectorApp:
                     if not callbacks_registered:
                         cv2.waitKey(1)
                         try:
-                            cv2.setMouseCallback(self.win_floor_proj, self._on_floor_mouse_event)
-                            cv2.setMouseCallback(self.win_floor_dots, self._on_floor_mouse_event)
+                            cv2.setMouseCallback(self.win_floor_proj, self._on_floor_mouse_event, "win1")
+                            cv2.setMouseCallback(self.win_floor_dots, self._on_floor_mouse_event, "win2")
                             callbacks_registered = True
                         except Exception:
                             pass

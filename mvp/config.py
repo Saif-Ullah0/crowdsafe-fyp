@@ -28,8 +28,8 @@ if not FLOOR_PLAN_DARK.exists():
     if _asset_dark.exists():
         FLOOR_PLAN_DARK = _asset_dark
 
-# Default Floor Plan Path
-DEFAULT_FLOOR_PLAN = FLOOR_PLAN_DARK if FLOOR_PLAN_DARK.exists() else (BASE_DIR.parent / "design_4_transit_interchange.png")
+# Default Floor Plan Path (Window 1 Blueprint)
+DEFAULT_FLOOR_PLAN = BASE_DIR.parent / "design_4_transit_interchange.png"
 if not DEFAULT_FLOOR_PLAN.exists():
     _asset_plan = BASE_DIR / "assets" / "design_4_transit_interchange.png"
     if _asset_plan.exists():
@@ -38,6 +38,8 @@ if not DEFAULT_FLOOR_PLAN.exists():
         _alt_plan = BASE_DIR.parent / "dataset-generator" / "output" / "floor_plans_2d" / "design_4_transit_interchange.png"
         if _alt_plan.exists():
             DEFAULT_FLOOR_PLAN = _alt_plan
+        else:
+            DEFAULT_FLOOR_PLAN = FLOOR_PLAN_DARK
 
 # ---------------------------------------------------------
 # Safety & Density Thresholds (People per m²)

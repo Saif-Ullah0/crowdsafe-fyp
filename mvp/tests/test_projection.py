@@ -395,21 +395,32 @@ def test_projector_dual_canvas_pre_scaling_and_toggle():
     # Active canvas should point to floor_dark_disp
     assert np.array_equal(app.floor_img_disp, app.floor_dark_disp)
 
+    # Verify Window 1 remains unchanged before and after theme toggle
+    win1_canvas_before = app.render_floor_no_projection(1)
+    win1_base_copy = app.win1_floor_disp.copy()
+
     # Toggle to Light CAD theme
     app.toggle_theme()
     assert app.theme == "light"
     assert np.array_equal(app.floor_img_disp, app.floor_light_disp)
+    # Window 1 must not change when Window 2 theme is toggled
+    assert np.array_equal(app.win1_floor_disp, win1_base_copy)
 
     # Toggle back to Dark Tactical theme
     app.toggle_theme()
     assert app.theme == "dark"
     assert np.array_equal(app.floor_img_disp, app.floor_dark_disp)
+    assert np.array_equal(app.win1_floor_disp, win1_base_copy)
 
-    # Simulate mouse click on the theme button in HUD
+    # Simulate mouse click on the theme button in HUD from Window 1 -> Should NOT toggle
     bx1, by1, bx2, by2 = app.theme_btn_rect
     click_x = (bx1 + bx2) // 2
     click_y = (by1 + by2) // 2
-    app._on_floor_mouse_event(cv2.EVENT_LBUTTONDOWN, click_x, click_y, 0, None)
+    app._on_floor_mouse_event(cv2.EVENT_LBUTTONDOWN, click_x, click_y, 0, "win1")
+    assert app.theme == "dark"
+
+    # Simulate mouse click on the theme button in HUD from Window 2 -> Should toggle to light
+    app._on_floor_mouse_event(cv2.EVENT_LBUTTONDOWN, click_x, click_y, 0, "win2")
     assert app.theme == "light"
 
     # Render Window 2 (Projection + Dots) under Light theme
