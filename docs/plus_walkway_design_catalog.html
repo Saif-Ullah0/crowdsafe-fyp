@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plus Walkway Design Catalog — Design 4: Transit Interchange</title>
+  <title>CrowdSafe — Plus Walkway Floor Plan Catalog & Multi-Map Viewer</title>
   <style>
     :root {
       --bg: #0b0f19;
@@ -14,22 +14,92 @@
       --text: #f1f5f9;
       --text-muted: #94a3b8;
       --success: #34d399;
+      --warning: #fbbf24;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 32px 16px; line-height: 1.6; }
-    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+    .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
     
-    header { background: var(--card); padding: 24px 32px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--accent); }
+    header { background: var(--card); padding: 24px 32px; border-radius: 14px; border: 1px solid var(--border); border-left: 6px solid var(--accent); }
     h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 6px; }
     h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin-bottom: 12px; }
-    h3 { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px; }
     p.subtitle { color: var(--text-muted); font-size: 15px; }
 
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    /* Interactive Tab Switcher */
+    .view-switcher-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--card);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .view-btn {
+      flex: 1 1 200px;
+      padding: 12px 18px;
+      background: #0e1628;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .view-btn:hover { background: #1c2744; color: #fff; border-color: var(--accent); }
+    .view-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 15px rgba(56,189,248,0.3); }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
     
-    .image-container { text-align: center; background: #070a12; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; }
-    .image-container img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .caption { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
+    .viewer-display {
+      text-align: center;
+      background: #060913;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 16px 0;
+      position: relative;
+    }
+    .viewer-display img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+      transition: opacity 0.25s ease;
+    }
+
+    .variant-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 18px;
+      background: #0d1527;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 14px;
+    }
+    .variant-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .variant-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+    .variant-actions { display: flex; gap: 10px; }
+    .action-btn {
+      padding: 8px 14px;
+      background: #1e293b;
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      transition: all 0.2s;
+    }
+    .action-btn:hover { background: #38bdf8; color: #0f172a; }
 
     .badge-pass { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: rgba(52, 211, 153, 0.15); color: var(--success); border: 1px solid var(--success); }
     
@@ -46,37 +116,60 @@
     pre { background: #070a12; border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: "Fira Code", monospace; font-size: 13px; color: #38bdf8; margin: 14px 0; }
     code { font-family: "Fira Code", monospace; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
 
-    .file-path { background: #0e1526; padding: 12px 16px; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-size: 13px; color: #a5f3fc; word-break: break-all; margin: 8px 0; }
+    .file-path { background: #0e1526; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-size: 13px; color: #a5f3fc; word-break: break-all; margin: 6px 0; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Plus Walkway Design Catalog — Design 4</h1>
-      <p class="subtitle">Controlled Transit Interchange &bull; Architectural Blueprint &bull; CCTV Coverage Specification</p>
+      <h1>CrowdSafe — Plus Walkway Floor Plan Catalog</h1>
+      <p class="subtitle">Design 4: Controlled Transit & Security Interchange &bull; Interactive Multi-Map Architectural Viewer</p>
     </header>
 
-    <!-- Floor Plan Visual Card -->
+    <!-- View Switcher Controls -->
+    <div class="view-switcher-bar">
+      <button class="view-btn active" onclick="switchView('cctv')">
+        <span>📷</span> CCTV Coverage (83.8%)
+      </button>
+      <button class="view-btn" onclick="switchView('clean')">
+        <span>📐</span> Clean Base (No Projections)
+      </button>
+      <button class="view-btn" onclick="switchView('humans')">
+        <span>👥</span> Human Location Dots (Tracking)
+      </button>
+      <button class="view-btn" onclick="switchView('tactical')">
+        <span>🎮</span> Tactical Game Map (Dashboard)
+      </button>
+    </div>
+
+    <!-- Active Viewer Card -->
     <div class="card">
-      <h2>1. Finalized 2D Architectural CAD Floor Plan</h2>
-      <p>High-resolution CAD map displaying the 10.0m plus walkway, corner rooms with inward-opening doors, central clock-tower fountain roundabout, speed-gate exit portals, and ray-cast camera viewing cones:</p>
-      
-      <div class="image-container">
-        <img src="design_4_transit_interchange.png" alt="Design 4: Controlled Transit Interchange 2D Floor Plan">
-        <div class="caption">Figure 1: Full venue blueprint with ray-cast FOVs occluded by opaque walls (83.8% net walkable coverage).</div>
+      <div class="viewer-display">
+        <img id="main-map-img" src="design_4_transit_interchange.png" alt="CrowdSafe Floor Plan">
+      </div>
+
+      <div class="variant-meta">
+        <div>
+          <div id="meta-title" class="variant-title">1. Calibrated CCTV Ray-Cast Coverage Map</div>
+          <div id="meta-desc" class="variant-desc">Full 3D optics line-of-sight ray-casting with solid wall occlusion, nadir dead zone, and 83.8% proven concourse surveillance.</div>
+        </div>
+        <div class="variant-actions">
+          <a id="btn-open-png" href="design_4_transit_interchange.png" target="_blank" class="action-btn">Open Full PNG</a>
+          <a id="btn-open-svg" href="design_4_transit_interchange.svg" target="_blank" class="action-btn">Vector SVG</a>
+        </div>
       </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Quick Specifications -->
     <div class="card">
-      <h2>2. Key Quantitative Metrics</h2>
+      <h2>Architectural Summary & Key Metrics</h2>
       <div class="stats-grid">
         <div class="stat-box">
           <div class="stat-label">Concourse Optical Coverage</div>
           <div class="stat-value">83.8% <span class="badge-pass">PASS &ge; 80%</span></div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Concourse Walkable Area</div>
+          <div class="stat-label">Net Walkable Area</div>
           <div class="stat-value">640.4 m²</div>
         </div>
         <div class="stat-box">
@@ -84,166 +177,105 @@
           <div class="stat-value">&empty; 5.0m Fountain</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Emergency Gate Throughput</div>
+          <div class="stat-label">Exit Evacuation Flow</div>
           <div class="stat-value">2,080 pers/min</div>
         </div>
       </div>
     </div>
 
-    <!-- Layout Details -->
+    <!-- Direct File Locations Table -->
     <div class="card">
-      <h2>3. Architectural Geometry & Layout</h2>
-      <pre>
-                                NORTH EXIT (Y = 38m)
-                     +-----------------------------------+
-                     |         GATEWAY [GW-N]            |
-                     |  CAM-N Mount (4.6m, Tilt 34°)     |
-                     |  [====] [====] [====] [====]      |
-                     +-----------------------------------+
-                     |             WING_N                |
-+--------------------+                                   +--------------------+
-|                    |                                   |                    |
-|      ROOM NW       |                                   |      ROOM NE       |
-|    (Ticketing &    |                                   |  (Infrastructure & |
-|  Customer Service) |                                   |     Restrooms)     |
-|   14m x 14m        |                                   |   14m x 14m        |
-|   (196.0 m²)       |                                   |   (196.0 m²)       |
-|                    |             ROTARY_N              |                    |
-|       Inward Door  [               (.)                 ]  Inward Door       |
-+--------\-----------+                                   +-----------/--------+
-|   GATEWAY [GW-W]   |         +---------------+         |   GATEWAY [GW-E]   |
-|  CAM-W (4.6m)      |  ROT_W  | CLOCK FOUNTAIN|  ROT_E  |  CAM-E (4.6m)      |
-|  [||] [||] [||]    |   (.)   |  ROUNDABOUT   |   (.)   |    [||] [||] [||]  |
-|  WEST EXIT (X=0m)  |         | r=2.5m (19.6m²)|        |  EAST EXIT (X=38m) |
-+--------/-----------+         +---------------+         +-----------\--------+
-|       Inward Door  [               (.)                 ]  Inward Door       |
-|                    |             ROTARY_S              |                    |
-|      ROOM SW       |                                   |      ROOM SE       |
-|  (Security Ops &   |                                   |    (Passenger      |
-|   Dispatch Hub)    |                                   |  Lounge & Rest)    |
-|   14m x 14m        |                                   |   14m x 14m        |
-|   (196.0 m²)       |                                   |   (196.0 m²)       |
-|                    |             WING_S                |                    |
-+--------------------+                                   +--------------------+
-                     |         GATEWAY [GW-S]            |
-                     |  CAM-S Mount (4.6m, Tilt 34°)     |
-                     |  [====] [====] [====] [====]      |
-                     +-----------------------------------+
-                                SOUTH EXIT (Y = 0m)
-      </pre>
-
+      <h2>File Locations & Application Integration</h2>
       <table>
         <thead>
           <tr>
-            <th>Zone / Element</th>
-            <th>Dimensions / Coordinates</th>
-            <th>Design Role & Safety Compliance</th>
+            <th>Floor Plan Variant</th>
+            <th>PNG File Path</th>
+            <th>Vector SVG</th>
+            <th>Primary Application Role</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Overall Footprint</strong></td>
-            <td>38.0m &times; 38.0m (1,444 m²)</td>
-            <td>Square envelope perimeter</td>
+            <td><strong>1. Clean Base (No Projections)</strong></td>
+            <td><code>design_4_clean_base.png</code></td>
+            <td><code>design_4_clean_base.svg</code></td>
+            <td>Clean architectural canvas to project custom camera regions or analytics overlays</td>
           </tr>
           <tr>
-            <td><strong>Plus Walkway Corridor</strong></td>
-            <td>10.0m Clear Width (640.4 m² net)</td>
-            <td>Central thoroughfare connecting 4 gateways</td>
+            <td><strong>2. Human Location Dots</strong></td>
+            <td><code>design_4_human_locations.png</code></td>
+            <td><code>design_4_human_locations.svg</code></td>
+            <td>Live crowd localization, pedestrian centroid dots, velocity vectors & bottleneck clusters</td>
           </tr>
           <tr>
-            <td><strong>4 Corner Rooms</strong></td>
-            <td>14.0m &times; 14.0m each (196.0 m²)</td>
-            <td>Room NW (Ticketing), NE (Restrooms), SW (Security Ops), SE (Lounge)</td>
+            <td><strong>3. Tactical Game Map</strong></td>
+            <td><code>design_4_tactical_gamemap.png</code></td>
+            <td><code>design_4_tactical_gamemap.svg</code></td>
+            <td>Modern dark-mode tactical dashboard minimap with radar sweep frustums & turret stations</td>
           </tr>
           <tr>
-            <td><strong>Corner Room Doors</strong></td>
-            <td>1.2m Commercial Magnetic</td>
-            <td>100% Inward swinging into room chambers (0% corridor obstruction)</td>
-          </tr>
-          <tr>
-            <td><strong>Central Roundabout</strong></td>
-            <td>&empty; 5.0m Fountain (r = 2.5m)</td>
-            <td>2.5m counter-clockwise clear pedestrian rotary circulation lane</td>
-          </tr>
-          <tr>
-            <td><strong>4 Exit Gateways</strong></td>
-            <td>4 Lanes per portal (2.0m width)</td>
-            <td>Speed gates with drop-arm emergency breakout (520 pers/min/gate)</td>
+            <td><strong>4. Ray-Cast Coverage Map</strong></td>
+            <td><code>design_4_transit_interchange.png</code></td>
+            <td><code>design_4_transit_interchange.svg</code></td>
+            <td>Physical CCTV optical calibration, DORI falloff boundaries, and compliance validation</td>
           </tr>
         </tbody>
       </table>
-    </div>
 
-    <!-- Camera Array -->
-    <div class="card">
-      <h2>4. Calibrated CCTV Camera Array</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Camera ID</th>
-            <th>Mount Location</th>
-            <th>Coordinates (X, Y, Z)</th>
-            <th>Heading / Tilt</th>
-            <th>Range</th>
-            <th>FOV Walkable Coverage</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>CAM-S</code></td>
-            <td>Over Gateway GW-S</td>
-            <td>(19.0m, 0.5m, 4.6m)</td>
-            <td>90.0° (N) / 34.0° down</td>
-            <td>20.5m</td>
-            <td>45.2% concourse</td>
-          </tr>
-          <tr>
-            <td><code>CAM-N</code></td>
-            <td>Over Gateway GW-N</td>
-            <td>(19.0m, 37.5m, 4.6m)</td>
-            <td>270.0° (S) / 34.0° down</td>
-            <td>20.5m</td>
-            <td>45.2% concourse</td>
-          </tr>
-          <tr>
-            <td><code>CAM-W</code></td>
-            <td>Over Gateway GW-W</td>
-            <td>(0.5m, 19.0m, 4.6m)</td>
-            <td>0.0° (E) / 34.0° down</td>
-            <td>20.5m</td>
-            <td>45.2% concourse</td>
-          </tr>
-          <tr>
-            <td><code>CAM-E</code></td>
-            <td>Over Gateway GW-E</td>
-            <td>(37.5m, 19.0m, 4.6m)</td>
-            <td>180.0° (W) / 34.0° down</td>
-            <td>20.5m</td>
-            <td>45.2% concourse</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Direct File Links -->
-    <div class="card">
-      <h2>5. Direct File Paths on Disk</h2>
-      <p>Direct absolute paths to open, edit, or copy into your application:</p>
-      
-      <h3 style="margin-top: 14px;">1. Root Catalog Files</h3>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/plus_walkway_design_catalog.md</div>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/plus_walkway_design_catalog.html</div>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/design_4_transit_interchange.png</div>
-
-      <h3 style="margin-top: 14px;">2. Web Dashboard Assets (Next.js)</h3>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/crowdsafe-dashboard/public/design_4_transit_interchange.png</div>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/crowdsafe-dashboard/public/floor_plans/design_4_transit_interchange.json</div>
-
-      <h3 style="margin-top: 14px;">3. Python MVP Assets</h3>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/mvp/assets/design_4_transit_interchange.png</div>
-      <div class="file-path">/run/media/mobeen/Projects/crowdsafe-fyp/mvp/assets/design_4_transit_interchange.json</div>
+      <h3 style="margin-top: 18px; margin-bottom: 8px; color: #fff;">Application Asset Paths:</h3>
+      <div class="file-path">Dashboard Web App: /run/media/mobeen/Projects/crowdsafe-fyp/crowdsafe-dashboard/public/</div>
+      <div class="file-path">Python MVP Pipeline: /run/media/mobeen/Projects/crowdsafe-fyp/mvp/assets/</div>
+      <div class="file-path">Project Root Directory: /run/media/mobeen/Projects/crowdsafe-fyp/</div>
     </div>
   </div>
+
+  <script>
+    const mapData = {
+      cctv: {
+        title: "1. Calibrated CCTV Ray-Cast Coverage Map",
+        desc: "Full 3D optics line-of-sight ray-casting with solid wall occlusion, nadir dead zone, and 83.8% proven concourse surveillance.",
+        png: "design_4_transit_interchange.png",
+        svg: "design_4_transit_interchange.svg"
+      },
+      clean: {
+        title: "2. Clean Base Architectural Plan (No Camera Projections)",
+        desc: "Pure architectural CAD blueprint showing concourse grid, 4 corner rooms with inward doors, speed gates, and central roundabout without colored FOV cones.",
+        png: "design_4_clean_base.png",
+        svg: "design_4_clean_base.svg"
+      },
+      humans: {
+        title: "3. Pedestrian & Human Location Tracking Dots",
+        desc: "Simulated real-time commuter locations (142 pedestrian centroids) with directional flow velocity vectors, roundabout circulation, and density cluster tags.",
+        png: "design_4_human_locations.png",
+        svg: "design_4_human_locations.svg"
+      },
+      tactical: {
+        title: "4. Tactical Game Map / Real-Time Dashboard View",
+        desc: "High-contrast dark-mode command center minimap featuring cyber-illuminated walls, holographic CCTV radar sweep cones, glowing fountain, and status HUD.",
+        png: "design_4_tactical_gamemap.png",
+        svg: "design_4_tactical_gamemap.svg"
+      }
+    };
+
+    function switchView(variant) {
+      document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const data = mapData[variant];
+      const img = document.getElementById('main-map-img');
+      img.style.opacity = '0.3';
+      
+      setTimeout(() => {
+        img.src = data.png;
+        img.alt = data.title;
+        document.getElementById('meta-title').innerText = data.title;
+        document.getElementById('meta-desc').innerText = data.desc;
+        document.getElementById('btn-open-png').href = data.png;
+        document.getElementById('btn-open-svg').href = data.svg;
+        img.style.opacity = '1';
+      }, 150);
+    }
+  </script>
 </body>
 </html>
