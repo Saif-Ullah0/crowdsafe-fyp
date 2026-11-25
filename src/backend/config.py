@@ -8,97 +8,39 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
 BASE_DIR = Path(__file__).resolve().parent
+
+def find_repo_root(start_path: Path) -> Path:
+    cur = start_path.resolve()
+    for p in [cur] + list(cur.parents):
+        if (p / ".git").exists() or (p / "DataSet").exists():
+            return p
+    return cur.parent
+
+REPO_ROOT = find_repo_root(BASE_DIR)
 OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------
 # Floor Plan Themes (Design 4 Variants)
 # ---------------------------------------------------------
-# Light CAD Theme (Clean Architectural Line Drawing)
-FLOOR_PLAN_LIGHT = BASE_DIR.parent / "design_4_clean_base.png"
+FLOOR_PLAN_LIGHT = REPO_ROOT / "design_4_clean_base.png"
 if not FLOOR_PLAN_LIGHT.exists():
     _asset_light = BASE_DIR / "assets" / "design_4_clean_base.png"
     if _asset_light.exists():
         FLOOR_PLAN_LIGHT = _asset_light
 
-# Dark Tactical Theme (Tactical Game Map Style)
-FLOOR_PLAN_DARK = BASE_DIR.parent / "design_4_tactical_gamemap.png"
+FLOOR_PLAN_DARK = REPO_ROOT / "design_4_tactical_gamemap.png"
 if not FLOOR_PLAN_DARK.exists():
     _asset_dark = BASE_DIR / "assets" / "design_4_tactical_gamemap.png"
     if _asset_dark.exists():
         FLOOR_PLAN_DARK = _asset_dark
 
-# Default Floor Plan Path (Window 1 Blueprint)
-DEFAULT_FLOOR_PLAN = BASE_DIR.parent / "design_4_transit_interchange.png"
+DEFAULT_FLOOR_PLAN = REPO_ROOT / "design_4_transit_interchange.png"
 if not DEFAULT_FLOOR_PLAN.exists():
     _asset_plan = BASE_DIR / "assets" / "design_4_transit_interchange.png"
     if _asset_plan.exists():
         DEFAULT_FLOOR_PLAN = _asset_plan
-    else:
-        _alt_plan = BASE_DIR.parent / "dataset-generator" / "output" / "floor_plans_2d" / "design_4_transit_interchange.png"
-        if _alt_plan.exists():
-            DEFAULT_FLOOR_PLAN = _alt_plan
-        else:
-            DEFAULT_FLOOR_PLAN = FLOOR_PLAN_DARK
 
-# ---------------------------------------------------------
-# Safety & Density Thresholds (People per m²)
-# Based on Fruin's Level of Service & International Crowd Dynamics
-# ---------------------------------------------------------
-DENSITY_LEVELS = {
-    "LOW": {
-        "max": 0.1,  # <--- Changed from 2.0
-        "color": (0, 255, 0),
-        "label": "Normal Flow",
-        "description": "Free movement, normal walking speed"
-    },
-    "MODERATE": {
-        "max": 0.2,  # <--- Changed from 3.5
-        "color": (0, 255, 255),
-        "label": "Caution / High Volume",
-        "description": "Constrained movement, walking speed restricted"
-    },
-    "HIGH": {
-        "max": 0.25, # <--- Changed from 5.0
-        "color": (0, 165, 255),
-        "label": "Warning / Bottleneck",
-        "description": "Crowd compression begins, involuntary contact"
-    },
-    "CRITICAL": {
-        "max": float("inf"),
-        "color": (0, 0, 255),
-        "label": "Critical / Crush Risk",
-        "description": "Extreme compressive asphyxiation / stampede risk"
-    }
-}
-# ---------------------------------------------------------
-# Default Zone / Region of Interest (ROI) Definitions
-# Normalized coordinates (x1, y1, x2, y2) in range [0.0, 1.0]
-# ---------------------------------------------------------
-DEFAULT_ZONES = [
-    {
-        "id": "zone_entry",
-        "name": "Entrance Gateway",
-        "bbox": (0.05, 0.1, 0.45, 0.9),  # (x_min, y_min, x_max, y_max)
-        "estimated_area_m2": 25.0
-    },
-    {
-        "id": "zone_corridor",
-        "name": "Central Concourse",
-        "bbox": (0.45, 0.1, 0.85, 0.9),
-        "estimated_area_m2": 35.0
-    },
-    {
-        "id": "zone_exit",
-        "name": "Emergency Exit Route",
-        "bbox": (0.85, 0.2, 0.98, 0.8),
-        "estimated_area_m2": 15.0
-    }
-]
-
-# ---------------------------------------------------------
-# Streaming & DVR Ingestion Settings
-# ---------------------------------------------------------
 @dataclass
 class StreamConfig:
     source: str = "sample"          # 'sample', directory path, video file, or camera index

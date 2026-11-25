@@ -1,32 +1,27 @@
-# Datasets & Large Binary Files
-datasets/
-models/CSRNet/weights/
-*.h5
-*.npy
-*.mat
-
-# Environment & Python Cache
-crowdsafe_env/
+# Python Virtual Environments
 .venv/
-mvp/.venv/
+venv/
+env/
 __pycache__/
-*.pyc
-.pytest_cache/
+*.py[cod]
+*$py.class
 
-# IDE & Editor
-.vscode/
-.idea/
-*.swp
-*.swo
+# Large Datasets and Media Outputs
+DataSet/
+*.mp4
+*.avi
+*.part
+mvp/output/
+src/backend/output/
 
-# OS & Preview Output Files
+# Node.js / Next.js Dashboard
+node_modules/
+.next/
+out/
+.env*.local
+
+# System & IDE
 .DS_Store
 Thumbs.db
-density_map_preview.png
-output/
-mvp/output/
-*.pth
-*.part
-models/CSRNet/*.json
-
-DataSet/
+.vscode/
+.idea/

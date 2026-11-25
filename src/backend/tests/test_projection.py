@@ -11,6 +11,7 @@ import pytest
 
 # Ensure mvp/ is on sys.path
 BASE_DIR = Path(__file__).resolve().parent.parent
+from config import REPO_ROOT
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
@@ -138,7 +139,7 @@ def test_annotation_detection_source_parsing():
 
 def test_dataset_40_live_annotation_read():
     """Verify live read of actual DataSet/40 if present in workspace."""
-    dataset_40 = BASE_DIR.parent / "DataSet" / "40"
+    dataset_40 = REPO_ROOT / "DataSet" / "40"
     if dataset_40.is_dir():
         source = AnnotationDetectionSource(dataset_40)
         dets = source.get_detections(frame_idx=1)
@@ -284,7 +285,7 @@ def test_canva_figma_studio_hit_testing_and_rendering():
     floor_dummy = np.full((1200, 1600, 3), 200, dtype=np.uint8)
     studio = CanvaFigmaCalibrationStudio(
         floor_image=floor_dummy,
-        source_dir=BASE_DIR.parent / "DataSet" / "40"
+        source_dir=REPO_ROOT / "DataSet" / "40"
     )
 
     # 1. Render test
@@ -338,7 +339,7 @@ def test_universal_target_resolution_and_custom_folders():
     assert targets_40[idx_40].image_path.is_file()
 
     # 2. Test single image file input
-    sample_img = BASE_DIR.parent / "DataSet" / "40" / "001.jpg"
+    sample_img = REPO_ROOT / "DataSet" / "40" / "001.jpg"
     if sample_img.is_file():
         targets_file, idx_file = resolve_universal_targets(str(sample_img))
         assert len(targets_file) >= 1
@@ -383,7 +384,7 @@ def test_projector_dual_canvas_pre_scaling_and_toggle():
     from projector_app import ProjectorApp
     import cv2
 
-    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    series_40 = REPO_ROOT / "DataSet" / "40"
     if not series_40.exists():
         pytest.skip("DataSet/40 not present for integration test")
 
@@ -439,7 +440,7 @@ def test_projector_gui_window_initialization():
     from projector_app import ProjectorApp
     import cv2
 
-    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    series_40 = REPO_ROOT / "DataSet" / "40"
     if not series_40.exists():
         pytest.skip("DataSet/40 not present for integration test")
 
@@ -455,7 +456,7 @@ def test_projector_boundary_overlay_toggle_and_clear():
     """Verify camera boundary outline and sightline arrow overlay is clear by default and toggleable."""
     from projector_app import ProjectorApp
 
-    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    series_40 = REPO_ROOT / "DataSet" / "40"
     if not series_40.exists():
         pytest.skip("DataSet/40 not present for integration test")
 
@@ -490,7 +491,7 @@ def test_projector_locked_calibration_no_drag():
     from projector_app import ProjectorApp
     import cv2
 
-    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    series_40 = REPO_ROOT / "DataSet" / "40"
     if not series_40.exists():
         pytest.skip("DataSet/40 not present for integration test")
 
@@ -513,7 +514,7 @@ def test_projector_show_video_cli_and_toggle():
     from projector_app import ProjectorApp
     import cv2
 
-    series_40 = BASE_DIR.parent / "DataSet" / "40"
+    series_40 = REPO_ROOT / "DataSet" / "40"
     if not series_40.exists():
         pytest.skip("DataSet/40 not present for integration test")
 

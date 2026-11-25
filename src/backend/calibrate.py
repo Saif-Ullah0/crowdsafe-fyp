@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from config import DEFAULT_FLOOR_PLAN
+from config import DEFAULT_FLOOR_PLAN, REPO_ROOT, BASE_DIR
 from core.projection import PlanarProjector
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
@@ -88,7 +88,7 @@ def resolve_series_path(source_or_series: str) -> Path:
     if p.exists():
         return p.resolve()
 
-    cand1 = BASE_DIR.parent / "DataSet" / source_or_series
+    cand1 = REPO_ROOT / "DataSet" / source_or_series
     if cand1.exists():
         return cand1.resolve()
 
@@ -100,7 +100,7 @@ def resolve_series_path(source_or_series: str) -> Path:
     if cand3.exists():
         return cand3.resolve()
 
-    cand4 = BASE_DIR.parent / source_or_series
+    cand4 = REPO_ROOT / source_or_series
     if cand4.exists():
         return cand4.resolve()
 
@@ -148,7 +148,7 @@ def resolve_universal_targets(source_or_series: Optional[str] = None) -> Tuple[L
             return targets, 0
 
     # Fallback to DataSet/40 if available
-    fallback_dir = BASE_DIR.parent / "DataSet" / "40"
+    fallback_dir = REPO_ROOT / "DataSet" / "40"
     if fallback_dir.is_dir():
         return resolve_universal_targets(str(fallback_dir))
 
